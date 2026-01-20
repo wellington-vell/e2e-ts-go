@@ -1,0 +1,10 @@
+{
+    "name": "server",
+    "private": true,
+    "scripts": {
+        "dev": "~/go/bin/air -c .air.toml",
+        "clean": "rm -rf tmp dist",
+        "build": "go build -o dist/main cmd/main.go",
+        "start": "dist/main"
+    }
+}

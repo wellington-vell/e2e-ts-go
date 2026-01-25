@@ -8,11 +8,11 @@ import {
 } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 
-import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
+import { ThemeProvider } from "@/context/theme";
 import "@/index.css";
 
-export const Route = createRootRouteWithContext<any>()({
+export const Route = createRootRouteWithContext()({
   component: RootComponent,
   head: () => ({
     meta: [

@@ -1,8 +1,6 @@
 {
   "$schema": "./node_modules/oxfmt/configuration_schema.json",
-  "ignorePatterns": [
-    "routeTree.gen.ts"
-  ],
+  "ignorePatterns": ["routeTree.gen.ts", "*.toml"],
   "printWidth": 80,
   "experimentalSortImports": {
     "order": "asc"

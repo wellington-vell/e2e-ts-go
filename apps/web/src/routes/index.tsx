@@ -23,9 +23,10 @@ const TITLE_TEXT = `
  `;
 
 function HomeComponent() {
-  const healthCheck = {
-    data: true,
-    isLoading: false,
+  const query = {
+    data: {
+      status: true,
+    },
   };
 
   return (
@@ -38,15 +39,11 @@ function HomeComponent() {
             <div
               className={cn(
                 "h-2 w-2 rounded-full",
-                healthCheck.data ? "bg-green-500" : "bg-red-500",
+                query.data.status ? "bg-green-500" : "bg-red-500",
               )}
             />
             <span className="text-sm text-muted-foreground">
-              {healthCheck.isLoading
-                ? "Checking..."
-                : healthCheck.data
-                  ? "Connected"
-                  : "Disconnected"}
+              {query.data.status ? "Connected" : "Disconnected"}
             </span>
           </div>
         </section>

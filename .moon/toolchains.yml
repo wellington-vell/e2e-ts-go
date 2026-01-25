@@ -1,0 +1,11 @@
+javascript:
+  packageManager: "bun"
+
+node:
+  version: "25.2.1"
+
+bun:
+  version: "1.3.5"
+
+go:
+  version: "1.25.5"

@@ -1,0 +1,29 @@
+language: typescript
+layer: application
+
+fileGroups:
+  vite:
+    - "src/**/*"
+    - "index.html"
+    - "vite.config.ts"
+
+tasks:
+  dev:
+    command: "bun run vite dev"
+
+  clean:
+    command: "rm -rf node_modules"
+
+  build:
+    command: "bun run vite build"
+    inputs:
+      - "@group(vite)"
+    outputs:
+      - "dist"
+  check:
+    command: "bun run oxlint && bun run oxfmt"
+
+workspace:
+  inheritedTasks:
+    exclude:
+      - build

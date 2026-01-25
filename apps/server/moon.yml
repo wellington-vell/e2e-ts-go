@@ -1,0 +1,26 @@
+language: go
+layer: application
+
+tasks:
+  dev:
+    command: "~/go/bin/air -c .air.toml"
+
+  build:
+    command: "go build -o dist/main cmd/main.go"
+    inputs:
+      - "cmd/**/*"
+      - "internal/**/*"
+      - "gen/**/*"
+    outputs:
+      - "dist/main"
+
+  clean:
+    command: "rm -rf .tmp dist"
+
+  check:
+    command: "golangci-lint run"
+
+  start:
+    command: "dist/main"
+    deps:
+      - "server:build"

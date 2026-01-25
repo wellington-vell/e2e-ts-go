@@ -9,6 +9,19 @@ const router = createRouter({
   routeTree,
   defaultPreload: "intent",
   defaultPendingComponent: () => <Loader />,
+  // context: {
+  //   transport,
+  //   queryClient,
+  // },
+  // Wrap: function WrapComponent({ children }: { children: React.ReactNode }) {
+  //   return (
+  //     <TransportProvider transport={transport}>
+  //       <QueryClientProvider client={queryClient}>
+  //         {children}
+  //       </QueryClientProvider>
+  //     </TransportProvider>
+  //   );
+  // },
 });
 
 declare module "@tanstack/react-router" {

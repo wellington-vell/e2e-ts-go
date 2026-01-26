@@ -18,7 +18,8 @@ func main() {
 
 	app := gorpc.New().
 		Prefix("/api").
-		Router(routers.AllRoutes)
+		Router(routers.AllRoutes).
+		Plugin(gorpc.NewScalarPlugin())
 
 	addr := fmt.Sprintf(":%s", port)
 	fmt.Printf("Server starting on port %s\n", port)

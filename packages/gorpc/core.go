@@ -19,17 +19,19 @@ type Meta struct {
 }
 
 type GORPC struct {
-	router  *radixRouter
-	prefix  *string
-	routers map[string]Router
+	router         *radixRouter
+	prefix         *string
+	routers        map[string]Router
+	pluginRegistry *pluginRegistry
 }
 
 type Router map[string]ProcedureAny
 
 func New() *GORPC {
 	return &GORPC{
-		router:  NewRouter(),
-		routers: make(map[string]Router),
+		router:         NewRouter(),
+		routers:        make(map[string]Router),
+		pluginRegistry: newPluginRegistry(),
 	}
 }
 
@@ -82,7 +84,131 @@ func (g *GORPC) Router(router Router) *GORPC {
 	return g
 }
 
+func (g *GORPC) Plugin(plugin Plugin) *GORPC {
+	if plugin == nil {
+		return g
+	}
+	g.pluginRegistry.Register(plugin)
+	if err := plugin.Register(g); err != nil {
+		panic(fmt.Sprintf("Failed to register plugin %s: %v", plugin.Name(), err))
+	}
+	return g
+}
+
+func (g *GORPC) hasPlugin(name string) bool {
+	for _, plugin := range g.pluginRegistry.Get() {
+		if plugin.Name() == name {
+			return true
+		}
+	}
+	return false
+}
+
+type ProcedureInfo struct {
+	Path       string
+	Method     string
+	Route      *Route
+	Meta       Meta
+	Tags       []string
+	InputType  reflect.Type
+	OutputType reflect.Type
+	ErrorCodes []int
+}
+
+func (g *GORPC) GetRouters() map[string]Router {
+	return g.routers
+}
+
+// GetAllProcedures traverses the radix router and returns all registered procedures with their metadata
+func (g *GORPC) GetAllProcedures() []ProcedureInfo {
+	var procedures []ProcedureInfo
+	routerProcs := g.router.GetAllProcedures()
+
+	for _, routerProc := range routerProcs {
+		info := g.extractProcedureInfo(routerProc.Procedure, routerProc.Path, routerProc.Method)
+		if info != nil {
+			procedures = append(procedures, *info)
+		}
+	}
+
+	return procedures
+}
+
+// extractProcedureInfo extracts metadata from a procedure using reflection
+func (g *GORPC) extractProcedureInfo(proc ProcedureAny, path, method string) *ProcedureInfo {
+	procValue := reflect.ValueOf(proc)
+	if procValue.Kind() == reflect.Interface {
+		procValue = procValue.Elem()
+	}
+	if procValue.Kind() == reflect.Ptr {
+		procValue = procValue.Elem()
+	}
+
+	if !procValue.IsValid() {
+		return nil
+	}
+
+	info := &ProcedureInfo{
+		Path:   path,
+		Method: method,
+	}
+
+	routeField := procValue.FieldByName("Route")
+	if routeField.IsValid() {
+		if route, ok := routeField.Interface().(*Route); ok {
+			info.Route = route
+		}
+	}
+
+	metaField := procValue.FieldByName("Meta")
+	if metaField.IsValid() {
+		if meta, ok := metaField.Interface().(Meta); ok {
+			info.Meta = meta
+		}
+	}
+
+	tagsField := procValue.FieldByName("Tags")
+	if tagsField.IsValid() {
+		if tags, ok := tagsField.Interface().([]string); ok {
+			info.Tags = tags
+		}
+	}
+
+	inputTypeField := procValue.FieldByName("InputType")
+	if inputTypeField.IsValid() {
+		if inputType, ok := inputTypeField.Interface().(reflect.Type); ok {
+			info.InputType = inputType
+		}
+	}
+
+	outputTypeField := procValue.FieldByName("OutputType")
+	if outputTypeField.IsValid() {
+		if outputType, ok := outputTypeField.Interface().(reflect.Type); ok {
+			info.OutputType = outputType
+		}
+	}
+
+	errorCodesField := procValue.FieldByName("ErrorCodes")
+	if errorCodesField.IsValid() {
+		if errorCodes, ok := errorCodesField.Interface().([]int); ok {
+			info.ErrorCodes = errorCodes
+		}
+	}
+
+	return info
+}
+
 func (g *GORPC) ListenAndServe(addr string) error {
+	// Create a mux that handles plugin routes first, then falls back to the router
+	mux := http.NewServeMux()
+	for _, plugin := range g.pluginRegistry.Get() {
+		routes := plugin.Routes()
+		for path, handler := range routes {
+			mux.Handle(path, handler)
+		}
+	}
+	mux.Handle("/", g.router)
+
 	log.Printf("Server starting on %s", addr)
-	return http.ListenAndServe(addr, g.router)
+	return http.ListenAndServe(addr, mux)
 }

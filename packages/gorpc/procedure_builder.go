@@ -14,6 +14,7 @@ type ProcedureBuilder[TInput, TOutput any] struct {
 	meta        Meta
 	route       *Route
 	tags        []string
+	errorCodes  []int
 }
 
 func OS[TInput, TOutput any]() *ProcedureBuilder[TInput, TOutput] {
@@ -56,6 +57,11 @@ func (pb *ProcedureBuilder[TInput, TOutput]) Tag(tags ...string) *ProcedureBuild
 	return pb
 }
 
+func (pb *ProcedureBuilder[TInput, TOutput]) Errors(errorCodes ...int) *ProcedureBuilder[TInput, TOutput] {
+	pb.errorCodes = errorCodes
+	return pb
+}
+
 // Build panics if handler or route is missing
 func (pb *ProcedureBuilder[TInput, TOutput]) Build() *Procedure[TInput, TOutput] {
 	if pb.handler == nil {
@@ -66,8 +72,7 @@ func (pb *ProcedureBuilder[TInput, TOutput]) Build() *Procedure[TInput, TOutput]
 		panic("procedure route is required")
 	}
 
-	// Infer input/output types from generics
-	var zeroInput TInput
+		var zeroInput TInput
 	inputType := reflect.TypeOf(zeroInput)
 	if inputType != nil {
 		pb.inputType = inputType
@@ -85,15 +90,11 @@ func (pb *ProcedureBuilder[TInput, TOutput]) Build() *Procedure[TInput, TOutput]
 		}
 	}
 
-	// Create type-erased handler wrapper
 	handlerAny := func(ctx *Context, input any) (any, error) {
 		var typedInput TInput
 
-		// Handle nil/empty input case - create zero value
 		if input == nil {
-			// Zero value is already created by var declaration
 		} else {
-			// Use JSON round-trip for type-safe conversion
 			inputBytes, err := json.Marshal(input)
 			if err != nil {
 				return nil, NewHTTPError(400, "Invalid input format: "+err.Error())
@@ -104,7 +105,6 @@ func (pb *ProcedureBuilder[TInput, TOutput]) Build() *Procedure[TInput, TOutput]
 			}
 		}
 
-		// Call the type-safe handler
 		result, err := pb.handler(ctx, typedInput)
 		if err != nil {
 			return nil, err
@@ -123,5 +123,6 @@ func (pb *ProcedureBuilder[TInput, TOutput]) Build() *Procedure[TInput, TOutput]
 		Meta:        pb.meta,
 		Route:       pb.route,
 		Tags:        pb.tags,
+		ErrorCodes:  pb.errorCodes,
 	}
 }

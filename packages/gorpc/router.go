@@ -6,12 +6,10 @@ import (
 )
 
 type radixNode struct {
-	prefix   string
-	children map[string]*radixNode
-	// paramChild is the child node for parameter segments (e.g., :id, :userId)
+	prefix    string
+	children  map[string]*radixNode
 	paramChild *radixNode
-	// paramName is the name of the parameter (e.g., "id", "userId") - only set if this is a parameter node
-	paramName string
+	paramName  string
 	handlers  map[string]ProcedureAny
 }
 
@@ -59,7 +57,6 @@ func (r *radixRouter) insertRecursive(node *radixNode, segments []string, method
 				handlers:  make(map[string]ProcedureAny),
 			}
 		}
-		// Ensure paramName matches if paramChild already exists
 		if node.paramChild.paramName != paramName {
 			node.paramChild.paramName = paramName
 		}
@@ -135,7 +132,6 @@ func (r *radixRouter) matchRecursive(node *radixNode, segments []string, method 
 
 	segment := segments[depth]
 
-	// Try exact match first (static segment)
 	if child, exists := node.children[segment]; exists {
 		if proc := r.matchRecursive(child, segments, method, params, depth+1); proc != nil {
 			return proc
@@ -149,7 +145,6 @@ func (r *radixRouter) matchRecursive(node *radixNode, segments []string, method 
 		if proc := r.matchRecursive(node.paramChild, segments, method, params, depth+1); proc != nil {
 			return proc
 		}
-		// Remove parameter if match failed (backtrack)
 		if node.paramChild.paramName != "" {
 			delete(params, node.paramChild.paramName)
 		}
@@ -184,4 +179,48 @@ func splitPath(path string) []string {
 		return []string{}
 	}
 	return strings.Split(path, "/")
+}
+
+func (r *radixRouter) GetAllProcedures() []struct {
+	Path     string
+	Method   string
+	Procedure ProcedureAny
+} {
+	var procedures []struct {
+		Path     string
+		Method   string
+		Procedure ProcedureAny
+	}
+	r.collectProceduresRecursive(r.root, "", &procedures)
+	return procedures
+}
+
+func (r *radixRouter) collectProceduresRecursive(node *radixNode, currentPath string, procedures *[]struct {
+	Path     string
+	Method   string
+	Procedure ProcedureAny
+}) {
+	if node.handlers != nil {
+		for method, proc := range node.handlers {
+			*procedures = append(*procedures, struct {
+				Path     string
+				Method   string
+				Procedure ProcedureAny
+			}{
+				Path:     currentPath,
+				Method:   method,
+				Procedure: proc,
+			})
+		}
+	}
+
+	for segment, child := range node.children {
+		childPath := currentPath + "/" + segment
+		r.collectProceduresRecursive(child, childPath, procedures)
+	}
+
+	if node.paramChild != nil {
+		paramPath := currentPath + "/:" + node.paramChild.paramName
+		r.collectProceduresRecursive(node.paramChild, paramPath, procedures)
+	}
 }

@@ -29,6 +29,7 @@ type Procedure[TInput, TOutput any] struct {
 	Meta        Meta
 	Route       *Route
 	Tags        []string
+	ErrorCodes  []int
 }
 
 func (p *Procedure[TInput, TOutput]) HandleRequest(w http.ResponseWriter, r *http.Request) {

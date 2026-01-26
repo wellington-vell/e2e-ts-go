@@ -48,6 +48,7 @@ var TodoRouter = gorpc.Router{
 			Method: "GET",
 			Path:   "/todos",
 		}).
+		Errors(500).
 		Handler(func(ctx *gorpc.Context, input struct{}) ([]Todo, error) {
 			rows, err := internal.DB.Query("SELECT id, text, completed, created_at, updated_at FROM todos ORDER BY created_at DESC")
 			if err != nil {
@@ -82,6 +83,7 @@ var TodoRouter = gorpc.Router{
 			Method: "GET",
 			Path:   "/todos/:id",
 		}).
+		Errors(400, 404, 500).
 		Handler(func(ctx *gorpc.Context, input GetTodoByIdInput) (Todo, error) {
 			idStr, ok := ctx.Params["id"]
 			if !ok {
@@ -119,6 +121,7 @@ var TodoRouter = gorpc.Router{
 			Method: "POST",
 			Path:   "/todos",
 		}).
+		Errors(500).
 		Handler(func(ctx *gorpc.Context, input CreateTodoInput) (Todo, error) {
 			var todo Todo
 			err := internal.DB.QueryRow(
@@ -144,6 +147,7 @@ var TodoRouter = gorpc.Router{
 			Method: "PUT",
 			Path:   "/todos/:id",
 		}).
+		Errors(400, 404, 500).
 		Handler(func(ctx *gorpc.Context, input UpdateTodoInput) (Todo, error) {
 			idStr, ok := ctx.Params["id"]
 			if !ok {
@@ -181,6 +185,7 @@ var TodoRouter = gorpc.Router{
 			Method: "DELETE",
 			Path:   "/todos/:id",
 		}).
+		Errors(400, 404, 500).
 		Handler(func(ctx *gorpc.Context, input DeleteTodoInput) (map[string]string, error) {
 			idStr, ok := ctx.Params["id"]
 			if !ok {

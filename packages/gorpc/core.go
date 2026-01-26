@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"reflect"
 	"strings"
 )
 
@@ -23,7 +24,7 @@ type GORPC struct {
 	routers map[string]Router
 }
 
-type Router map[string]*Procedure
+type Router map[string]ProcedureAny
 
 func New() *GORPC {
 	return &GORPC{
@@ -48,17 +49,34 @@ func (g *GORPC) Router(router Router) *GORPC {
 	}
 
 	for procName, proc := range router {
-		if proc.Route == nil {
+		// Use reflection to access Route field directly (avoiding getter method)
+		procValue := reflect.ValueOf(proc)
+		// proc is an interface, so we need to get the underlying value
+		if procValue.Kind() == reflect.Interface {
+			procValue = procValue.Elem()
+		}
+		// Now get the actual struct (Procedure is a pointer)
+		if procValue.Kind() == reflect.Ptr {
+			procValue = procValue.Elem()
+		}
+
+		routeField := procValue.FieldByName("Route")
+		if !routeField.IsValid() {
+			panic(fmt.Sprintf("procedure %s: cannot access route field", procName))
+		}
+
+		route, ok := routeField.Interface().(*Route)
+		if !ok || route == nil {
 			panic(fmt.Sprintf("procedure %s: route is required", procName))
 		}
 
-		routePath := proc.Route.Path
+		routePath := route.Path
 		if !strings.HasPrefix(routePath, "/") {
 			routePath = "/" + routePath
 		}
 		fullPath := prefix + routePath
 
-		g.router.Insert(fullPath, proc.Route.Method, proc)
+		g.router.Insert(fullPath, route.Method, proc)
 	}
 
 	return g

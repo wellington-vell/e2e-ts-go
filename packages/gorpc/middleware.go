@@ -19,7 +19,7 @@ func (mc *MiddlewareChain) Add(middleware MiddlewareFunc) {
 }
 
 // Execute executes middleware in the order it was added, with the handler called last
-func (mc *MiddlewareChain) Execute(ctx *Context, input interface{}, handler HandlerFunc) (interface{}, error) {
+func (mc *MiddlewareChain) Execute(ctx *Context, input interface{}, handler handlerFuncAny) (interface{}, error) {
 	if len(mc.middlewares) == 0 {
 		return handler(ctx, input)
 	}

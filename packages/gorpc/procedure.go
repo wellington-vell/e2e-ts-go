@@ -6,10 +6,22 @@ import (
 	"reflect"
 )
 
-type HandlerFunc func(ctx *Context, input any) (any, error)
+// HandlerFunc is a generic type-safe handler function
+type HandlerFunc[TInput, TOutput any] func(ctx *Context, input TInput) (TOutput, error)
 
-type Procedure struct {
-	Handler     HandlerFunc
+// handlerFuncAny is a type-erased handler function for internal storage
+type handlerFuncAny func(ctx *Context, input any) (any, error)
+
+// ProcedureAny is an interface for type-erased procedure storage
+type ProcedureAny interface {
+	HandleRequest(w http.ResponseWriter, r *http.Request)
+	HandleRequestWithContext(ctx *Context)
+}
+
+// Procedure is a generic type-safe procedure
+type Procedure[TInput, TOutput any] struct {
+	Handler     HandlerFunc[TInput, TOutput]
+	handlerAny  handlerFuncAny // internal type-erased handler
 	InputType   reflect.Type
 	OutputType  reflect.Type
 	Middleware  *MiddlewareChain
@@ -19,7 +31,7 @@ type Procedure struct {
 	Tags        []string
 }
 
-func (p *Procedure) HandleRequest(w http.ResponseWriter, r *http.Request) {
+func (p *Procedure[TInput, TOutput]) HandleRequest(w http.ResponseWriter, r *http.Request) {
 	ctx := &Context{
 		Req:    r,
 		Res:    w,
@@ -28,7 +40,7 @@ func (p *Procedure) HandleRequest(w http.ResponseWriter, r *http.Request) {
 	p.HandleRequestWithContext(ctx)
 }
 
-func (p *Procedure) HandleRequestWithContext(ctx *Context) {
+func (p *Procedure[TInput, TOutput]) HandleRequestWithContext(ctx *Context) {
 	var input any
 
 	if ctx.Req.Body != nil && ctx.Req.ContentLength > 0 &&
@@ -44,9 +56,9 @@ func (p *Procedure) HandleRequestWithContext(ctx *Context) {
 	var result any
 	var err error
 	if p.Middleware != nil && len(p.Middleware.middlewares) > 0 {
-		result, err = p.Middleware.Execute(ctx, input, p.Handler)
+		result, err = p.Middleware.Execute(ctx, input, p.handlerAny)
 	} else {
-		result, err = p.Handler(ctx, input)
+		result, err = p.handlerAny(ctx, input)
 	}
 
 	if err != nil {

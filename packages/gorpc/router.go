@@ -12,7 +12,7 @@ type radixNode struct {
 	paramChild *radixNode
 	// paramName is the name of the parameter (e.g., "id", "userId") - only set if this is a parameter node
 	paramName string
-	handlers  map[string]*Procedure
+	handlers  map[string]ProcedureAny
 }
 
 // radixRouter is a custom HTTP router using a radix tree for efficient path matching
@@ -24,20 +24,20 @@ func NewRouter() *radixRouter {
 	return &radixRouter{
 		root: &radixNode{
 			children: make(map[string]*radixNode),
-			handlers: make(map[string]*Procedure),
+			handlers: make(map[string]ProcedureAny),
 		},
 	}
 }
 
-func (r *radixRouter) Insert(pattern, method string, procedure *Procedure) {
+func (r *radixRouter) Insert(pattern, method string, procedure ProcedureAny) {
 	segments := splitPath(pattern)
 	r.insertRecursive(r.root, segments, method, procedure, 0)
 }
 
-func (r *radixRouter) insertRecursive(node *radixNode, segments []string, method string, procedure *Procedure, depth int) {
+func (r *radixRouter) insertRecursive(node *radixNode, segments []string, method string, procedure ProcedureAny, depth int) {
 	if depth >= len(segments) {
 		if node.handlers == nil {
-			node.handlers = make(map[string]*Procedure)
+			node.handlers = make(map[string]ProcedureAny)
 		}
 		node.handlers[method] = procedure
 		return
@@ -56,7 +56,7 @@ func (r *radixRouter) insertRecursive(node *radixNode, segments []string, method
 				prefix:    segment,
 				paramName: paramName,
 				children:  make(map[string]*radixNode),
-				handlers:  make(map[string]*Procedure),
+				handlers:  make(map[string]ProcedureAny),
 			}
 		}
 		// Ensure paramName matches if paramChild already exists
@@ -70,7 +70,7 @@ func (r *radixRouter) insertRecursive(node *radixNode, segments []string, method
 			child = &radixNode{
 				prefix:   segment,
 				children: make(map[string]*radixNode),
-				handlers: make(map[string]*Procedure),
+				handlers: make(map[string]ProcedureAny),
 			}
 			node.children[segment] = child
 		}
@@ -79,7 +79,7 @@ func (r *radixRouter) insertRecursive(node *radixNode, segments []string, method
 }
 
 type MatchResult struct {
-	Procedure *Procedure
+	Procedure ProcedureAny
 	Params    map[string]string
 }
 
@@ -123,7 +123,7 @@ func (r *radixRouter) pathExistsRecursive(node *radixNode, segments []string, de
 	return false
 }
 
-func (r *radixRouter) matchRecursive(node *radixNode, segments []string, method string, params map[string]string, depth int) *Procedure {
+func (r *radixRouter) matchRecursive(node *radixNode, segments []string, method string, params map[string]string, depth int) ProcedureAny {
 	if depth >= len(segments) {
 		if node.handlers != nil {
 			if proc, ok := node.handlers[method]; ok {

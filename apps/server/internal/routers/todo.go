@@ -2,7 +2,6 @@ package routers
 
 import (
 	"database/sql"
-	"encoding/json"
 	"errors"
 	"server/internal"
 	"strconv"
@@ -39,9 +38,7 @@ type GetTodoByIdInput struct {
 }
 
 var TodoRouter = gorpc.Router{
-	"getAll": gorpc.OS().
-		Input(nil).
-		Output([]Todo{}).
+	"getAll": gorpc.OS[struct{}, []Todo]().
 		Tag("todos").
 		Meta(gorpc.Meta{
 			Summary:     "Get all todos",
@@ -51,7 +48,7 @@ var TodoRouter = gorpc.Router{
 			Method: "GET",
 			Path:   "/todos",
 		}).
-		Handler(func(ctx *gorpc.Context, input interface{}) (interface{}, error) {
+		Handler(func(ctx *gorpc.Context, input struct{}) ([]Todo, error) {
 			rows, err := internal.DB.Query("SELECT id, text, completed, created_at, updated_at FROM todos ORDER BY created_at DESC")
 			if err != nil {
 				return nil, gorpc.NewHTTPError(500, "Failed to fetch todos: "+err.Error())
@@ -75,9 +72,7 @@ var TodoRouter = gorpc.Router{
 		}).
 		Build(),
 
-	"getById": gorpc.OS().
-		Input(GetTodoByIdInput{}).
-		Output(Todo{}).
+	"getById": gorpc.OS[GetTodoByIdInput, Todo]().
 		Tag("todos").
 		Meta(gorpc.Meta{
 			Summary:     "Get a todo by ID",
@@ -87,15 +82,15 @@ var TodoRouter = gorpc.Router{
 			Method: "GET",
 			Path:   "/todos/:id",
 		}).
-		Handler(func(ctx *gorpc.Context, input interface{}) (interface{}, error) {
+		Handler(func(ctx *gorpc.Context, input GetTodoByIdInput) (Todo, error) {
 			idStr, ok := ctx.Params["id"]
 			if !ok {
-				return nil, gorpc.NewHTTPError(400, "Missing todo ID parameter")
+				return Todo{}, gorpc.NewHTTPError(400, "Missing todo ID parameter")
 			}
 
 			id, err := strconv.Atoi(idStr)
 			if err != nil {
-				return nil, gorpc.NewHTTPError(400, "Invalid todo ID: "+idStr)
+				return Todo{}, gorpc.NewHTTPError(400, "Invalid todo ID: "+idStr)
 			}
 			var todo Todo
 			err = internal.DB.QueryRow(
@@ -105,18 +100,16 @@ var TodoRouter = gorpc.Router{
 
 			if err != nil {
 				if errors.Is(err, sql.ErrNoRows) {
-					return nil, gorpc.NewHTTPError(404, "Todo not found")
+					return Todo{}, gorpc.NewHTTPError(404, "Todo not found")
 				}
-				return nil, gorpc.NewHTTPError(500, "Failed to fetch todo: "+err.Error())
+				return Todo{}, gorpc.NewHTTPError(500, "Failed to fetch todo: "+err.Error())
 			}
 
 			return todo, nil
 		}).
 		Build(),
 
-	"create": gorpc.OS().
-		Input(CreateTodoInput{}).
-		Output(Todo{}).
+	"create": gorpc.OS[CreateTodoInput, Todo]().
 		Tag("todos").
 		Meta(gorpc.Meta{
 			Summary:     "Create a new todo",
@@ -126,35 +119,22 @@ var TodoRouter = gorpc.Router{
 			Method: "POST",
 			Path:   "/todos",
 		}).
-		Handler(func(ctx *gorpc.Context, input interface{}) (interface{}, error) {
-			var req CreateTodoInput
-			if input != nil {
-				inputBytes, err := json.Marshal(input)
-				if err != nil {
-					return nil, gorpc.NewHTTPError(400, "Invalid input format: "+err.Error())
-				}
-				if err := json.Unmarshal(inputBytes, &req); err != nil {
-					return nil, gorpc.NewHTTPError(400, "Invalid input structure: "+err.Error())
-				}
-			}
-
+		Handler(func(ctx *gorpc.Context, input CreateTodoInput) (Todo, error) {
 			var todo Todo
 			err := internal.DB.QueryRow(
 				"INSERT INTO todos (text, completed) VALUES ($1, $2) RETURNING id, text, completed, created_at, updated_at",
-				req.Text, req.Completed,
+				input.Text, input.Completed,
 			).Scan(&todo.ID, &todo.Text, &todo.Completed, &todo.CreatedAt, &todo.UpdatedAt)
 
 			if err != nil {
-				return nil, gorpc.NewHTTPError(500, "Failed to create todo: "+err.Error())
+				return Todo{}, gorpc.NewHTTPError(500, "Failed to create todo: "+err.Error())
 			}
 
 			return todo, nil
 		}).
 		Build(),
 
-	"update": gorpc.OS().
-		Input(UpdateTodoInput{}).
-		Output(Todo{}).
+	"update": gorpc.OS[UpdateTodoInput, Todo]().
 		Tag("todos").
 		Meta(gorpc.Meta{
 			Summary:     "Update a todo",
@@ -164,47 +144,34 @@ var TodoRouter = gorpc.Router{
 			Method: "PUT",
 			Path:   "/todos/:id",
 		}).
-		Handler(func(ctx *gorpc.Context, input interface{}) (interface{}, error) {
+		Handler(func(ctx *gorpc.Context, input UpdateTodoInput) (Todo, error) {
 			idStr, ok := ctx.Params["id"]
 			if !ok {
-				return nil, gorpc.NewHTTPError(400, "Missing todo ID parameter")
+				return Todo{}, gorpc.NewHTTPError(400, "Missing todo ID parameter")
 			}
 			id, err := strconv.Atoi(idStr)
 			if err != nil {
-				return nil, gorpc.NewHTTPError(400, "Invalid todo ID: "+idStr)
-			}
-
-			var req UpdateTodoInput
-			if input != nil {
-				inputBytes, err := json.Marshal(input)
-				if err != nil {
-					return nil, gorpc.NewHTTPError(400, "Invalid input format: "+err.Error())
-				}
-				if err := json.Unmarshal(inputBytes, &req); err != nil {
-					return nil, gorpc.NewHTTPError(400, "Invalid input structure: "+err.Error())
-				}
+				return Todo{}, gorpc.NewHTTPError(400, "Invalid todo ID: "+idStr)
 			}
 
 			var todo Todo
 			err = internal.DB.QueryRow(
 				"UPDATE todos SET text = $1, completed = $2, updated_at = NOW() WHERE id = $3 RETURNING id, text, completed, created_at, updated_at",
-				req.Text, req.Completed, id,
+				input.Text, input.Completed, id,
 			).Scan(&todo.ID, &todo.Text, &todo.Completed, &todo.CreatedAt, &todo.UpdatedAt)
 
 			if err != nil {
 				if errors.Is(err, sql.ErrNoRows) {
-					return nil, gorpc.NewHTTPError(404, "Todo not found")
+					return Todo{}, gorpc.NewHTTPError(404, "Todo not found")
 				}
-				return nil, gorpc.NewHTTPError(500, "Failed to update todo: "+err.Error())
+				return Todo{}, gorpc.NewHTTPError(500, "Failed to update todo: "+err.Error())
 			}
 
 			return todo, nil
 		}).
 		Build(),
 
-	"delete": gorpc.OS().
-		Input(DeleteTodoInput{}).
-		Output(nil).
+	"delete": gorpc.OS[DeleteTodoInput, map[string]string]().
 		Tag("todos").
 		Meta(gorpc.Meta{
 			Summary:     "Delete a todo",
@@ -214,7 +181,7 @@ var TodoRouter = gorpc.Router{
 			Method: "DELETE",
 			Path:   "/todos/:id",
 		}).
-		Handler(func(ctx *gorpc.Context, input interface{}) (interface{}, error) {
+		Handler(func(ctx *gorpc.Context, input DeleteTodoInput) (map[string]string, error) {
 			idStr, ok := ctx.Params["id"]
 			if !ok {
 				return nil, gorpc.NewHTTPError(400, "Missing todo ID parameter")

@@ -1,13 +1,14 @@
 package gorpc
 
 import (
+	"encoding/json"
 	"reflect"
 )
 
-type ProcedureBuilder struct {
+type ProcedureBuilder[TInput, TOutput any] struct {
 	inputType   reflect.Type
 	outputType  reflect.Type
-	handler     HandlerFunc
+	handler     HandlerFunc[TInput, TOutput]
 	middleware  *MiddlewareChain
 	contextType reflect.Type
 	meta        Meta
@@ -15,68 +16,48 @@ type ProcedureBuilder struct {
 	tags        []string
 }
 
-func OS() *ProcedureBuilder {
-	return &ProcedureBuilder{
+func OS[TInput, TOutput any]() *ProcedureBuilder[TInput, TOutput] {
+	return &ProcedureBuilder[TInput, TOutput]{
 		middleware: NewMiddlewareChain(),
 	}
 }
 
-func (pb *ProcedureBuilder) Input(inputType interface{}) *ProcedureBuilder {
-	if inputType != nil {
-		pb.inputType = reflect.TypeOf(inputType)
-		if pb.inputType.Kind() == reflect.Ptr {
-			pb.inputType = pb.inputType.Elem()
-		}
-	}
-	return pb
-}
-
-func (pb *ProcedureBuilder) Handler(handler HandlerFunc) *ProcedureBuilder {
+func (pb *ProcedureBuilder[TInput, TOutput]) Handler(handler HandlerFunc[TInput, TOutput]) *ProcedureBuilder[TInput, TOutput] {
 	pb.handler = handler
 	return pb
 }
 
-func (pb *ProcedureBuilder) Use(middleware MiddlewareFunc) *ProcedureBuilder {
+func (pb *ProcedureBuilder[TInput, TOutput]) Use(middleware MiddlewareFunc) *ProcedureBuilder[TInput, TOutput] {
 	if middleware != nil {
 		pb.middleware.Add(middleware)
 	}
 	return pb
 }
 
-func (pb *ProcedureBuilder) Context(contextType interface{}) *ProcedureBuilder {
+func (pb *ProcedureBuilder[TInput, TOutput]) Context(contextType interface{}) *ProcedureBuilder[TInput, TOutput] {
 	if contextType != nil {
 		pb.contextType = reflect.TypeOf(contextType)
 	}
 	return pb
 }
 
-func (pb *ProcedureBuilder) Output(outputType interface{}) *ProcedureBuilder {
-	if outputType != nil {
-		pb.outputType = reflect.TypeOf(outputType)
-		if pb.outputType.Kind() == reflect.Ptr {
-			pb.outputType = pb.outputType.Elem()
-		}
-	}
-	return pb
-}
-
-func (pb *ProcedureBuilder) Meta(meta Meta) *ProcedureBuilder {
+func (pb *ProcedureBuilder[TInput, TOutput]) Meta(meta Meta) *ProcedureBuilder[TInput, TOutput] {
 	pb.meta = meta
 	return pb
 }
 
-func (pb *ProcedureBuilder) Route(route Route) *ProcedureBuilder {
+func (pb *ProcedureBuilder[TInput, TOutput]) Route(route Route) *ProcedureBuilder[TInput, TOutput] {
 	pb.route = &route
 	return pb
 }
 
-func (pb *ProcedureBuilder) Tag(tags ...string) *ProcedureBuilder {
+func (pb *ProcedureBuilder[TInput, TOutput]) Tag(tags ...string) *ProcedureBuilder[TInput, TOutput] {
 	pb.tags = append(pb.tags, tags...)
 	return pb
 }
 
 // Build panics if handler or route is missing
-func (pb *ProcedureBuilder) Build() *Procedure {
+func (pb *ProcedureBuilder[TInput, TOutput]) Build() *Procedure[TInput, TOutput] {
 	if pb.handler == nil {
 		panic("procedure handler is required")
 	}
@@ -85,8 +66,56 @@ func (pb *ProcedureBuilder) Build() *Procedure {
 		panic("procedure route is required")
 	}
 
-	return &Procedure{
+	// Infer input/output types from generics
+	var zeroInput TInput
+	inputType := reflect.TypeOf(zeroInput)
+	if inputType != nil {
+		pb.inputType = inputType
+		if pb.inputType.Kind() == reflect.Ptr {
+			pb.inputType = pb.inputType.Elem()
+		}
+	}
+
+	var zeroOutput TOutput
+	outputType := reflect.TypeOf(zeroOutput)
+	if outputType != nil {
+		pb.outputType = outputType
+		if pb.outputType.Kind() == reflect.Ptr {
+			pb.outputType = pb.outputType.Elem()
+		}
+	}
+
+	// Create type-erased handler wrapper
+	handlerAny := func(ctx *Context, input any) (any, error) {
+		var typedInput TInput
+
+		// Handle nil/empty input case - create zero value
+		if input == nil {
+			// Zero value is already created by var declaration
+		} else {
+			// Use JSON round-trip for type-safe conversion
+			inputBytes, err := json.Marshal(input)
+			if err != nil {
+				return nil, NewHTTPError(400, "Invalid input format: "+err.Error())
+			}
+
+			if err := json.Unmarshal(inputBytes, &typedInput); err != nil {
+				return nil, NewHTTPError(400, "Invalid input structure: "+err.Error())
+			}
+		}
+
+		// Call the type-safe handler
+		result, err := pb.handler(ctx, typedInput)
+		if err != nil {
+			return nil, err
+		}
+
+		return result, nil
+	}
+
+	return &Procedure[TInput, TOutput]{
 		Handler:     pb.handler,
+		handlerAny:  handlerAny,
 		InputType:   pb.inputType,
 		OutputType:  pb.outputType,
 		Middleware:  pb.middleware,

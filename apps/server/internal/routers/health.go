@@ -5,8 +5,7 @@ import (
 )
 
 var HealthRouter = gorpc.Router{
-	"healthCheck": gorpc.OS().
-		Output("").
+	"healthCheck": gorpc.OS[struct{}, string]().
 		Tag("health").
 		Meta(gorpc.Meta{
 			Summary:     "Health check endpoint",
@@ -16,7 +15,7 @@ var HealthRouter = gorpc.Router{
 			Method: "GET",
 			Path:   "/health",
 		}).
-		Handler(func(ctx *gorpc.Context, input interface{}) (interface{}, error) {
+		Handler(func(ctx *gorpc.Context, input struct{}) (string, error) {
 			return "OK", nil
 		}).
 		Build(),

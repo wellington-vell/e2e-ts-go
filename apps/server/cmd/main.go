@@ -2,8 +2,11 @@ package main
 
 import (
 	"fmt"
-	"net/http"
+
 	"server/internal"
+	"server/internal/routers"
+
+	"github.com/wellington-vell/gorpc"
 )
 
 func main() {
@@ -13,8 +16,14 @@ func main() {
 		panic(fmt.Sprintf("Failed to initialize database: %v", err))
 	}
 
-	http.HandleFunc("/health", internal.HealthCheck)
+	app := gorpc.New().
+		Prefix("/api").
+		Router(routers.AllRoutes)
 
-	fmt.Printf("Server started on port %s\n", port)
-	http.ListenAndServe(fmt.Sprintf(":%s", port), nil)
+	addr := fmt.Sprintf(":%s", port)
+	fmt.Printf("Server starting on port %s\n", port)
+
+	if err := app.ListenAndServe(addr); err != nil {
+		panic(fmt.Sprintf("Failed to start server: %v", err))
+	}
 }

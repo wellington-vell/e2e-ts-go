@@ -10,7 +10,6 @@ tasks:
     inputs:
       - "cmd/**/*"
       - "internal/**/*"
-      - "gen/**/*"
     outputs:
       - "dist/main"
 

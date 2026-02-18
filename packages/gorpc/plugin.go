@@ -20,6 +20,9 @@ type Plugin interface {
 	Routes() map[string]http.Handler
 }
 
+// pluginRegistry maintains a list of registered plugins and provides methods
+// for adding and retrieving them. It is used internally by GORPC to manage
+// plugin lifecycle and route registration.
 type pluginRegistry struct {
 	plugins []Plugin
 }

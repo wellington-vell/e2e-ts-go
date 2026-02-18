@@ -18,6 +18,8 @@ type Meta struct {
 	Description string `json:"description"`
 }
 
+// GORPC is the main framework instance that manages routers, plugins, and the HTTP server.
+// It provides a fluent API for registering procedures, mounting plugins, and starting the server.
 type GORPC struct {
 	router         *radixRouter
 	prefix         *string
@@ -27,6 +29,8 @@ type GORPC struct {
 
 type Router map[string]ProcedureAny
 
+// New creates a new GORPC instance with an empty router and plugin registry.
+// This is the entry point for creating a new gorpc application.
 func New() *GORPC {
 	return &GORPC{
 		router:         NewRouter(),
@@ -40,6 +44,15 @@ func (g *GORPC) Prefix(path string) *GORPC {
 	return g
 }
 
+// Router registers a collection of procedures under a common prefix.
+// It uses reflection to extract route metadata from each procedure struct,
+// including the HTTP method, path, and path parameters. This design allows
+// procedures to define their routing behavior declaratively while keeping
+// the registration process centralized.
+//
+// The prefix defaults to "/api" if not explicitly set via Prefix().
+// Reflection is used here to avoid requiring getter methods on procedure structs,
+// following the convention of direct field access for configuration.
 func (g *GORPC) Router(router Router) *GORPC {
 	if router == nil {
 		return g
@@ -91,6 +104,13 @@ func (g *GORPC) Router(router Router) *GORPC {
 	return g
 }
 
+// Plugin registers a plugin with the gorpc instance. Plugins can extend
+// functionality by registering HTTP routes, adding middleware, or modifying
+// the application behavior. The plugin's Register method is called immediately
+// to allow it to access the GORPC instance and register its routes.
+//
+// Panics if plugin registration fails, as this indicates a configuration
+// error that should be caught during startup rather than at runtime.
 func (g *GORPC) Plugin(plugin Plugin) *GORPC {
 	if plugin == nil {
 		return g
@@ -228,6 +248,11 @@ func (g *GORPC) ListenAndServe(addr string) error {
 	return http.ListenAndServe(addr, mux)
 }
 
+// extractPathParamsFromRoute extracts parameter names from route paths.
+// It identifies path parameters by the colon prefix (e.g., :id in /todos/:id).
+// This is used to pre-populate the PathParams field on procedures so that
+// parameter names are available for documentation and validation without
+// requiring runtime extraction for every request.
 func extractPathParamsFromRoute(path string) []string {
 	var params []string
 	segments := strings.Split(path, "/")

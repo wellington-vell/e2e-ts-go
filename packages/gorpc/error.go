@@ -10,12 +10,12 @@ func writeError(w http.ResponseWriter, err error) {
 
 	if httpErr, ok := err.(*HTTPError); ok {
 		w.WriteHeader(httpErr.StatusCode)
-		json.NewEncoder(w).Encode(map[string]string{"error": httpErr.Message})
+		json.NewEncoder(w).Encode(map[string]string{"message": httpErr.Message})
 		return
 	}
 
 	w.WriteHeader(http.StatusInternalServerError)
-	json.NewEncoder(w).Encode(map[string]string{"error": err.Error()})
+	json.NewEncoder(w).Encode(map[string]string{"message": err.Error()})
 }
 
 type HTTPError struct {

@@ -30,6 +30,7 @@ type Procedure[TInput, TOutput any] struct {
 	Route       *Route
 	Tags        []string
 	ErrorCodes  []int
+	PathParams  []string // explicit path parameters like ["id"] for /todos/:id
 }
 
 func (p *Procedure[TInput, TOutput]) HandleRequest(w http.ResponseWriter, r *http.Request) {

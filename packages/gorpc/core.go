@@ -78,6 +78,13 @@ func (g *GORPC) Router(router Router) *GORPC {
 		}
 		fullPath := prefix + routePath
 
+		// Extract path parameters from the route path
+		pathParams := extractPathParamsFromRoute(routePath)
+		pathParamsField := procValue.FieldByName("PathParams")
+		if pathParamsField.IsValid() && pathParamsField.Kind() == reflect.Slice {
+			pathParamsField.Set(reflect.ValueOf(pathParams))
+		}
+
 		g.router.Insert(fullPath, route.Method, proc)
 	}
 
@@ -113,6 +120,7 @@ type ProcedureInfo struct {
 	InputType  reflect.Type
 	OutputType reflect.Type
 	ErrorCodes []int
+	PathParams []string
 }
 
 func (g *GORPC) GetRouters() map[string]Router {
@@ -195,6 +203,13 @@ func (g *GORPC) extractProcedureInfo(proc ProcedureAny, path, method string) *Pr
 		}
 	}
 
+	pathParamsField := procValue.FieldByName("PathParams")
+	if pathParamsField.IsValid() {
+		if pathParams, ok := pathParamsField.Interface().([]string); ok {
+			info.PathParams = pathParams
+		}
+	}
+
 	return info
 }
 
@@ -211,4 +226,15 @@ func (g *GORPC) ListenAndServe(addr string) error {
 
 	log.Printf("Server starting on %s", addr)
 	return http.ListenAndServe(addr, mux)
+}
+
+func extractPathParamsFromRoute(path string) []string {
+	var params []string
+	segments := strings.Split(path, "/")
+	for _, segment := range segments {
+		if len(segment) > 0 && segment[0] == ':' {
+			params = append(params, segment[1:])
+		}
+	}
+	return params
 }

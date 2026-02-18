@@ -20,21 +20,20 @@ type Todo struct {
 
 type CreateTodoInput struct {
 	Text      string `json:"text" validate:"required,max=250"`
-	Completed bool   `json:"completed"`
+	Completed *bool  `json:"completed,omitempty"`
 }
 
 type UpdateTodoInput struct {
-	ID        int    `json:"id" validate:"required,min=1"`
 	Text      string `json:"text" validate:"required,max=250"`
-	Completed bool   `json:"completed"`
+	Completed *bool  `json:"completed,omitempty"`
 }
 
 type DeleteTodoInput struct {
 	ID int `json:"id" validate:"required,min=1"`
 }
 
-type GetTodoByIdInput struct {
-	ID int `json:"id" validate:"required,min=1"`
+type DeleteTodoResponse struct {
+	Message string `json:"message"`
 }
 
 var TodoRouter = gorpc.Router{
@@ -73,7 +72,7 @@ var TodoRouter = gorpc.Router{
 		}).
 		Build(),
 
-	"getById": gorpc.OS[GetTodoByIdInput, Todo]().
+	"getById": gorpc.OS[struct{}, Todo]().
 		Tag("todos").
 		Meta(gorpc.Meta{
 			Summary:     "Get a todo by ID",
@@ -84,7 +83,7 @@ var TodoRouter = gorpc.Router{
 			Path:   "/todos/:id",
 		}).
 		Errors(400, 404, 500).
-		Handler(func(ctx *gorpc.Context, input GetTodoByIdInput) (Todo, error) {
+		Handler(func(ctx *gorpc.Context, input struct{}) (Todo, error) {
 			idStr, ok := ctx.Params["id"]
 			if !ok {
 				return Todo{}, gorpc.NewHTTPError(400, "Missing todo ID parameter")
@@ -99,7 +98,6 @@ var TodoRouter = gorpc.Router{
 				"SELECT id, text, completed, created_at, updated_at FROM todos WHERE id = $1",
 				id,
 			).Scan(&todo.ID, &todo.Text, &todo.Completed, &todo.CreatedAt, &todo.UpdatedAt)
-
 			if err != nil {
 				if errors.Is(err, sql.ErrNoRows) {
 					return Todo{}, gorpc.NewHTTPError(404, "Todo not found")
@@ -123,12 +121,15 @@ var TodoRouter = gorpc.Router{
 		}).
 		Errors(500).
 		Handler(func(ctx *gorpc.Context, input CreateTodoInput) (Todo, error) {
+			completed := false
+			if input.Completed != nil {
+				completed = *input.Completed
+			}
 			var todo Todo
 			err := internal.DB.QueryRow(
 				"INSERT INTO todos (text, completed) VALUES ($1, $2) RETURNING id, text, completed, created_at, updated_at",
-				input.Text, input.Completed,
+				input.Text, completed,
 			).Scan(&todo.ID, &todo.Text, &todo.Completed, &todo.CreatedAt, &todo.UpdatedAt)
-
 			if err != nil {
 				return Todo{}, gorpc.NewHTTPError(500, "Failed to create todo: "+err.Error())
 			}
@@ -158,12 +159,16 @@ var TodoRouter = gorpc.Router{
 				return Todo{}, gorpc.NewHTTPError(400, "Invalid todo ID: "+idStr)
 			}
 
+			completed := false
+			if input.Completed != nil {
+				completed = *input.Completed
+			}
+
 			var todo Todo
 			err = internal.DB.QueryRow(
 				"UPDATE todos SET text = $1, completed = $2, updated_at = NOW() WHERE id = $3 RETURNING id, text, completed, created_at, updated_at",
-				input.Text, input.Completed, id,
+				input.Text, completed, id,
 			).Scan(&todo.ID, &todo.Text, &todo.Completed, &todo.CreatedAt, &todo.UpdatedAt)
-
 			if err != nil {
 				if errors.Is(err, sql.ErrNoRows) {
 					return Todo{}, gorpc.NewHTTPError(404, "Todo not found")
@@ -175,7 +180,7 @@ var TodoRouter = gorpc.Router{
 		}).
 		Build(),
 
-	"delete": gorpc.OS[DeleteTodoInput, map[string]string]().
+	"delete": gorpc.OS[struct{}, DeleteTodoResponse]().
 		Tag("todos").
 		Meta(gorpc.Meta{
 			Summary:     "Delete a todo",
@@ -186,31 +191,31 @@ var TodoRouter = gorpc.Router{
 			Path:   "/todos/:id",
 		}).
 		Errors(400, 404, 500).
-		Handler(func(ctx *gorpc.Context, input DeleteTodoInput) (map[string]string, error) {
+		Handler(func(ctx *gorpc.Context, input struct{}) (DeleteTodoResponse, error) {
 			idStr, ok := ctx.Params["id"]
 			if !ok {
-				return nil, gorpc.NewHTTPError(400, "Missing todo ID parameter")
+				return DeleteTodoResponse{}, gorpc.NewHTTPError(400, "Missing todo ID parameter")
 			}
 			id, err := strconv.Atoi(idStr)
 			if err != nil {
-				return nil, gorpc.NewHTTPError(400, "Invalid todo ID: "+idStr)
+				return DeleteTodoResponse{}, gorpc.NewHTTPError(400, "Invalid todo ID: "+idStr)
 			}
 
 			result, err := internal.DB.Exec("DELETE FROM todos WHERE id = $1", id)
 			if err != nil {
-				return nil, gorpc.NewHTTPError(500, "Failed to delete todo: "+err.Error())
+				return DeleteTodoResponse{}, gorpc.NewHTTPError(500, "Failed to delete todo: "+err.Error())
 			}
 
 			rowsAffected, err := result.RowsAffected()
 			if err != nil {
-				return nil, gorpc.NewHTTPError(500, "Failed to check deletion: "+err.Error())
+				return DeleteTodoResponse{}, gorpc.NewHTTPError(500, "Failed to check deletion: "+err.Error())
 			}
 
 			if rowsAffected == 0 {
-				return nil, gorpc.NewHTTPError(404, "Todo not found")
+				return DeleteTodoResponse{}, gorpc.NewHTTPError(404, "Todo not found")
 			}
 
-			return map[string]string{"message": "Todo deleted successfully"}, nil
+			return DeleteTodoResponse{Message: "Todo deleted successfully"}, nil
 		}).
 		Build(),
 }

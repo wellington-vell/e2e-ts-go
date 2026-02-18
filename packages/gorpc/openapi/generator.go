@@ -3,17 +3,19 @@ package openapi
 import (
 	"fmt"
 	"reflect"
+	"strings"
 )
 
 type ProcedureInfo struct {
-	Path      string
-	Method    string
-	Route     interface{}
-	Meta      interface{}
-	Tags      []string
-	InputType reflect.Type
+	Path       string
+	Method     string
+	Route      interface{}
+	Meta       interface{}
+	Tags       []string
+	InputType  reflect.Type
 	OutputType reflect.Type
 	ErrorCodes []int
+	PathParams []string
 }
 
 // GenerateSpec generates an OpenAPI 3.0 specification from procedures
@@ -47,6 +49,10 @@ func GenerateSpec(procedures []ProcedureInfo) (map[string]interface{}, error) {
 		if path != "" && path[0] != '/' {
 			path = "/" + path
 		}
+
+		// Convert :param to {param} for OpenAPI spec
+		path = convertToOpenAPIPath(path)
+
 		if path == "" {
 			continue
 		}
@@ -79,6 +85,21 @@ func GenerateSpec(procedures []ProcedureInfo) (map[string]interface{}, error) {
 
 		operation := map[string]interface{}{}
 
+		if len(proc.PathParams) > 0 {
+			params := []interface{}{}
+			for _, param := range proc.PathParams {
+				params = append(params, map[string]interface{}{
+					"name":     param,
+					"in":       "path",
+					"required": true,
+					"schema": map[string]interface{}{
+						"type": "integer",
+					},
+				})
+			}
+			operation["parameters"] = params
+		}
+
 		metaValue := reflect.ValueOf(proc.Meta)
 		if metaValue.IsValid() {
 			summaryField := metaValue.FieldByName("Summary")
@@ -98,7 +119,8 @@ func GenerateSpec(procedures []ProcedureInfo) (map[string]interface{}, error) {
 			operation["tags"] = proc.Tags
 		}
 
-		if proc.InputType != nil && proc.InputType.Kind() != reflect.Invalid {
+		// Only add requestBody if input type has fields (not an empty struct{})
+		if proc.InputType != nil && proc.InputType.Kind() == reflect.Struct && proc.InputType.NumField() > 0 {
 			requestBody := map[string]interface{}{
 				"required": true,
 				"content": map[string]interface{}{
@@ -111,7 +133,7 @@ func GenerateSpec(procedures []ProcedureInfo) (map[string]interface{}, error) {
 		}
 
 		responses := map[string]interface{}{}
-		
+
 		if method == "post" {
 			responses["201"] = map[string]interface{}{
 				"description": "Created",
@@ -131,7 +153,7 @@ func GenerateSpec(procedures []ProcedureInfo) (map[string]interface{}, error) {
 				},
 			}
 		}
-		
+
 		errorCodes := proc.ErrorCodes
 		has400 := false
 		for _, code := range errorCodes {
@@ -143,7 +165,7 @@ func GenerateSpec(procedures []ProcedureInfo) (map[string]interface{}, error) {
 		if !has400 && proc.InputType != nil && proc.InputType.Kind() != reflect.Invalid {
 			errorCodes = append([]int{400}, errorCodes...)
 		}
-		
+
 		for _, code := range errorCodes {
 			codeStr := fmt.Sprintf("%d", code)
 			description := getErrorDescription(code)
@@ -154,17 +176,17 @@ func GenerateSpec(procedures []ProcedureInfo) (map[string]interface{}, error) {
 						"schema": map[string]interface{}{
 							"type": "object",
 							"properties": map[string]interface{}{
-								"error": map[string]interface{}{
+								"message": map[string]interface{}{
 									"type": "string",
 								},
 							},
-							"required": []string{"error"},
+							"required": []string{"message"},
 						},
 					},
 				},
 			}
 		}
-		
+
 		operation["responses"] = responses
 
 		pathItemMap[method] = operation
@@ -208,7 +230,9 @@ func typeToSchema(t reflect.Type) map[string]interface{} {
 			}
 		}
 	case reflect.Ptr:
-		return typeToSchema(t.Elem())
+		innerSchema := typeToSchema(t.Elem())
+		innerSchema["nullable"] = true
+		return innerSchema
 	case reflect.Struct:
 		schema["type"] = "object"
 		properties := make(map[string]interface{})
@@ -299,4 +323,14 @@ func getErrorDescription(code int) string {
 	default:
 		return fmt.Sprintf("Error %d", code)
 	}
+}
+
+func convertToOpenAPIPath(path string) string {
+	segments := strings.Split(path, "/")
+	for i, segment := range segments {
+		if len(segment) > 0 && segment[0] == ':' {
+			segments[i] = "{" + segment[1:] + "}"
+		}
+	}
+	return strings.Join(segments, "/")
 }

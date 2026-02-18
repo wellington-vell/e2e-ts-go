@@ -72,7 +72,7 @@ func (pb *ProcedureBuilder[TInput, TOutput]) Build() *Procedure[TInput, TOutput]
 		panic("procedure route is required")
 	}
 
-		var zeroInput TInput
+	var zeroInput TInput
 	inputType := reflect.TypeOf(zeroInput)
 	if inputType != nil {
 		pb.inputType = inputType

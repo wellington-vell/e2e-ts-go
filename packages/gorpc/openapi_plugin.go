@@ -46,6 +46,7 @@ func (p *OpenAPIPlugin) serveOpenAPI(w http.ResponseWriter, r *http.Request) {
 			InputType:  proc.InputType,
 			OutputType: proc.OutputType,
 			ErrorCodes: proc.ErrorCodes,
+			PathParams: proc.PathParams,
 		}
 	}
 

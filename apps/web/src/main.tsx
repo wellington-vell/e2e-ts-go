@@ -4,24 +4,23 @@ import ReactDOM from "react-dom/client";
 
 import { Loader } from "@/components/loader";
 import { routeTree } from "@/routeTree.gen";
+import { QueryClientProvider } from "@tanstack/react-query"
+import { queryClient } from "@/lib/orpc";
 
 const router = createRouter({
   routeTree,
   defaultPreload: "intent",
   defaultPendingComponent: () => <Loader />,
-  // context: {
-  //   transport,
-  //   queryClient,
-  // },
-  // Wrap: function WrapComponent({ children }: { children: React.ReactNode }) {
-  //   return (
-  //     <TransportProvider transport={transport}>
-  //       <QueryClientProvider client={queryClient}>
-  //         {children}
-  //       </QueryClientProvider>
-  //     </TransportProvider>
-  //   );
-  // },
+  context: {
+    queryClient,
+  },
+  Wrap: function WrapComponent({ children }: { children: React.ReactNode }) {
+    return (
+      <QueryClientProvider client={queryClient}>
+        {children}
+      </QueryClientProvider>
+    );
+  },
 });
 
 declare module "@tanstack/react-router" {

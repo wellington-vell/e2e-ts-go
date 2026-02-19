@@ -92,3 +92,126 @@ func TestGenerateSpec(t *testing.T) {
 		}
 	}
 }
+
+func TestApplyValidation(t *testing.T) {
+	tests := []struct {
+		name        string
+		schema      map[string]interface{}
+		validateTag string
+		expected    map[string]interface{}
+	}{
+		{
+			name:        "min and max for string",
+			schema:      map[string]interface{}{"type": "string"},
+			validateTag: "min=5,max=250",
+			expected: map[string]interface{}{
+				"type":      "string",
+				"minLength": 5,
+				"maxLength": 250,
+			},
+		},
+		{
+			name:        "min and max for integer",
+			schema:      map[string]interface{}{"type": "integer"},
+			validateTag: "min=1,max=100",
+			expected: map[string]interface{}{
+				"type":    "integer",
+				"minimum": float64(1),
+				"maximum": float64(100),
+			},
+		},
+		{
+			name:        "min and max for number",
+			schema:      map[string]interface{}{"type": "number"},
+			validateTag: "min=0,max=10.5",
+			expected: map[string]interface{}{
+				"type":    "number",
+				"minimum": float64(0),
+				"maximum": float64(10.5),
+			},
+		},
+		{
+			name:        "email format",
+			schema:      map[string]interface{}{"type": "string"},
+			validateTag: "email",
+			expected: map[string]interface{}{
+				"type":   "string",
+				"format": "email",
+			},
+		},
+		{
+			name:        "url format",
+			schema:      map[string]interface{}{"type": "string"},
+			validateTag: "url",
+			expected: map[string]interface{}{
+				"type":   "string",
+				"format": "uri",
+			},
+		},
+		{
+			name:        "uuid format",
+			schema:      map[string]interface{}{"type": "string"},
+			validateTag: "uuid",
+			expected: map[string]interface{}{
+				"type":   "string",
+				"format": "uuid",
+			},
+		},
+		{
+			name:        "datetime format",
+			schema:      map[string]interface{}{"type": "string"},
+			validateTag: "datetime",
+			expected: map[string]interface{}{
+				"type":   "string",
+				"format": "date-time",
+			},
+		},
+		{
+			name:        "pattern",
+			schema:      map[string]interface{}{"type": "string"},
+			validateTag: "pattern=^[a-z]+$",
+			expected: map[string]interface{}{
+				"type":    "string",
+				"pattern": "^[a-z]+$",
+			},
+		},
+		{
+			name:        "multiple tags combined",
+			schema:      map[string]interface{}{"type": "string"},
+			validateTag: "required,min=5,max=250,email",
+			expected: map[string]interface{}{
+				"type":      "string",
+				"minLength": 5,
+				"maxLength": 250,
+				"format":    "email",
+			},
+		},
+		{
+			name:        "empty validate tag",
+			schema:      map[string]interface{}{"type": "string"},
+			validateTag: "",
+			expected: map[string]interface{}{
+				"type": "string",
+			},
+		},
+		{
+			name:        "unknown tags are ignored",
+			schema:      map[string]interface{}{"type": "string"},
+			validateTag: "required,unknowntag",
+			expected: map[string]interface{}{
+				"type": "string",
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			result := applyValidation(tt.schema, tt.validateTag)
+			for key, expectedVal := range tt.expected {
+				if result[key] != expectedVal {
+					t.Errorf("applyValidation() key %s = %v, want %v", key, result[key], expectedVal)
+				}
+			}
+		})
+	}
+}

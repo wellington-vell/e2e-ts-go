@@ -4,7 +4,6 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Loader2, Trash2 } from "lucide-react";
 import React from "react";
 import { toast } from "sonner";
-import z from "zod";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -16,6 +15,7 @@ import {
 } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
+import { zPostApiTodosData } from "@/lib/api/zod.gen";
 import { orpc } from "@/lib/orpc";
 
 export const Route = createFileRoute("/todo")({
@@ -44,11 +44,6 @@ function TodosRoute() {
 
 function TodoForm() {
   const todos = useSuspenseQuery(orpc.getApiTodos.queryOptions());
-  const schema = z.object({
-    text: z
-      .string()
-      .min(2, { message: "Todo must be at least 5 characters long" }),
-  });
 
   const mutation = useMutation(
     orpc.postApiTodos.mutationOptions({
@@ -65,7 +60,7 @@ function TodoForm() {
       text: "",
     },
     validators: {
-      onChange: schema,
+      onChange: zPostApiTodosData.shape.body,
     },
     onSubmit: (values) => {
       mutation.mutate({

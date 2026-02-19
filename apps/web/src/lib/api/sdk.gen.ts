@@ -23,6 +23,14 @@ import type {
 } from "./types.gen";
 
 import { client } from "./client.gen";
+import {
+  zDeleteApiTodosByIdData,
+  zGetApiHealthData,
+  zGetApiTodosByIdData,
+  zGetApiTodosData,
+  zPostApiTodosData,
+  zPutApiTodosByIdData,
+} from "./zod.gen";
 
 export type Options<
   TData extends TDataShape = TDataShape,
@@ -53,7 +61,11 @@ export const getApiHealth = <ThrowOnError extends boolean = false>(
     GetApiHealthResponses,
     GetApiHealthErrors,
     ThrowOnError
-  >({ url: "/api/health", ...options });
+  >({
+    requestValidator: async (data) => await zGetApiHealthData.parseAsync(data),
+    url: "/api/health",
+    ...options,
+  });
 
 /**
  * Get all todos
@@ -67,7 +79,11 @@ export const getApiTodos = <ThrowOnError extends boolean = false>(
     GetApiTodosResponses,
     GetApiTodosErrors,
     ThrowOnError
-  >({ url: "/api/todos", ...options });
+  >({
+    requestValidator: async (data) => await zGetApiTodosData.parseAsync(data),
+    url: "/api/todos",
+    ...options,
+  });
 
 /**
  * Create a new todo
@@ -82,6 +98,7 @@ export const postApiTodos = <ThrowOnError extends boolean = false>(
     PostApiTodosErrors,
     ThrowOnError
   >({
+    requestValidator: async (data) => await zPostApiTodosData.parseAsync(data),
     url: "/api/todos",
     ...options,
     headers: {
@@ -102,7 +119,12 @@ export const deleteApiTodosById = <ThrowOnError extends boolean = false>(
     DeleteApiTodosByIdResponses,
     DeleteApiTodosByIdErrors,
     ThrowOnError
-  >({ url: "/api/todos/{id}", ...options });
+  >({
+    requestValidator: async (data) =>
+      await zDeleteApiTodosByIdData.parseAsync(data),
+    url: "/api/todos/{id}",
+    ...options,
+  });
 
 /**
  * Get a todo by ID
@@ -116,7 +138,12 @@ export const getApiTodosById = <ThrowOnError extends boolean = false>(
     GetApiTodosByIdResponses,
     GetApiTodosByIdErrors,
     ThrowOnError
-  >({ url: "/api/todos/{id}", ...options });
+  >({
+    requestValidator: async (data) =>
+      await zGetApiTodosByIdData.parseAsync(data),
+    url: "/api/todos/{id}",
+    ...options,
+  });
 
 /**
  * Update a todo
@@ -131,6 +158,8 @@ export const putApiTodosById = <ThrowOnError extends boolean = false>(
     PutApiTodosByIdErrors,
     ThrowOnError
   >({
+    requestValidator: async (data) =>
+      await zPutApiTodosByIdData.parseAsync(data),
     url: "/api/todos/{id}",
     ...options,
     headers: {

@@ -19,12 +19,12 @@ type Todo struct {
 }
 
 type CreateTodoInput struct {
-	Text      string `json:"text" validate:"required,max=250"`
+	Text      string `json:"text" validate:"required,min=5,max=250"`
 	Completed *bool  `json:"completed,omitempty"`
 }
 
 type UpdateTodoInput struct {
-	Text      *string `json:"text,omitempty" validate:"omitempty,max=250"`
+	Text      *string `json:"text,omitempty" validate:"omitempty,min=5,max=250"`
 	Completed *bool   `json:"completed,omitempty"`
 }
 type DeleteTodoResponse struct {

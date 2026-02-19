@@ -3,6 +3,7 @@ package openapi
 import (
 	"fmt"
 	"reflect"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -264,6 +265,12 @@ func typeToSchema(t reflect.Type) map[string]interface{} {
 			fieldSchema := typeToSchema(field.Type)
 			properties[fieldName] = fieldSchema
 
+			validateTag := field.Tag.Get("validate")
+			if validateTag != "" {
+				fieldSchema = applyValidation(fieldSchema, validateTag)
+				properties[fieldName] = fieldSchema
+			}
+
 			if field.Type.Kind() != reflect.Ptr {
 				required = append(required, fieldName)
 			}
@@ -339,4 +346,46 @@ func convertToOpenAPIPath(path string) string {
 		}
 	}
 	return strings.Join(segments, "/")
+}
+
+func applyValidation(schema map[string]interface{}, validateTag string) map[string]interface{} {
+	tags := strings.Split(validateTag, ",")
+	for _, tag := range tags {
+		tag = strings.TrimSpace(tag)
+
+		switch {
+		case strings.HasPrefix(tag, "min="):
+			val := strings.TrimPrefix(tag, "min=")
+			if minVal, err := strconv.ParseFloat(val, 64); err == nil {
+				switch schema["type"] {
+				case "string":
+					schema["minLength"] = int(minVal)
+				case "integer", "number":
+					schema["minimum"] = minVal
+				}
+			}
+		case strings.HasPrefix(tag, "max="):
+			val := strings.TrimPrefix(tag, "max=")
+			if maxVal, err := strconv.ParseFloat(val, 64); err == nil {
+				switch schema["type"] {
+				case "string":
+					schema["maxLength"] = int(maxVal)
+				case "integer", "number":
+					schema["maximum"] = maxVal
+				}
+			}
+		case tag == "email":
+			schema["format"] = "email"
+		case tag == "url":
+			schema["format"] = "uri"
+		case tag == "uuid":
+			schema["format"] = "uuid"
+		case tag == "datetime":
+			schema["format"] = "date-time"
+		case strings.HasPrefix(tag, "pattern="):
+			val := strings.TrimPrefix(tag, "pattern=")
+			schema["pattern"] = val
+		}
+	}
+	return schema
 }

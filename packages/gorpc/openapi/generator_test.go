@@ -3,7 +3,20 @@ package openapi
 import (
 	"reflect"
 	"testing"
+	"time"
 )
+
+func TestTypeToSchemaTimeTime(t *testing.T) {
+	result := typeToSchema(reflect.TypeOf(time.Time{}))
+
+	if result["type"] != "string" {
+		t.Errorf("Expected type to be 'string', got %v", result["type"])
+	}
+
+	if result["format"] != "date-time" {
+		t.Errorf("Expected format to be 'date-time', got %v", result["format"])
+	}
+}
 
 func TestConvertToOpenAPIPath(t *testing.T) {
 	tests := []struct {

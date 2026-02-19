@@ -13,9 +13,10 @@
     "clean": "moon run :clean",
     "build": "moon run :build",
     "start": "moon run :start",
-    "openapi": "~/go/bin/swag init -g apps/server/cmd/main.go -o apps/server/docs 2>&1 || $HOME/go/bin/swag init -g apps/server/cmd/main.go -o apps/server/docs 2>&1 || which swag"
+    "openapi-ts": "openapi-ts"
   },
   "devDependencies": {
+    "@hey-api/openapi-ts": "0.92.4",
     "@moonrepo/cli": "^1.41.7",
     "@types/bun": "^1.3.6",
     "oxfmt": "^0.25.0",

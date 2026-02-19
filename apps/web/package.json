@@ -4,6 +4,8 @@
   "type": "module",
   "dependencies": {
     "@base-ui/react": "^1.0.0",
+    "@orpc/hey-api": "^1.13.5",
+    "@orpc/tanstack-query": "^1.13.5",
     "@t3-oss/env-core": "^0.13.10",
     "@tailwindcss/vite": "^4.0.15",
     "@tanstack/react-form": "^1.27.7",

@@ -24,14 +24,9 @@ type CreateTodoInput struct {
 }
 
 type UpdateTodoInput struct {
-	Text      string `json:"text" validate:"required,max=250"`
-	Completed *bool  `json:"completed,omitempty"`
+	Text      *string `json:"text,omitempty" validate:"omitempty,max=250"`
+	Completed *bool   `json:"completed,omitempty"`
 }
-
-type DeleteTodoInput struct {
-	ID int `json:"id" validate:"required,min=1"`
-}
-
 type DeleteTodoResponse struct {
 	Message string `json:"message"`
 }
@@ -53,7 +48,7 @@ var TodoRouter = gorpc.Router{
 			if err != nil {
 				return nil, gorpc.NewHTTPError(500, "Failed to fetch todos: "+err.Error())
 			}
-			defer rows.Close()
+			defer func() { _ = rows.Close() }()
 
 			var todos []Todo
 			for rows.Next() {
@@ -159,7 +154,24 @@ var TodoRouter = gorpc.Router{
 				return Todo{}, gorpc.NewHTTPError(400, "Invalid todo ID: "+idStr)
 			}
 
-			completed := false
+			var currentTodo Todo
+			err = internal.DB.QueryRow(
+				"SELECT text, completed, created_at, updated_at FROM todos WHERE id = $1",
+				id,
+			).Scan(&currentTodo.Text, &currentTodo.Completed, &currentTodo.CreatedAt, &currentTodo.UpdatedAt)
+			if err != nil {
+				if errors.Is(err, sql.ErrNoRows) {
+					return Todo{}, gorpc.NewHTTPError(404, "Todo not found")
+				}
+				return Todo{}, gorpc.NewHTTPError(500, "Failed to fetch todo: "+err.Error())
+			}
+
+			text := currentTodo.Text
+			if input.Text != nil {
+				text = *input.Text
+			}
+
+			completed := currentTodo.Completed
 			if input.Completed != nil {
 				completed = *input.Completed
 			}
@@ -167,7 +179,7 @@ var TodoRouter = gorpc.Router{
 			var todo Todo
 			err = internal.DB.QueryRow(
 				"UPDATE todos SET text = $1, completed = $2, updated_at = NOW() WHERE id = $3 RETURNING id, text, completed, created_at, updated_at",
-				input.Text, completed, id,
+				text, completed, id,
 			).Scan(&todo.ID, &todo.Text, &todo.Completed, &todo.CreatedAt, &todo.UpdatedAt)
 			if err != nil {
 				if errors.Is(err, sql.ErrNoRows) {

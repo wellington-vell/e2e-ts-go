@@ -10,7 +10,7 @@ import (
 
 func Env(key string) string {
 	envPath := filepath.Join("..", "..", ".env")
-	godotenv.Load(envPath)
+	_ = godotenv.Load(envPath)
 
 	value, ok := os.LookupEnv(key)
 	if !ok {

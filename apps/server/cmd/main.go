@@ -17,6 +17,12 @@ func main() {
 	}
 
 	app := gorpc.New().
+		EnableCORS(gorpc.CORSConfig{
+			AllowOrigins:     []string{internal.Env("CORS_ORIGIN")},
+			AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+			AllowHeaders:     []string{"Content-Type", "Authorization", "X-Requested-With"},
+			AllowCredentials: true,
+		}).
 		Prefix("/api").
 		Router(routers.AllRoutes).
 		Plugin(gorpc.NewScalarPlugin()).

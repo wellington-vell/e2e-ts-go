@@ -1,11 +1,11 @@
+import { QueryClientProvider } from "@tanstack/react-query";
 import { RouterProvider, createRouter } from "@tanstack/react-router";
 import React from "react";
 import ReactDOM from "react-dom/client";
 
 import { Loader } from "@/components/loader";
-import { routeTree } from "@/routeTree.gen";
-import { QueryClientProvider } from "@tanstack/react-query"
 import { queryClient } from "@/lib/orpc";
+import { routeTree } from "@/routeTree.gen";
 
 const router = createRouter({
   routeTree,
@@ -16,9 +16,7 @@ const router = createRouter({
   },
   Wrap: function WrapComponent({ children }: { children: React.ReactNode }) {
     return (
-      <QueryClientProvider client={queryClient}>
-        {children}
-      </QueryClientProvider>
+      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
     );
   },
 });

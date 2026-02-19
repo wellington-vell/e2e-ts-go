@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"reflect"
 	"strings"
+	"time"
 )
 
 type ProcedureInfo struct {
@@ -234,6 +235,11 @@ func typeToSchema(t reflect.Type) map[string]interface{} {
 		innerSchema["nullable"] = true
 		return innerSchema
 	case reflect.Struct:
+		if t == reflect.TypeOf(time.Time{}) {
+			schema["type"] = "string"
+			schema["format"] = "date-time"
+			return schema
+		}
 		schema["type"] = "object"
 		properties := make(map[string]interface{})
 		required := []string{}

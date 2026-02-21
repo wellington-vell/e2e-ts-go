@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"reflect"
+	"slices"
 	"strconv"
 	"strings"
 )
@@ -285,13 +286,7 @@ func (g *GORPC) handleCORS(w http.ResponseWriter, _ *http.Request, origin string
 	cfg := g.corsConfig
 
 	allowOrigin := ""
-	hasWildcard := false
-	for _, o := range cfg.AllowOrigins {
-		if o == "*" {
-			hasWildcard = true
-			break
-		}
-	}
+	hasWildcard := slices.Contains(cfg.AllowOrigins, "*")
 
 	if hasWildcard {
 		allowOrigin = "*"

@@ -46,11 +46,12 @@ Each procedure is registered as an HTTP endpoint with support for RESTful path p
 ### API Methods
 
 - **`New()`** - Create a new GORPC instance
-- **`Handler()`** - Register HTTP handlers
+- **`Prefix()`** - Add a prefix to all routes
+- **`Router()`** - Register HTTP handlers
 - **`Middleware()`** - Add global middleware
 - **`Plugin()`** - Register plugins (OpenAPI, Scalar, Swagger)
 - **`EnableCORS()`** - Enable CORS support
-- **`Run()`** - Start the HTTP server
+- **`ListenAndServe()`** - Start the HTTP server
 
 ### Procedure Builder
 
@@ -60,6 +61,7 @@ Each procedure is registered as an HTTP endpoint with support for RESTful path p
 - **`Route()`** - Define HTTP method and path
 - **`Errors()`** - Define error status codes
 - **`Handler()`** - Register the handler function
+- **`Build()`** - Build the procedure
 
 ## Quick Start
 

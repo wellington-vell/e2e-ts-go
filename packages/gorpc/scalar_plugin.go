@@ -3,6 +3,7 @@ package gorpc
 import (
 	"encoding/json"
 	"fmt"
+	"maps"
 	"net/http"
 )
 
@@ -13,7 +14,7 @@ type ScalarPlugin struct {
 	title       string
 	theme       string
 	layout      string
-	config      map[string]interface{}
+	config      map[string]any
 }
 
 type ScalarPluginOptions struct {
@@ -21,7 +22,7 @@ type ScalarPluginOptions struct {
 	Title  string
 	Theme  string
 	Layout string
-	Config map[string]interface{}
+	Config map[string]any
 }
 
 func NewScalarPlugin(options ...*ScalarPluginOptions) *ScalarPlugin {
@@ -29,7 +30,7 @@ func NewScalarPlugin(options ...*ScalarPluginOptions) *ScalarPlugin {
 	title := "API Documentation - Scalar"
 	theme := "purple"
 	layout := "modern"
-	config := make(map[string]interface{})
+	config := make(map[string]any)
 
 	if len(options) > 0 && options[0] != nil {
 		opts := options[0]
@@ -55,8 +56,8 @@ func NewScalarPlugin(options ...*ScalarPluginOptions) *ScalarPlugin {
 		uiPath:      uiPath,
 		title:       title,
 		theme:       theme,
-		layout:       layout,
-		config:       config,
+		layout:      layout,
+		config:      config,
 	}
 }
 
@@ -79,13 +80,11 @@ func (p *ScalarPlugin) Routes() map[string]http.Handler {
 }
 
 func (p *ScalarPlugin) serveUI(w http.ResponseWriter, r *http.Request) {
-	config := map[string]interface{}{
-		"theme":  p.theme,
-		"layout": p.layout,
-	}
-	for k, v := range p.config {
-		config[k] = v
-	}
+	config := make(map[string]any)
+	maps.Copy(config, p.config)
+	config["theme"] = p.theme
+	config["layout"] = p.layout
+
 	configJSON, err := json.Marshal(config)
 	if err != nil {
 		configJSON = []byte(`{"theme": "purple", "layout": "modern"}`)

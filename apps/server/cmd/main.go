@@ -7,6 +7,7 @@ import (
 	"server/internal/routers"
 
 	"github.com/wellington-vell/gorpc"
+	"github.com/wellington-vell/gorpc/plugins"
 )
 
 func main() {
@@ -25,8 +26,8 @@ func main() {
 		}).
 		Prefix("/api").
 		Router(routers.AllRoutes).
-		Plugin(gorpc.NewScalarPlugin()).
-		Plugin(gorpc.NewSwaggerPlugin())
+		Plugin(plugins.NewScalarPlugin()).
+		Plugin(plugins.NewSwaggerPlugin())
 
 	addr := fmt.Sprintf(":%s", port)
 	fmt.Printf("Server starting on port %s\n", port)

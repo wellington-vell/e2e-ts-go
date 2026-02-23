@@ -1,14 +1,16 @@
-package gorpc
+package plugins
 
 import (
 	"encoding/json"
 	"fmt"
 	"maps"
 	"net/http"
+
+	"github.com/wellington-vell/gorpc"
 )
 
 type ScalarPlugin struct {
-	app         *GORPC
+	app         *gorpc.GORPC
 	openAPIPath string
 	uiPath      string
 	title       string
@@ -65,9 +67,9 @@ func (p *ScalarPlugin) Name() string {
 	return "scalar"
 }
 
-func (p *ScalarPlugin) Register(app *GORPC) error {
+func (p *ScalarPlugin) Register(app *gorpc.GORPC) error {
 	p.app = app
-	if !app.hasPlugin("openapi") {
+	if !app.HasPlugin("openapi") {
 		app.Plugin(NewOpenAPIPlugin())
 	}
 	return nil

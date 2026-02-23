@@ -1,13 +1,15 @@
-package gorpc
+package plugins
 
 import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+
+	"github.com/wellington-vell/gorpc"
 )
 
 type SwaggerPlugin struct {
-	app         *GORPC
+	app         *gorpc.GORPC
 	openAPIPath string
 	uiPath      string
 	title       string
@@ -17,11 +19,11 @@ type SwaggerPlugin struct {
 }
 
 type SwaggerPluginOptions struct {
-	UIPath     string
-	Title      string
-	Layout     string
+	UIPath      string
+	Title       string
+	Layout      string
 	DeepLinking *bool
-	Config     map[string]interface{}
+	Config      map[string]interface{}
 }
 
 func NewSwaggerPlugin(options ...*SwaggerPluginOptions) *SwaggerPlugin {
@@ -57,9 +59,9 @@ func NewSwaggerPlugin(options ...*SwaggerPluginOptions) *SwaggerPlugin {
 		openAPIPath: "/openapi.json",
 		uiPath:      uiPath,
 		title:       title,
-		layout:       layout,
-		deepLinking:  deepLinking,
-		config:       config,
+		layout:      layout,
+		deepLinking: deepLinking,
+		config:      config,
 	}
 }
 
@@ -67,9 +69,9 @@ func (p *SwaggerPlugin) Name() string {
 	return "swagger"
 }
 
-func (p *SwaggerPlugin) Register(app *GORPC) error {
+func (p *SwaggerPlugin) Register(app *gorpc.GORPC) error {
 	p.app = app
-	if !app.hasPlugin("openapi") {
+	if !app.HasPlugin("openapi") {
 		app.Plugin(NewOpenAPIPlugin())
 	}
 	return nil

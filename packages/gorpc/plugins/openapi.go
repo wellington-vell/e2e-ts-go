@@ -1,13 +1,14 @@
-package gorpc
+package plugins
 
 import (
 	"net/http"
 
+	"github.com/wellington-vell/gorpc"
 	"github.com/wellington-vell/gorpc/openapi"
 )
 
 type OpenAPIPlugin struct {
-	app  *GORPC
+	app  *gorpc.GORPC
 	path string
 }
 
@@ -21,7 +22,7 @@ func (p *OpenAPIPlugin) Name() string {
 	return "openapi"
 }
 
-func (p *OpenAPIPlugin) Register(app *GORPC) error {
+func (p *OpenAPIPlugin) Register(app *gorpc.GORPC) error {
 	p.app = app
 	return nil
 }

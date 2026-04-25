@@ -29,7 +29,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/server_internal_schemas.HealthResponse"
+                            "$ref": "#/definitions/server_internal_models.HealthResponse"
                         }
                     }
                 }
@@ -51,7 +51,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/server_internal_schemas.Todo"
+                                "$ref": "#/definitions/server_internal_models.Todo"
                             }
                         }
                     }
@@ -76,7 +76,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/server_internal_schemas.CreateTodoRequest"
+                            "$ref": "#/definitions/server_internal_models.CreateTodoRequest"
                         }
                     }
                 ],
@@ -84,7 +84,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/server_internal_schemas.Todo"
+                            "$ref": "#/definitions/server_internal_models.Todo"
                         }
                     },
                     "400": {
@@ -119,7 +119,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/server_internal_schemas.Todo"
+                            "$ref": "#/definitions/server_internal_models.Todo"
                         }
                     },
                     "400": {
@@ -162,7 +162,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/server_internal_schemas.UpdateTodoRequest"
+                            "$ref": "#/definitions/server_internal_models.UpdateTodoRequest"
                         }
                     }
                 ],
@@ -170,7 +170,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/server_internal_schemas.Todo"
+                            "$ref": "#/definitions/server_internal_models.Todo"
                         }
                     },
                     "400": {
@@ -223,35 +223,66 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "server_internal_schemas.CreateTodoRequest": {
+        "server_internal_models.CreateTodoRequest": {
             "type": "object",
             "required": [
                 "text"
             ],
             "properties": {
                 "actualHours": {
-                    "type": "number"
+                    "type": "number",
+                    "minimum": 0
                 },
                 "cost": {
-                    "type": "number"
+                    "type": "number",
+                    "minimum": 0
                 },
                 "dueDate": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "date"
                 },
                 "estimatedHours": {
-                    "type": "number"
+                    "type": "number",
+                    "minimum": 0
                 },
                 "label": {
-                    "type": "string"
+                    "type": "string",
+                    "enum": [
+                        "bug",
+                        "feature",
+                        "doc"
+                    ]
                 },
                 "priority": {
-                    "$ref": "#/definitions/server_internal_schemas.TodoPriority"
+                    "enum": [
+                        "low",
+                        "medium",
+                        "high"
+                    ],
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/server_internal_models.TodoPriority"
+                        }
+                    ]
                 },
                 "progress": {
-                    "type": "integer"
+                    "type": "integer",
+                    "maximum": 100,
+                    "minimum": 0
                 },
                 "status": {
-                    "$ref": "#/definitions/server_internal_schemas.TodoStatus"
+                    "enum": [
+                        "backlog",
+                        "todo",
+                        "in_progress",
+                        "done",
+                        "canceled"
+                    ],
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/server_internal_models.TodoStatus"
+                        }
+                    ]
                 },
                 "text": {
                     "type": "string",
@@ -259,7 +290,7 @@ const docTemplate = `{
                 }
             }
         },
-        "server_internal_schemas.HealthResponse": {
+        "server_internal_models.HealthResponse": {
             "type": "object",
             "properties": {
                 "arch": {
@@ -304,23 +335,29 @@ const docTemplate = `{
                 }
             }
         },
-        "server_internal_schemas.Todo": {
+        "server_internal_models.Todo": {
             "type": "object",
+            "required": [
+                "text"
+            ],
             "properties": {
                 "actualHours": {
                     "type": "number"
                 },
                 "completedAt": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "date"
                 },
                 "cost": {
                     "type": "number"
                 },
                 "createdAt": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "date"
                 },
                 "dueDate": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "date"
                 },
                 "estimatedHours": {
                     "type": "number"
@@ -332,24 +369,25 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "priority": {
-                    "$ref": "#/definitions/server_internal_schemas.TodoPriority"
+                    "$ref": "#/definitions/server_internal_models.TodoPriority"
                 },
                 "progress": {
                     "type": "integer"
                 },
                 "status": {
-                    "$ref": "#/definitions/server_internal_schemas.TodoStatus"
+                    "$ref": "#/definitions/server_internal_models.TodoStatus"
                 },
                 "text": {
                     "type": "string",
                     "minLength": 1
                 },
                 "updatedAt": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "date"
                 }
             }
         },
-        "server_internal_schemas.TodoPriority": {
+        "server_internal_models.TodoPriority": {
             "type": "string",
             "enum": [
                 "low",
@@ -362,7 +400,7 @@ const docTemplate = `{
                 "TodoPriorityHigh"
             ]
         },
-        "server_internal_schemas.TodoStatus": {
+        "server_internal_models.TodoStatus": {
             "type": "string",
             "enum": [
                 "backlog",
@@ -379,38 +417,70 @@ const docTemplate = `{
                 "TodoStatusCanceled"
             ]
         },
-        "server_internal_schemas.UpdateTodoRequest": {
+        "server_internal_models.UpdateTodoRequest": {
             "type": "object",
             "properties": {
                 "actualHours": {
-                    "type": "number"
+                    "type": "number",
+                    "minimum": 0
                 },
                 "completedAt": {
                     "type": "string"
                 },
                 "cost": {
-                    "type": "number"
+                    "type": "number",
+                    "minimum": 0
                 },
                 "dueDate": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "date"
                 },
                 "estimatedHours": {
-                    "type": "number"
+                    "type": "number",
+                    "minimum": 0
                 },
                 "label": {
-                    "type": "string"
+                    "type": "string",
+                    "enum": [
+                        "bug",
+                        "feature",
+                        "doc"
+                    ]
                 },
                 "priority": {
-                    "$ref": "#/definitions/server_internal_schemas.TodoPriority"
+                    "enum": [
+                        "low",
+                        "medium",
+                        "high"
+                    ],
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/server_internal_models.TodoPriority"
+                        }
+                    ]
                 },
                 "progress": {
-                    "type": "integer"
+                    "type": "integer",
+                    "maximum": 100,
+                    "minimum": 0
                 },
                 "status": {
-                    "$ref": "#/definitions/server_internal_schemas.TodoStatus"
+                    "enum": [
+                        "backlog",
+                        "todo",
+                        "in_progress",
+                        "done",
+                        "canceled"
+                    ],
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/server_internal_models.TodoStatus"
+                        }
+                    ]
                 },
                 "text": {
-                    "type": "string"
+                    "type": "string",
+                    "minLength": 1
                 }
             }
         }

@@ -4,19 +4,19 @@ export type ClientOptions = {
     baseUrl: 'http://localhost:8080' | (string & {});
 };
 
-export type ServerInternalSchemasCreateTodoRequest = {
+export type ServerInternalModelsCreateTodoRequest = {
     actualHours?: number;
     cost?: number;
     dueDate?: string;
     estimatedHours?: number;
-    label?: string;
-    priority?: ServerInternalSchemasTodoPriority;
+    label?: 'bug' | 'feature' | 'doc';
+    priority?: 'low' | 'medium' | 'high';
     progress?: number;
-    status?: ServerInternalSchemasTodoStatus;
+    status?: 'backlog' | 'todo' | 'in_progress' | 'done' | 'canceled';
     text: string;
 };
 
-export type ServerInternalSchemasHealthResponse = {
+export type ServerInternalModelsHealthResponse = {
     arch?: string;
     args?: Array<string>;
     date?: string;
@@ -33,7 +33,7 @@ export type ServerInternalSchemasHealthResponse = {
     version?: string;
 };
 
-export type ServerInternalSchemasTodo = {
+export type ServerInternalModelsTodo = {
     actualHours?: number;
     completedAt?: string;
     cost?: number;
@@ -42,27 +42,27 @@ export type ServerInternalSchemasTodo = {
     estimatedHours?: number;
     id?: string;
     label?: string;
-    priority?: ServerInternalSchemasTodoPriority;
+    priority?: ServerInternalModelsTodoPriority;
     progress?: number;
-    status?: ServerInternalSchemasTodoStatus;
-    text?: string;
+    status?: ServerInternalModelsTodoStatus;
+    text: string;
     updatedAt?: string;
 };
 
-export type ServerInternalSchemasTodoPriority = 'low' | 'medium' | 'high';
+export type ServerInternalModelsTodoPriority = 'low' | 'medium' | 'high';
 
-export type ServerInternalSchemasTodoStatus = 'backlog' | 'todo' | 'in_progress' | 'done' | 'canceled';
+export type ServerInternalModelsTodoStatus = 'backlog' | 'todo' | 'in_progress' | 'done' | 'canceled';
 
-export type ServerInternalSchemasUpdateTodoRequest = {
+export type ServerInternalModelsUpdateTodoRequest = {
     actualHours?: number;
     completedAt?: string;
     cost?: number;
     dueDate?: string;
     estimatedHours?: number;
-    label?: string;
-    priority?: ServerInternalSchemasTodoPriority;
+    label?: 'bug' | 'feature' | 'doc';
+    priority?: 'low' | 'medium' | 'high';
     progress?: number;
-    status?: ServerInternalSchemasTodoStatus;
+    status?: 'backlog' | 'todo' | 'in_progress' | 'done' | 'canceled';
     text?: string;
 };
 
@@ -77,7 +77,7 @@ export type GetApiV1HealthResponses = {
     /**
      * OK
      */
-    200: ServerInternalSchemasHealthResponse;
+    200: ServerInternalModelsHealthResponse;
 };
 
 export type GetApiV1HealthResponse = GetApiV1HealthResponses[keyof GetApiV1HealthResponses];
@@ -93,7 +93,7 @@ export type GetApiV1TodosResponses = {
     /**
      * OK
      */
-    200: Array<ServerInternalSchemasTodo>;
+    200: Array<ServerInternalModelsTodo>;
 };
 
 export type GetApiV1TodosResponse = GetApiV1TodosResponses[keyof GetApiV1TodosResponses];
@@ -102,7 +102,7 @@ export type PostApiV1TodosData = {
     /**
      * Todo creation request
      */
-    body: ServerInternalSchemasCreateTodoRequest;
+    body: ServerInternalModelsCreateTodoRequest;
     path?: never;
     query?: never;
     url: '/api/v1/todos';
@@ -121,7 +121,7 @@ export type PostApiV1TodosResponses = {
     /**
      * Created
      */
-    201: ServerInternalSchemasTodo;
+    201: ServerInternalModelsTodo;
 };
 
 export type PostApiV1TodosResponse = PostApiV1TodosResponses[keyof PostApiV1TodosResponses];
@@ -187,7 +187,7 @@ export type GetApiV1TodosByIdResponses = {
     /**
      * OK
      */
-    200: ServerInternalSchemasTodo;
+    200: ServerInternalModelsTodo;
 };
 
 export type GetApiV1TodosByIdResponse = GetApiV1TodosByIdResponses[keyof GetApiV1TodosByIdResponses];
@@ -196,7 +196,7 @@ export type PutApiV1TodosByIdData = {
     /**
      * Todo update request
      */
-    body: ServerInternalSchemasUpdateTodoRequest;
+    body: ServerInternalModelsUpdateTodoRequest;
     path: {
         /**
          * Todo ID
@@ -224,7 +224,7 @@ export type PutApiV1TodosByIdResponses = {
     /**
      * OK
      */
-    200: ServerInternalSchemasTodo;
+    200: ServerInternalModelsTodo;
 };
 
 export type PutApiV1TodosByIdResponse = PutApiV1TodosByIdResponses[keyof PutApiV1TodosByIdResponses];

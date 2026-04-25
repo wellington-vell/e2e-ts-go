@@ -2,7 +2,33 @@
 
 import * as z from 'zod';
 
-export const zServerInternalSchemasHealthResponse = z.object({
+export const z_server_internal_models_create_todo_request = z.object({
+    actualHours: z.number().gte(0).optional(),
+    cost: z.number().gte(0).optional(),
+    dueDate: z.iso.date().optional(),
+    estimatedHours: z.number().gte(0).optional(),
+    label: z.enum([
+        'bug',
+        'feature',
+        'doc'
+    ]).optional(),
+    priority: z.enum([
+        'low',
+        'medium',
+        'high'
+    ]).optional(),
+    progress: z.int().gte(0).lte(100).optional(),
+    status: z.enum([
+        'backlog',
+        'todo',
+        'in_progress',
+        'done',
+        'canceled'
+    ]).optional(),
+    text: z.string().min(1)
+});
+
+export const z_server_internal_models_health_response = z.object({
     arch: z.string().optional(),
     args: z.array(z.string()).optional(),
     date: z.string().optional(),
@@ -17,13 +43,13 @@ export const zServerInternalSchemasHealthResponse = z.object({
     version: z.string().optional()
 });
 
-export const zServerInternalSchemasTodoPriority = z.enum([
+export const z_server_internal_models_todo_priority = z.enum([
     'low',
     'medium',
     'high'
 ]);
 
-export const zServerInternalSchemasTodoStatus = z.enum([
+export const z_server_internal_models_todo_status = z.enum([
     'backlog',
     'todo',
     'in_progress',
@@ -31,65 +57,61 @@ export const zServerInternalSchemasTodoStatus = z.enum([
     'canceled'
 ]);
 
-export const zServerInternalSchemasCreateTodoRequest = z.object({
+export const z_server_internal_models_todo = z.object({
     actualHours: z.number().optional(),
+    completedAt: z.iso.date().optional(),
     cost: z.number().optional(),
-    dueDate: z.string().optional(),
-    estimatedHours: z.number().optional(),
-    label: z.string().optional(),
-    priority: zServerInternalSchemasTodoPriority.optional(),
-    progress: z.int().optional(),
-    status: zServerInternalSchemasTodoStatus.optional(),
-    text: z.string().min(1)
-});
-
-export const zServerInternalSchemasTodo = z.object({
-    actualHours: z.number().optional(),
-    completedAt: z.string().optional(),
-    cost: z.number().optional(),
-    createdAt: z.string().optional(),
-    dueDate: z.string().optional(),
+    createdAt: z.iso.date().optional(),
+    dueDate: z.iso.date().optional(),
     estimatedHours: z.number().optional(),
     id: z.string().optional(),
     label: z.string().optional(),
-    priority: zServerInternalSchemasTodoPriority.optional(),
+    priority: z_server_internal_models_todo_priority.optional(),
     progress: z.int().optional(),
-    status: zServerInternalSchemasTodoStatus.optional(),
-    text: z.string().min(1).optional(),
-    updatedAt: z.string().optional()
+    status: z_server_internal_models_todo_status.optional(),
+    text: z.string().min(1),
+    updatedAt: z.iso.date().optional()
 });
 
-export const zServerInternalSchemasUpdateTodoRequest = z.object({
-    actualHours: z.number().optional(),
+export const z_server_internal_models_update_todo_request = z.object({
+    actualHours: z.number().gte(0).optional(),
     completedAt: z.string().optional(),
-    cost: z.number().optional(),
-    dueDate: z.string().optional(),
-    estimatedHours: z.number().optional(),
-    label: z.string().optional(),
-    priority: zServerInternalSchemasTodoPriority.optional(),
-    progress: z.int().optional(),
-    status: zServerInternalSchemasTodoStatus.optional(),
-    text: z.string().optional()
+    cost: z.number().gte(0).optional(),
+    dueDate: z.iso.date().optional(),
+    estimatedHours: z.number().gte(0).optional(),
+    label: z.enum([
+        'bug',
+        'feature',
+        'doc'
+    ]).optional(),
+    priority: z.enum([
+        'low',
+        'medium',
+        'high'
+    ]).optional(),
+    progress: z.int().gte(0).lte(100).optional(),
+    status: z.enum([
+        'backlog',
+        'todo',
+        'in_progress',
+        'done',
+        'canceled'
+    ]).optional(),
+    text: z.string().min(1).optional()
 });
 
-/**
- * Todo creation request
- */
-export const zPostApiV1TodosBody = zServerInternalSchemasCreateTodoRequest;
+export const z_post_api_v1_todos_body = z_server_internal_models_create_todo_request;
 
-export const zDeleteApiV1TodosByIdPath = z.object({
+export const z_delete_api_v1_todos_by_id_path = z.object({
     id: z.string()
 });
 
-export const zGetApiV1TodosByIdPath = z.object({
+export const z_get_api_v1_todos_by_id_path = z.object({
     id: z.string()
 });
 
-/**
- * Todo update request
- */
-export const zPutApiV1TodosByIdBody = zServerInternalSchemasUpdateTodoRequest;
+export const z_put_api_v1_todos_by_id_body = z_server_internal_models_update_todo_request;
 
-export const zPutApiV1TodosByIdPath = z.object({
+export const z_put_api_v1_todos_by_id_path = z.object({
     id: z.string()
 });

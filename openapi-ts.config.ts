@@ -12,10 +12,13 @@ export default defineConfig({
       name: 'zod',
       requests: true,
       responses: false,
+      case: 'snake_case',
+      comments: false,
     },
     {
       name: '@hey-api/sdk',
       validator: true,
+      comments: false,
     },
   ],
 });

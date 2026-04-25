@@ -5,7 +5,7 @@ import * as z from 'zod';
 import type { Client, Options as Options2, TDataShape } from './client';
 import { client } from './client.gen';
 import type { DeleteApiV1TodosByIdData, DeleteApiV1TodosByIdErrors, DeleteApiV1TodosByIdResponses, GetApiV1HealthData, GetApiV1HealthResponses, GetApiV1TodosByIdData, GetApiV1TodosByIdErrors, GetApiV1TodosByIdResponses, GetApiV1TodosData, GetApiV1TodosResponses, PostApiV1TodosData, PostApiV1TodosErrors, PostApiV1TodosResponses, PutApiV1TodosByIdData, PutApiV1TodosByIdErrors, PutApiV1TodosByIdResponses } from './types.gen';
-import { zDeleteApiV1TodosByIdPath, zGetApiV1TodosByIdPath, zPostApiV1TodosBody, zPutApiV1TodosByIdBody, zPutApiV1TodosByIdPath } from './zod.gen';
+import { z_delete_api_v1_todos_by_id_path, z_get_api_v1_todos_by_id_path, z_post_api_v1_todos_body, z_put_api_v1_todos_by_id_body, z_put_api_v1_todos_by_id_path } from './zod.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean, TResponse = unknown> = Options2<TData, ThrowOnError, TResponse> & {
     /**
@@ -21,11 +21,6 @@ export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends 
     meta?: Record<string, unknown>;
 };
 
-/**
- * Health Check
- *
- * Returns the health status of the server along with uptime and memory usage
- */
 export const getApiV1Health = <ThrowOnError extends boolean = false>(options?: Options<GetApiV1HealthData, ThrowOnError>) => (options?.client ?? client).get<GetApiV1HealthResponses, unknown, ThrowOnError>({
     requestValidator: async (data) => await z.object({
         body: z.never().optional(),
@@ -36,11 +31,6 @@ export const getApiV1Health = <ThrowOnError extends boolean = false>(options?: O
     ...options
 });
 
-/**
- * Get all todos
- *
- * Retrieves all todo items
- */
 export const getApiV1Todos = <ThrowOnError extends boolean = false>(options?: Options<GetApiV1TodosData, ThrowOnError>) => (options?.client ?? client).get<GetApiV1TodosResponses, unknown, ThrowOnError>({
     requestValidator: async (data) => await z.object({
         body: z.never().optional(),
@@ -51,14 +41,9 @@ export const getApiV1Todos = <ThrowOnError extends boolean = false>(options?: Op
     ...options
 });
 
-/**
- * Create a new todo
- *
- * Creates a new todo item with the provided text
- */
 export const postApiV1Todos = <ThrowOnError extends boolean = false>(options: Options<PostApiV1TodosData, ThrowOnError>) => (options.client ?? client).post<PostApiV1TodosResponses, PostApiV1TodosErrors, ThrowOnError>({
     requestValidator: async (data) => await z.object({
-        body: zPostApiV1TodosBody,
+        body: z_post_api_v1_todos_body,
         path: z.never().optional(),
         query: z.never().optional()
     }).parseAsync(data),
@@ -70,45 +55,30 @@ export const postApiV1Todos = <ThrowOnError extends boolean = false>(options: Op
     }
 });
 
-/**
- * Delete a todo
- *
- * Deletes a todo item by its ID
- */
 export const deleteApiV1TodosById = <ThrowOnError extends boolean = false>(options: Options<DeleteApiV1TodosByIdData, ThrowOnError>) => (options.client ?? client).delete<DeleteApiV1TodosByIdResponses, DeleteApiV1TodosByIdErrors, ThrowOnError>({
     requestValidator: async (data) => await z.object({
         body: z.never().optional(),
-        path: zDeleteApiV1TodosByIdPath,
+        path: z_delete_api_v1_todos_by_id_path,
         query: z.never().optional()
     }).parseAsync(data),
     url: '/api/v1/todos/{id}',
     ...options
 });
 
-/**
- * Get a todo by ID
- *
- * Retrieves a single todo item by its ID
- */
 export const getApiV1TodosById = <ThrowOnError extends boolean = false>(options: Options<GetApiV1TodosByIdData, ThrowOnError>) => (options.client ?? client).get<GetApiV1TodosByIdResponses, GetApiV1TodosByIdErrors, ThrowOnError>({
     requestValidator: async (data) => await z.object({
         body: z.never().optional(),
-        path: zGetApiV1TodosByIdPath,
+        path: z_get_api_v1_todos_by_id_path,
         query: z.never().optional()
     }).parseAsync(data),
     url: '/api/v1/todos/{id}',
     ...options
 });
 
-/**
- * Update a todo
- *
- * Updates an existing todo item by its ID
- */
 export const putApiV1TodosById = <ThrowOnError extends boolean = false>(options: Options<PutApiV1TodosByIdData, ThrowOnError>) => (options.client ?? client).put<PutApiV1TodosByIdResponses, PutApiV1TodosByIdErrors, ThrowOnError>({
     requestValidator: async (data) => await z.object({
-        body: zPutApiV1TodosByIdBody,
-        path: zPutApiV1TodosByIdPath,
+        body: z_put_api_v1_todos_by_id_body,
+        path: z_put_api_v1_todos_by_id_path,
         query: z.never().optional()
     }).parseAsync(data),
     url: '/api/v1/todos/{id}',

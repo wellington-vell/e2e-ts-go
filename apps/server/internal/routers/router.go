@@ -2,6 +2,7 @@ package routers
 
 import (
 	"net/http"
+	"time"
 
 	"server/internal"
 
@@ -16,6 +17,7 @@ func Router() http.Handler {
 	r.Use(chiMiddleware.Recoverer)
 	r.Use(chiMiddleware.RealIP)
 	r.Use(chiMiddleware.Logger)
+	r.Use(chiMiddleware.Timeout(10 * time.Second))
 
 	r.Use(cors.New(cors.Options{
 		AllowedOrigins:   []string{internal.Env("CORS_ORIGIN")},

@@ -1,11 +1,11 @@
-// import { experimental_toORPCClient } from '@orpc/hey-api';
-// import { createTanstackQueryUtils } from '@orpc/tanstack-query';
+import { experimental_toORPCClient } from '@orpc/hey-api';
+import { createTanstackQueryUtils } from '@orpc/tanstack-query';
 import { QueryCache, QueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 
-// import { client } from '@/lib/api/client.gen';
-// import * as sdk from '@/lib/api/sdk.gen';
-// import { env } from '@/lib/env';
+import { client } from '@/lib/api/client.gen';
+import * as sdk from '@/lib/api/sdk.gen';
+import { env } from '@/lib/env';
 
 export const queryClient = new QueryClient({
   queryCache: new QueryCache({
@@ -20,23 +20,23 @@ export const queryClient = new QueryClient({
   }),
 });
 
-// client.setConfig({
-//   baseUrl: env.VITE_SERVER_URL,
-//   credentials: 'include',
-// });
+client.setConfig({
+  baseUrl: env.VITE_SERVER_URL,
+  credentials: 'include',
+});
 
-// client.interceptors.error.use((error) => {
-//   return error;
-// });
+client.interceptors.error.use((error) => {
+  return error;
+});
 
-// client.interceptors.response.use(async (response, _request, _opts) => {
-//   return response;
-// });
+client.interceptors.response.use(async (response, _request, _opts) => {
+  return response;
+});
 
-// client.interceptors.request.use((request, _opts) => {
-//   return request;
-// });
+client.interceptors.request.use((request, _opts) => {
+  return request;
+});
 
-// const apiClient = experimental_toORPCClient(sdk);
+const apiClient = experimental_toORPCClient(sdk);
 
-// export const orpc = createTanstackQueryUtils(apiClient);
+export const orpc = createTanstackQueryUtils(apiClient);

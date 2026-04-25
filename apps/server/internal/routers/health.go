@@ -6,7 +6,7 @@ import (
 	"runtime"
 	"time"
 
-	"server/internal/schemas"
+	"server/internal/models"
 )
 
 var startTime = time.Now()
@@ -15,12 +15,12 @@ var startTime = time.Now()
 // @Description Returns the health status of the server along with uptime and memory usage
 // @Tags Health
 // @Produce json
-// @Success 200 {object} schemas.HealthResponse
+// @Success 200 {object} models.HealthResponse
 // @Router /api/v1/health [get]
 func HealthCheck(w http.ResponseWriter, r *http.Request) {
 	now := time.Now()
 	_, offsetSeconds := now.Zone()
-	resp := schemas.HealthResponse{
+	resp := models.HealthResponse{
 		Status:         "OK",
 		Date:           now.Format("02/01/2006 15:04:05"),
 		Timezone:       "America/Sao_Paulo",

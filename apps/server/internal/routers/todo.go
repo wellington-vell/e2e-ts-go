@@ -3,53 +3,52 @@ package routers
 import (
 	"database/sql"
 	"encoding/json"
+	"errors"
+	"log"
 	"net/http"
-	"time"
-
-	"github.com/google/uuid"
 
 	"server/internal/db"
-	"server/internal/schemas"
+	"server/internal/models"
+
+	"github.com/google/uuid"
 )
 
 // @Summary Get all todos
 // @Description Retrieves all todo items
 // @Tags Todos
 // @Produce json
-// @Success 200 {array} schemas.Todo
+// @Success 200 {array} models.Todo
 // @Router /api/v1/todos [get]
 func HandleGetTodos(w http.ResponseWriter, r *http.Request) {
-	todos, err := GetAllTodos()
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-	if todos == nil {
-		todos = []schemas.Todo{}
-	}
-	w.Header().Set("Content-Type", "application/json")
-	if err := json.NewEncoder(w).Encode(todos); err != nil {
-		return
-	}
-}
-
-func GetAllTodos() ([]schemas.Todo, error) {
 	query := `SELECT id, text, status, label, priority, estimated_hours, actual_hours, progress, cost, due_date, completed_at, created_at, updated_at FROM todos ORDER BY created_at DESC`
-	rows, err := db.DB.Query(query)
+	rows, err := db.Query.QueryContext(r.Context(), query)
 	if err != nil {
-		return nil, err
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
+		return
 	}
 	defer rows.Close()
 
-	var todos []schemas.Todo
+	var todos []models.Todo
 	for rows.Next() {
-		var t schemas.Todo
+		var t models.Todo
 		if err := rows.Scan(&t.ID, &t.Text, &t.Status, &t.Label, &t.Priority, &t.EstimatedHours, &t.ActualHours, &t.Progress, &t.Cost, &t.DueDate, &t.CompletedAt, &t.CreatedAt, &t.UpdatedAt); err != nil {
-			return nil, err
+			http.Error(w, "Internal server error", http.StatusInternalServerError)
+			return
 		}
 		todos = append(todos, t)
 	}
-	return todos, rows.Err()
+	if err := rows.Err(); err != nil {
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
+		return
+	}
+	if todos == nil {
+		todos = []models.Todo{}
+	}
+	w.Header().Set("Content-Type", "application/json")
+	if err := json.NewEncoder(w).Encode(todos); err != nil {
+		log.Printf("JSON encode error in HandleGetTodos: %v", err)
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
+	}
 }
 
 // @Summary Get a todo by ID
@@ -57,7 +56,7 @@ func GetAllTodos() ([]schemas.Todo, error) {
 // @Tags Todos
 // @Produce json
 // @Param id path string true "Todo ID"
-// @Success 200 {object} schemas.Todo
+// @Success 200 {object} models.Todo
 // @Failure 400 {string} string "Invalid ID"
 // @Failure 404 {string} string "Todo not found"
 // @Router /api/v1/todos/{id} [get]
@@ -68,32 +67,22 @@ func HandleGetTodo(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Invalid ID", http.StatusBadRequest)
 		return
 	}
-	todo, err := GetTodoByID(id)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-	if todo == nil {
+	query := `SELECT id, text, status, label, priority, estimated_hours, actual_hours, progress, cost, due_date, completed_at, created_at, updated_at FROM todos WHERE id = $1`
+	var t models.Todo
+	err = db.Query.QueryRowContext(r.Context(), query, id).Scan(&t.ID, &t.Text, &t.Status, &t.Label, &t.Priority, &t.EstimatedHours, &t.ActualHours, &t.Progress, &t.Cost, &t.DueDate, &t.CompletedAt, &t.CreatedAt, &t.UpdatedAt)
+	if errors.Is(err, sql.ErrNoRows) {
 		http.Error(w, "Todo not found", http.StatusNotFound)
 		return
 	}
-	w.Header().Set("Content-Type", "application/json")
-	if err := json.NewEncoder(w).Encode(todo); err != nil {
+	if err != nil {
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
 		return
 	}
-}
-
-func GetTodoByID(id uuid.UUID) (*schemas.Todo, error) {
-	query := `SELECT id, text, status, label, priority, estimated_hours, actual_hours, progress, cost, due_date, completed_at, created_at, updated_at FROM todos WHERE id = $1`
-	var t schemas.Todo
-	err := db.DB.QueryRow(query, id).Scan(&t.ID, &t.Text, &t.Status, &t.Label, &t.Priority, &t.EstimatedHours, &t.ActualHours, &t.Progress, &t.Cost, &t.DueDate, &t.CompletedAt, &t.CreatedAt, &t.UpdatedAt)
-	if err == sql.ErrNoRows {
-		return nil, nil
+	w.Header().Set("Content-Type", "application/json")
+	if err := json.NewEncoder(w).Encode(&t); err != nil {
+		log.Printf("JSON encode error in HandleGetTodo: %v", err)
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
 	}
-	if err != nil {
-		return nil, err
-	}
-	return &t, nil
 }
 
 // @Summary Create a new todo
@@ -101,38 +90,21 @@ func GetTodoByID(id uuid.UUID) (*schemas.Todo, error) {
 // @Tags Todos
 // @Accept json
 // @Produce json
-// @Param request body schemas.CreateTodoRequest true "Todo creation request"
-// @Success 201 {object} schemas.Todo
+// @Param request body models.CreateTodoRequest true "Todo creation request"
+// @Success 201 {object} models.Todo
 // @Failure 400 {string} string "Invalid request body or missing text"
 // @Router /api/v1/todos [post]
 func HandleCreateTodo(w http.ResponseWriter, r *http.Request) {
-	var req schemas.CreateTodoRequest
+	var req models.CreateTodoRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		http.Error(w, "Invalid request body", http.StatusBadRequest)
 		return
 	}
-	if req.Text == "" {
-		http.Error(w, "Text is required", http.StatusBadRequest)
-		return
-	}
-	todo, err := CreateTodo(&req)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusCreated)
-	if err := json.NewEncoder(w).Encode(todo); err != nil {
-		return
-	}
-}
-
-func CreateTodo(req *schemas.CreateTodoRequest) (*schemas.Todo, error) {
-	status := schemas.TodoStatusBacklog
+	status := models.TodoStatusBacklog
 	if req.Status != nil {
 		status = *req.Status
 	}
-	priority := schemas.TodoPriorityMedium
+	priority := models.TodoPriorityMedium
 	if req.Priority != nil {
 		priority = *req.Priority
 	}
@@ -154,12 +126,22 @@ func CreateTodo(req *schemas.CreateTodoRequest) (*schemas.Todo, error) {
 	}
 
 	query := `INSERT INTO todos (text, status, label, priority, estimated_hours, actual_hours, progress, cost, due_date) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id, text, status, label, priority, estimated_hours, actual_hours, progress, cost, due_date, completed_at, created_at, updated_at`
-	var t schemas.Todo
-	err := db.DB.QueryRow(query, req.Text, status, req.Label, priority, estimatedHours, actualHours, progress, cost, req.DueDate).Scan(&t.ID, &t.Text, &t.Status, &t.Label, &t.Priority, &t.EstimatedHours, &t.ActualHours, &t.Progress, &t.Cost, &t.DueDate, &t.CompletedAt, &t.CreatedAt, &t.UpdatedAt)
+	var t models.Todo
+	err := db.Query.QueryRowContext(r.Context(), query, req.Text, status, req.Label, priority, estimatedHours, actualHours, progress, cost, req.DueDate).Scan(&t.ID, &t.Text, &t.Status, &t.Label, &t.Priority, &t.EstimatedHours, &t.ActualHours, &t.Progress, &t.Cost, &t.DueDate, &t.CompletedAt, &t.CreatedAt, &t.UpdatedAt)
 	if err != nil {
-		return nil, err
+		if errors.Is(err, db.ErrUniqueViolation) {
+			http.Error(w, "Duplicate entry", http.StatusConflict)
+			return
+		}
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
+		return
 	}
-	return &t, nil
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusCreated)
+	if err := json.NewEncoder(w).Encode(&t); err != nil {
+		log.Printf("JSON encode error in HandleCreateTodo: %v", err)
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
+	}
 }
 
 // @Summary Update a todo
@@ -168,8 +150,8 @@ func CreateTodo(req *schemas.CreateTodoRequest) (*schemas.Todo, error) {
 // @Accept json
 // @Produce json
 // @Param id path string true "Todo ID"
-// @Param request body schemas.UpdateTodoRequest true "Todo update request"
-// @Success 200 {object} schemas.Todo
+// @Param request body models.UpdateTodoRequest true "Todo update request"
+// @Success 200 {object} models.Todo
 // @Failure 400 {string} string "Invalid ID or request body"
 // @Failure 404 {string} string "Todo not found"
 // @Router /api/v1/todos/{id} [put]
@@ -180,74 +162,55 @@ func HandleUpdateTodo(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Invalid ID", http.StatusBadRequest)
 		return
 	}
-	var req schemas.UpdateTodoRequest
+	var req models.UpdateTodoRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		http.Error(w, "Invalid request body", http.StatusBadRequest)
 		return
 	}
-	todo, err := UpdateTodo(id, &req)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-	if todo == nil {
+	query := `
+		UPDATE todos SET
+			text = COALESCE($1, text),
+			status = COALESCE($2, status),
+			label = COALESCE($3, label),
+			priority = COALESCE($4, priority),
+			estimated_hours = COALESCE($5, estimated_hours),
+			actual_hours = COALESCE($6, actual_hours),
+			progress = COALESCE($7, progress),
+			cost = COALESCE($8, cost),
+			due_date = COALESCE($9, due_date),
+			completed_at = COALESCE($10, completed_at),
+			updated_at = NOW()
+		WHERE id = $11
+		RETURNING id, text, status, label, priority, estimated_hours, actual_hours, progress, cost, due_date, completed_at, created_at, updated_at
+	`
+	var t models.Todo
+	err = db.Query.QueryRowContext(r.Context(), query,
+		req.Text,
+		req.Status,
+		req.Label,
+		req.Priority,
+		req.EstimatedHours,
+		req.ActualHours,
+		req.Progress,
+		req.Cost,
+		req.DueDate,
+		req.CompletedAt,
+		id,
+	).Scan(&t.ID, &t.Text, &t.Status, &t.Label, &t.Priority, &t.EstimatedHours, &t.ActualHours, &t.Progress, &t.Cost, &t.DueDate, &t.CompletedAt, &t.CreatedAt, &t.UpdatedAt)
+
+	if errors.Is(err, sql.ErrNoRows) {
 		http.Error(w, "Todo not found", http.StatusNotFound)
 		return
 	}
-	w.Header().Set("Content-Type", "application/json")
-	if err := json.NewEncoder(w).Encode(todo); err != nil {
+	if err != nil {
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
 		return
 	}
-}
-
-func UpdateTodo(id uuid.UUID, req *schemas.UpdateTodoRequest) (*schemas.Todo, error) {
-	t, err := GetTodoByID(id)
-	if err != nil {
-		return nil, err
+	w.Header().Set("Content-Type", "application/json")
+	if err := json.NewEncoder(w).Encode(&t); err != nil {
+		log.Printf("JSON encode error in HandleUpdateTodo: %v", err)
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
 	}
-	if t == nil {
-		return nil, nil
-	}
-
-	if req.Text != nil {
-		t.Text = *req.Text
-	}
-	if req.Status != nil {
-		t.Status = *req.Status
-	}
-	if req.Label != nil {
-		t.Label = req.Label
-	}
-	if req.Priority != nil {
-		t.Priority = *req.Priority
-	}
-	if req.EstimatedHours != nil {
-		t.EstimatedHours = *req.EstimatedHours
-	}
-	if req.ActualHours != nil {
-		t.ActualHours = *req.ActualHours
-	}
-	if req.Progress != nil {
-		t.Progress = *req.Progress
-	}
-	if req.Cost != nil {
-		t.Cost = *req.Cost
-	}
-	if req.DueDate != nil {
-		t.DueDate = req.DueDate
-	}
-	if req.CompletedAt != nil {
-		t.CompletedAt = req.CompletedAt
-	}
-	t.UpdatedAt = time.Now()
-
-	query := `UPDATE todos SET text = $1, status = $2, label = $3, priority = $4, estimated_hours = $5, actual_hours = $6, progress = $7, cost = $8, due_date = $9, completed_at = $10, updated_at = $11 WHERE id = $12`
-	_, err = db.DB.Exec(query, t.Text, t.Status, t.Label, t.Priority, t.EstimatedHours, t.ActualHours, t.Progress, t.Cost, t.DueDate, t.CompletedAt, t.UpdatedAt, id)
-	if err != nil {
-		return nil, err
-	}
-
-	return t, nil
 }
 
 // @Summary Delete a todo
@@ -265,27 +228,20 @@ func HandleDeleteTodo(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Invalid ID", http.StatusBadRequest)
 		return
 	}
-	deleted, err := DeleteTodo(id)
+	query := `DELETE FROM todos WHERE id = $1`
+	result, err := db.Query.ExecContext(r.Context(), query, id)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
 		return
 	}
-	if !deleted {
+	rows, err := result.RowsAffected()
+	if err != nil {
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
+		return
+	}
+	if rows == 0 {
 		http.Error(w, "Todo not found", http.StatusNotFound)
 		return
 	}
 	w.WriteHeader(http.StatusNoContent)
-}
-
-func DeleteTodo(id uuid.UUID) (bool, error) {
-	query := `DELETE FROM todos WHERE id = $1`
-	result, err := db.DB.Exec(query, id)
-	if err != nil {
-		return false, err
-	}
-	rows, err := result.RowsAffected()
-	if err != nil {
-		return false, err
-	}
-	return rows > 0, nil
 }

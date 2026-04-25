@@ -3,7 +3,7 @@ layer: application
 
 tasks:
   dev:
-    command: "~/go/bin/air -c .air.toml"
+    command: 'go tool air -c .air.toml'
 
   build:
     command: "go build -o dist/main cmd/main.go"
@@ -14,12 +14,15 @@ tasks:
       - "dist/main"
 
   clean:
-    command: "rm -rf .tmp dist"
+    script: "rm -rf .tmp dist && go clean -cache -testcache -modcache"
 
   check:
-    command: "golangci-lint run"
+    script: 'golangci-lint run && go tool gofumpt -w -l .'
 
   start:
     command: "dist/main"
     deps:
       - "server:build"
+
+  swagger:
+    command: "swag init -g cmd/main.go -o docs --parseDependency --parseInternal"

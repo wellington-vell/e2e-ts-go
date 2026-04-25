@@ -1,10 +1,8 @@
-import { useQuery } from "@tanstack/react-query";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute } from '@tanstack/react-router';
 
-import { orpc } from "@/lib/orpc";
-import { cn } from "@/lib/utils";
+import { cn } from '@/lib/utils';
 
-export const Route = createFileRoute("/")({
+export const Route = createFileRoute('/')({
   component: HomeComponent,
 });
 
@@ -25,7 +23,7 @@ const TITLE_TEXT = `
  `;
 
 function HomeComponent() {
-  const { data } = useQuery(orpc.getApiHealth.queryOptions());
+  const data = true;
 
   return (
     <div className="container mx-auto max-w-3xl px-4 py-2">
@@ -36,12 +34,12 @@ function HomeComponent() {
           <div className="flex items-center gap-2">
             <div
               className={cn(
-                "h-2 w-2 rounded-full",
-                data?.body ? "bg-green-500" : "bg-red-500",
+                'h-2 w-2 rounded-full',
+                data ? 'bg-green-500' : 'bg-red-500',
               )}
             />
             <span className="text-sm text-muted-foreground">
-              {data?.body ? "Connected" : "Disconnected"}
+              {data ? 'Connected' : 'Disconnected'}
             </span>
           </div>
         </section>

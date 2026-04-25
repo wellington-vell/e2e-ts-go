@@ -1,12 +1,4 @@
-# e2e-ts-go
-
-An end-to-end type-safe full-stack project inspired by [Better T Stack](https://www.better-t-stack.dev/), featuring a **Go backend** and **TypeScript frontend** with full type safety across the stack.
-
-## Overview
-
-This project demonstrates how to achieve end-to-end type safety between a Go backend and TypeScript frontend, bringing the developer experience of modern TypeScript full-stack frameworks to a Go-based architecture.
-
-## Architecture
+# Architecture
 
 - **Backend**: Go server with HTTP handlers
 - **Frontend**: TypeScript/React with Vite, TanStack Router, and TanStack Query
@@ -34,7 +26,7 @@ This project demonstrates how to achieve end-to-end type safety between a Go bac
 
 - **[Moonrepo](https://moonrepo.dev/docs)** - Monorepo build system
 - **[Bun](https://bun.com/docs)** - Package manager and runtime
-- **[oxlint & oxfmt](https://oxc.rs/docs/guide/introduction.html)** - Fast TypeScript linter & Code formatter
+- **[Oxc and Golangci-lint](https://oxc.rs/docs/guide/introduction.html)** - Linters & Code formatters
 
 ## Project Structure
 
@@ -63,6 +55,7 @@ e2e-ts-go/
 - [Go](https://go.dev/) 1.25.5 or later
 - [Bun](https://bun.sh/) 1.3.5 or later
 - [Docker](https://www.docker.com/) (containerized development/deployment)
+- [Golangci Lint](https://golangci-lint.run/docs/welcome/install/local/) linter for golang language
 
 ### Installation
 
@@ -95,19 +88,6 @@ This will start:
 
 - Go server (default port from `SERVER_PORT` env variable)
 - Vite dev server for the frontend (default port from `VITE_WEB_PORT` env variable)
-
-## Goals
-
-- ✅ Go backend with HTTP server
-- ✅ TypeScript frontend with modern React stack
-- ✅ Monorepo setup with Moonrepo
-- 🚧 End-to-end type safety between Go and TypeScript
-- 🚧 Type generation from Go to TypeScript
-- 🚧 RPC-like communication with type safety
-
-## Inspiration
-
-This project is inspired by [Better T Stack](https://www.better-t-stack.dev/), which provides a modern CLI for scaffolding end-to-end type-safe TypeScript projects. This implementation explores achieving similar type safety guarantees with a Go backend instead of a TypeScript/Node.js backend.
 
 ## License
 

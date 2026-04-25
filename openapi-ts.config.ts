@@ -1,20 +1,20 @@
-import { defineConfig } from "@hey-api/openapi-ts";
+import { defineConfig } from '@hey-api/openapi-ts';
 
 export default defineConfig({
-  input: { path: "http://localhost:8080/openapi.json" },
+  input: { path: 'http://localhost:8080/spec.json' },
   output: {
-    path: "apps/web/src/lib/api",
+    path: 'apps/web/src/lib/api',
     entryFile: false,
-    postProcess: ["oxfmt"],
+    postProcess: ['oxfmt'],
   },
   plugins: [
     {
-      name: "zod",
+      name: 'zod',
       requests: true,
       responses: false,
     },
     {
-      name: "@hey-api/sdk",
+      name: '@hey-api/sdk',
       validator: true,
     },
   ],

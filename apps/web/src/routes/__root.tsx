@@ -1,33 +1,35 @@
-import { TanStackDevtools } from "@tanstack/react-devtools";
-import { formDevtoolsPlugin } from "@tanstack/react-form-devtools";
-import { ReactQueryDevtoolsPanel } from "@tanstack/react-query-devtools";
+import { TanStackDevtools } from '@tanstack/react-devtools';
+import { formDevtoolsPlugin } from '@tanstack/react-form-devtools';
+import { ReactQueryDevtoolsPanel } from '@tanstack/react-query-devtools';
 import {
   HeadContent,
   Outlet,
   createRootRouteWithContext,
-} from "@tanstack/react-router";
-import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
+} from '@tanstack/react-router';
+import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools';
 
-import { Toaster } from "@/components/ui/sonner";
-import { ThemeProvider } from "@/context/theme";
-import "@/index.css";
+import { Toaster } from '@/components/ui/sonner';
+import { ThemeProvider } from '@/context/theme';
+
+import '@/index.css';
+import { env } from '@/lib/env';
 
 export const Route = createRootRouteWithContext()({
   component: RootComponent,
   head: () => ({
     meta: [
       {
-        title: "E2E GO/TS",
+        title: 'E2E GO/TS',
       },
       {
-        name: "description",
-        content: "E2E GO/TS is a web application for testing GO/TS integration",
+        name: 'description',
+        content: 'E2E GO/TS is a web application for testing GO/TS integration',
       },
     ],
     links: [
       {
-        rel: "icon",
-        href: "/favicon.ico",
+        rel: 'icon',
+        href: '/favicon.ico',
       },
     ],
   }),
@@ -49,20 +51,22 @@ function RootComponent() {
         <Toaster richColors />
       </ThemeProvider>
 
-      <TanStackDevtools
-        config={{ position: "bottom-left", panelLocation: "bottom" }}
-        plugins={[
-          formDevtoolsPlugin(),
-          {
-            name: "TanStack Query",
-            render: <ReactQueryDevtoolsPanel />,
-          },
-          {
-            name: "TanStack Router",
-            render: <TanStackRouterDevtoolsPanel />,
-          },
-        ]}
-      />
+      {env.VITE_NODE_ENV === 'development' && (
+        <TanStackDevtools
+          config={{ position: 'bottom-left', panelLocation: 'bottom' }}
+          plugins={[
+            formDevtoolsPlugin(),
+            {
+              name: 'TanStack Query',
+              render: <ReactQueryDevtoolsPanel />,
+            },
+            {
+              name: 'TanStack Router',
+              render: <TanStackRouterDevtoolsPanel />,
+            },
+          ]}
+        />
+      )}
     </>
   );
 }

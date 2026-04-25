@@ -1,0 +1,407 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "contact": {}
+    },
+    "paths": {
+        "/api/v1/health": {
+            "get": {
+                "description": "Returns the health status of the server along with uptime and memory usage",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Health"
+                ],
+                "summary": "Health Check",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/server_internal_schemas.HealthResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/todos": {
+            "get": {
+                "description": "Retrieves all todo items",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Todos"
+                ],
+                "summary": "Get all todos",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/server_internal_schemas.Todo"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Creates a new todo item with the provided text",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Todos"
+                ],
+                "summary": "Create a new todo",
+                "parameters": [
+                    {
+                        "description": "Todo creation request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/server_internal_schemas.CreateTodoRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/server_internal_schemas.Todo"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request body or missing text",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/todos/{id}": {
+            "get": {
+                "description": "Retrieves a single todo item by its ID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Todos"
+                ],
+                "summary": "Get a todo by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Todo ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/server_internal_schemas.Todo"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid ID",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Todo not found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "Updates an existing todo item by its ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Todos"
+                ],
+                "summary": "Update a todo",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Todo ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Todo update request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/server_internal_schemas.UpdateTodoRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/server_internal_schemas.Todo"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid ID or request body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Todo not found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Deletes a todo item by its ID",
+                "tags": [
+                    "Todos"
+                ],
+                "summary": "Delete a todo",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Todo ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "400": {
+                        "description": "Invalid ID",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Todo not found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "server_internal_schemas.CreateTodoRequest": {
+            "type": "object",
+            "required": [
+                "text"
+            ],
+            "properties": {
+                "actualHours": {
+                    "type": "number"
+                },
+                "cost": {
+                    "type": "number"
+                },
+                "dueDate": {
+                    "type": "string"
+                },
+                "estimatedHours": {
+                    "type": "number"
+                },
+                "label": {
+                    "type": "string"
+                },
+                "priority": {
+                    "$ref": "#/definitions/server_internal_schemas.TodoPriority"
+                },
+                "progress": {
+                    "type": "integer"
+                },
+                "status": {
+                    "$ref": "#/definitions/server_internal_schemas.TodoStatus"
+                },
+                "text": {
+                    "type": "string",
+                    "minLength": 1
+                }
+            }
+        },
+        "server_internal_schemas.HealthResponse": {
+            "type": "object",
+            "properties": {
+                "arch": {
+                    "type": "string"
+                },
+                "args": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "date": {
+                    "type": "string"
+                },
+                "memory": {
+                    "type": "object",
+                    "additionalProperties": {}
+                },
+                "node": {
+                    "type": "string"
+                },
+                "os": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "timezone": {
+                    "type": "string"
+                },
+                "timezoneName": {
+                    "type": "string"
+                },
+                "timezoneOffset": {
+                    "type": "integer"
+                },
+                "uptime": {
+                    "type": "number"
+                },
+                "version": {
+                    "type": "string"
+                }
+            }
+        },
+        "server_internal_schemas.Todo": {
+            "type": "object",
+            "properties": {
+                "actualHours": {
+                    "type": "number"
+                },
+                "completedAt": {
+                    "type": "string"
+                },
+                "cost": {
+                    "type": "number"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "dueDate": {
+                    "type": "string"
+                },
+                "estimatedHours": {
+                    "type": "number"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "label": {
+                    "type": "string"
+                },
+                "priority": {
+                    "$ref": "#/definitions/server_internal_schemas.TodoPriority"
+                },
+                "progress": {
+                    "type": "integer"
+                },
+                "status": {
+                    "$ref": "#/definitions/server_internal_schemas.TodoStatus"
+                },
+                "text": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "updatedAt": {
+                    "type": "string"
+                }
+            }
+        },
+        "server_internal_schemas.TodoPriority": {
+            "type": "string",
+            "enum": [
+                "low",
+                "medium",
+                "high"
+            ],
+            "x-enum-varnames": [
+                "TodoPriorityLow",
+                "TodoPriorityMedium",
+                "TodoPriorityHigh"
+            ]
+        },
+        "server_internal_schemas.TodoStatus": {
+            "type": "string",
+            "enum": [
+                "backlog",
+                "todo",
+                "in_progress",
+                "done",
+                "canceled"
+            ],
+            "x-enum-varnames": [
+                "TodoStatusBacklog",
+                "TodoStatusTodo",
+                "TodoStatusInProgress",
+                "TodoStatusDone",
+                "TodoStatusCanceled"
+            ]
+        },
+        "server_internal_schemas.UpdateTodoRequest": {
+            "type": "object",
+            "properties": {
+                "actualHours": {
+                    "type": "number"
+                },
+                "completedAt": {
+                    "type": "string"
+                },
+                "cost": {
+                    "type": "number"
+                },
+                "dueDate": {
+                    "type": "string"
+                },
+                "estimatedHours": {
+                    "type": "number"
+                },
+                "label": {
+                    "type": "string"
+                },
+                "priority": {
+                    "$ref": "#/definitions/server_internal_schemas.TodoPriority"
+                },
+                "progress": {
+                    "type": "integer"
+                },
+                "status": {
+                    "$ref": "#/definitions/server_internal_schemas.TodoStatus"
+                },
+                "text": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}

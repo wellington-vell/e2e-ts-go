@@ -21,7 +21,10 @@ tasks:
     outputs:
       - "dist"
   check:
-    command: "bun run oxlint && bun run oxfmt"
+    script: 'bun run oxlint --type-aware --type-check && bun run oxfmt --write .'
+  
+  check-types:
+    command: 'tsgo --noEmit'
 
 workspace:
   inheritedTasks:

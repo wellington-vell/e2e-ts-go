@@ -1,8 +1,103 @@
 {
   "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["unicorn", "typescript", "oxc"],
-  "categories": {},
+  "plugins": ["unicorn", "typescript", "oxc", "react", "import"],
+  "jsPlugins": [
+    "eslint-plugin-react-you-might-not-need-an-effect",
+    {
+      "name": "react-hooks-js",
+      "specifier": "eslint-plugin-react-hooks"
+    },
+    "@tanstack/eslint-plugin-query",
+    "eslint-plugin-use-no-memo"
+  ],
+  "categories": {
+    "correctness": "error",
+    "suspicious": "error",
+    "perf": "warn"
+  },
   "rules": {
+    "react-you-might-not-need-an-effect/no-derived-state": "error",
+    "react-you-might-not-need-an-effect/no-chain-state-updates": "error",
+    "react-you-might-not-need-an-effect/no-event-handler": "error",
+    "react-you-might-not-need-an-effect/no-adjust-state-on-prop-change": "error",
+    "react-you-might-not-need-an-effect/no-reset-all-state-on-prop-change": "error",
+    "react-you-might-not-need-an-effect/no-pass-live-state-to-parent": "error",
+    "react-you-might-not-need-an-effect/no-pass-data-to-parent": "error",
+    "react-you-might-not-need-an-effect/no-initialize-state": "error",
+    "react-you-might-not-need-an-effect/no-empty-effect": "error",
+    "use-no-memo/react-hook-form": "error",
+    "use-no-memo/tanstack-table": "error",
+    "use-no-memo/material-react-table": "error",
+    "@tanstack/query/exhaustive-deps": "error",
+    "@tanstack/query/no-rest-destructuring": "error",
+    "@tanstack/query/stable-query-client": "error",
+    "@tanstack/query/no-unstable-deps": "error",
+    "@tanstack/query/infinite-query-property-order": "error",
+    "@tanstack/query/no-void-query-fn": "error",
+    "@tanstack/query/mutation-property-order": "error",
+    "react/react-in-jsx-scope": "off",
+    "react/style-prop-object": [
+      "error",
+      {
+        "allow": ["StatusBar"]
+      }
+    ],
+    "react/forbid-elements": [
+      "error",
+      {
+        "forbid": [
+          {
+            "element": "TouchableOpacity",
+            "message": "Use <Pressable /> instead."
+          },
+          {
+            "element": "TouchableHighlight",
+            "message": "Use <Pressable /> instead."
+          },
+          {
+            "element": "FlatList",
+            "message": "Use <FlashList /> instead."
+          }
+        ]
+      }
+    ],
+    "react-hooks-js/rules-of-hooks": "error",
+    "react-hooks-js/exhaustive-deps": "error",
+    "react-hooks-js/config": "error",
+    "react-hooks-js/error-boundaries": "error",
+    "react-hooks-js/component-hook-factories": "error",
+    "react-hooks-js/gating": "error",
+    "react-hooks-js/globals": "error",
+    "react-hooks-js/immutability": "error",
+    "react-hooks-js/preserve-manual-memoization": "error",
+    "react-hooks-js/purity": "error",
+    "react-hooks-js/refs": "error",
+    "react-hooks-js/set-state-in-effect": "error",
+    "react-hooks-js/set-state-in-render": "error",
+    "react-hooks-js/static-components": "error",
+    "react-hooks-js/unsupported-syntax": "warn",
+    "react-hooks-js/use-memo": "error",
+    "react-hooks-js/incompatible-library": "warn",
+    "import/no-default-export": "error",
+    "import/prefer-default-export": "off",
+    "import/no-namespace": "error",
+    "import/no-unassigned-import": [
+      "error",
+      {
+        "allow": ["**/*.css", "react-native-random-uuid"]
+      }
+    ],
+    "import/no-relative-parent-imports": "error",
+    "no-case-declarations": "warn",
+    "getter-return": "warn",
+    "no-empty": "warn",
+    "no-fallthrough": "warn",
+    "no-misleading-character-class": "warn",
+    "no-prototype-builtins": "warn",
+    "no-unreachable": "warn",
+    "no-redeclare": "error",
+    "no-regex-spaces": "error",
+    "no-var": "warn",
     "constructor-super": "warn",
     "for-direction": "warn",
     "no-async-promise-executor": "warn",
@@ -56,6 +151,7 @@
     "require-yield": "warn",
     "use-isnan": "warn",
     "valid-typeof": "warn",
+    "no-await-in-loop": "error",
     "oxc/bad-array-method-on-arguments": "warn",
     "oxc/bad-char-at-comparison": "warn",
     "oxc/bad-comparison-sequence": "warn",
@@ -69,6 +165,8 @@
     "oxc/number-arg-out-of-range": "warn",
     "oxc/only-used-in-recursion": "warn",
     "oxc/uninvoked-array-callback": "warn",
+    "oxc/no-barrel-file": "error",
+    "typescript/no-explicit-any": "error",
     "typescript/await-thenable": "warn",
     "typescript/no-array-delete": "warn",
     "typescript/no-base-to-string": "warn",
@@ -94,6 +192,9 @@
     "typescript/restrict-template-expressions": "warn",
     "typescript/triple-slash-reference": "warn",
     "typescript/unbound-method": "warn",
+    "typescript/no-import-type-side-effects": "error",
+    "typescript/no-non-null-assertion": "error",
+    "typescript/no-deprecated": "error",
     "unicorn/no-await-in-promise-methods": "warn",
     "unicorn/no-empty-file": "warn",
     "unicorn/no-invalid-fetch-options": "warn",
@@ -106,11 +207,18 @@
     "unicorn/no-useless-length-check": "warn",
     "unicorn/no-useless-spread": "warn",
     "unicorn/prefer-set-size": "warn",
-    "unicorn/prefer-string-starts-ends-with": "warn"
+    "unicorn/prefer-string-starts-ends-with": "warn",
+    "unicorn/no-abusive-eslint-disable": "error",
+    "unicorn/filename-case": [
+      "error",
+      {
+        "case": "kebabCase"
+      }
+    ]
   },
   "settings": {
     "jsx-a11y": {
-      "polymorphicPropName": null,
+      "polymorphicPropName": "as",
       "components": {},
       "attributes": {}
     },
@@ -120,7 +228,8 @@
     "react": {
       "formComponents": [],
       "linkComponents": [],
-      "version": null
+      "version": "19.2.4",
+      "componentWrapperFunctions": []
     },
     "jsdoc": {
       "ignorePrivate": false,
@@ -140,5 +249,40 @@
     "builtin": true
   },
   "globals": {},
-  "ignorePatterns": ["routeTree.gen.ts"]
+  "overrides": [
+    {
+      "files": ["**/orpc.ts", "**/apps/mobile/**"],
+      "rules": {
+        "import/no-namespace": "off"
+      }
+    },
+    {
+      "files": ["**/lib/api/**"],
+      "rules": {
+        "import/no-relative-parent-imports": "off"
+      }
+    },
+    {
+      "files": ["apps/mobile/src/app/**", "*.config.*"],
+      "rules": {
+        "import/no-default-export": "off"
+      }
+    },
+    {
+      "files": ["apps/mobile/src/app/**"],
+      "rules": {
+        "import/prefer-default-export": "error"
+      }
+    }
+  ],
+  "ignorePatterns": [
+    "**/*.config.*",
+    "**/*.go",
+    "**/node_modules/**",
+    "**/*.gen.*",
+    "**/.changeset/**",
+    "**/.github/**",
+    "**/*.d.ts",
+    "apps/mobile/src/lib/api/**"
+  ]
 }

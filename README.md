@@ -89,6 +89,27 @@ This will start:
 - Go server (default port from `SERVER_PORT` env variable)
 - Vite dev server for the frontend (default port from `VITE_WEB_PORT` env variable)
 
+### Database Migrations
+
+Database migrations are managed with [goose](https://github.com/pressly/goose). Make sure `DATABASE_URL` is set in your `.env` file.
+
+```bash
+# Create a new migration
+bun run migrate-create -- add_users sql
+
+# Run all pending migrations
+bun run migrate-up
+
+# Roll back the last migration
+bun run migrate-down
+
+# Migrate to a specific version
+bun run migrate-up-to -- 20260425000000
+
+# Roll back to version 0 (all migrations)
+bun run migrate-down-to -- 0
+```
+
 ## License
 
 See [LICENSE](./LICENSE) file for details.

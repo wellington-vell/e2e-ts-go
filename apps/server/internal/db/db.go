@@ -4,12 +4,14 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"os"
 	"time"
 
 	"server/internal"
 
 	_ "github.com/lib/pq"
 	"github.com/pressly/goose/v3"
+	"github.com/pressly/goose/v3/database"
 )
 
 var (
@@ -94,13 +96,16 @@ func InitDB() error {
 }
 
 func runMigrations() error {
-	if err := goose.SetDialect("postgres"); err != nil {
-		return fmt.Errorf("failed to set goose dialect: %w", err)
+	provider, err := goose.NewProvider(
+		database.DialectPostgres,
+		DB,
+		os.DirFS("./internal/db/migrations"),
+	)
+	if err != nil {
+		return fmt.Errorf("failed to create goose provider: %w", err)
 	}
 
-	migrationsDir := "./internal/db/migrations"
-
-	if err := goose.Up(DB, migrationsDir); err != nil {
+	if _, err := provider.Up(context.Background()); err != nil {
 		return fmt.Errorf("goose migration failed: %w", err)
 	}
 

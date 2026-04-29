@@ -1,0 +1,55 @@
+services:
+  server:
+    build:
+      context: .
+      dockerfile: ./apps/server/Dockerfile
+    container_name: e2e-ts-go-server
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: ${DATABASE_URL:-postgresql://postgres:postgres@db:5432/e2e-ts-go?sslmode=disable}
+    ports:
+      - "${SERVER_PORT:-8080}:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+  web:
+    build:
+      context: .
+      dockerfile: ./apps/web/Dockerfile
+    container_name: e2e-ts-go-web
+    env_file:
+      - .env
+    environment:
+      VITE_SERVER_URL: ${VITE_SERVER_URL:-http://server:8080}
+    ports:
+      - "${VITE_WEB_PORT:-3000}:3000"
+    depends_on:
+      server:
+        condition: service_healthy
+    restart: unless-stopped
+
+  db:
+    image: postgres:18-alpine
+    container_name: e2e-ts-go-postgres
+    env_file:
+      - .env
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_DB: ${POSTGRES_DB:-e2e-ts-go}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+volumes:
+  postgres_data:

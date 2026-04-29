@@ -1,0 +1,324 @@
+definitions:
+  server_internal_models.CreateTodoRequest:
+    properties:
+      actualHours:
+        minimum: 0
+        type: number
+      cost:
+        minimum: 0
+        type: number
+      dueDate:
+        format: date
+        type: string
+      estimatedHours:
+        minimum: 0
+        type: number
+      label:
+        enum:
+        - bug
+        - feature
+        - doc
+        type: string
+      priority:
+        allOf:
+        - $ref: '#/definitions/server_internal_models.TodoPriority'
+        enum:
+        - low
+        - medium
+        - high
+      progress:
+        maximum: 100
+        minimum: 0
+        type: integer
+      status:
+        allOf:
+        - $ref: '#/definitions/server_internal_models.TodoStatus'
+        enum:
+        - backlog
+        - todo
+        - in_progress
+        - done
+        - canceled
+      text:
+        minLength: 1
+        type: string
+    required:
+    - text
+    type: object
+  server_internal_models.HealthResponse:
+    properties:
+      arch:
+        type: string
+      args:
+        items:
+          type: string
+        type: array
+      date:
+        type: string
+      memory:
+        additionalProperties: {}
+        type: object
+      node:
+        type: string
+      os:
+        type: string
+      status:
+        type: string
+      timezone:
+        type: string
+      timezoneName:
+        type: string
+      timezoneOffset:
+        type: integer
+      uptime:
+        type: number
+      version:
+        type: string
+    type: object
+  server_internal_models.Todo:
+    properties:
+      actualHours:
+        type: number
+      completedAt:
+        format: date
+        type: string
+      cost:
+        type: number
+      createdAt:
+        format: date
+        type: string
+      dueDate:
+        format: date
+        type: string
+      estimatedHours:
+        type: number
+      id:
+        type: string
+      label:
+        type: string
+      priority:
+        $ref: '#/definitions/server_internal_models.TodoPriority'
+      progress:
+        type: integer
+      status:
+        $ref: '#/definitions/server_internal_models.TodoStatus'
+      text:
+        minLength: 1
+        type: string
+      updatedAt:
+        format: date
+        type: string
+    required:
+    - text
+    type: object
+  server_internal_models.TodoPriority:
+    enum:
+    - low
+    - medium
+    - high
+    type: string
+    x-enum-varnames:
+    - TodoPriorityLow
+    - TodoPriorityMedium
+    - TodoPriorityHigh
+  server_internal_models.TodoStatus:
+    enum:
+    - backlog
+    - todo
+    - in_progress
+    - done
+    - canceled
+    type: string
+    x-enum-varnames:
+    - TodoStatusBacklog
+    - TodoStatusTodo
+    - TodoStatusInProgress
+    - TodoStatusDone
+    - TodoStatusCanceled
+  server_internal_models.UpdateTodoRequest:
+    properties:
+      actualHours:
+        minimum: 0
+        type: number
+      completedAt:
+        type: string
+      cost:
+        minimum: 0
+        type: number
+      dueDate:
+        format: date
+        type: string
+      estimatedHours:
+        minimum: 0
+        type: number
+      label:
+        enum:
+        - bug
+        - feature
+        - doc
+        type: string
+      priority:
+        allOf:
+        - $ref: '#/definitions/server_internal_models.TodoPriority'
+        enum:
+        - low
+        - medium
+        - high
+      progress:
+        maximum: 100
+        minimum: 0
+        type: integer
+      status:
+        allOf:
+        - $ref: '#/definitions/server_internal_models.TodoStatus'
+        enum:
+        - backlog
+        - todo
+        - in_progress
+        - done
+        - canceled
+      text:
+        minLength: 1
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /api/v1/health:
+    get:
+      description: Returns the health status of the server along with uptime and memory
+        usage
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/server_internal_models.HealthResponse'
+      summary: Health Check
+      tags:
+      - Health
+  /api/v1/todos:
+    get:
+      description: Retrieves all todo items
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/server_internal_models.Todo'
+            type: array
+      summary: Get all todos
+      tags:
+      - Todos
+    post:
+      consumes:
+      - application/json
+      description: Creates a new todo item with the provided text
+      parameters:
+      - description: Todo creation request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/server_internal_models.CreateTodoRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/server_internal_models.Todo'
+        "400":
+          description: Invalid request body or missing text
+          schema:
+            type: string
+      summary: Create a new todo
+      tags:
+      - Todos
+  /api/v1/todos/{id}:
+    delete:
+      description: Deletes a todo item by its ID
+      parameters:
+      - description: Todo ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Invalid ID
+          schema:
+            type: string
+        "404":
+          description: Todo not found
+          schema:
+            type: string
+      summary: Delete a todo
+      tags:
+      - Todos
+    get:
+      description: Retrieves a single todo item by its ID
+      parameters:
+      - description: Todo ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/server_internal_models.Todo'
+        "400":
+          description: Invalid ID
+          schema:
+            type: string
+        "404":
+          description: Todo not found
+          schema:
+            type: string
+      summary: Get a todo by ID
+      tags:
+      - Todos
+    put:
+      consumes:
+      - application/json
+      description: Updates an existing todo item by its ID
+      parameters:
+      - description: Todo ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Todo update request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/server_internal_models.UpdateTodoRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/server_internal_models.Todo'
+        "400":
+          description: Invalid ID or request body
+          schema:
+            type: string
+        "404":
+          description: Todo not found
+          schema:
+            type: string
+      summary: Update a todo
+      tags:
+      - Todos
+swagger: "2.0"

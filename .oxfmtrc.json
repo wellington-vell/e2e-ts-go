@@ -1,0 +1,25 @@
+{
+  "$schema": "./node_modules/oxfmt/configuration_schema.json",
+  "printWidth": 80,
+  "singleQuote": true,
+  "experimentalSortPackageJson": true,
+  "experimentalSortImports": {
+    "order": "asc"
+  },
+  "experimentalTailwindcss": {
+    "stylesheet": "./src/index.css",
+    "attributes": ["className"],
+    "functions": ["clsx", "cn"],
+    "preserveWhitespace": false
+  },
+  "ignorePatterns": [
+    "**/*.html",
+    "**/*.css",
+    "**/*.gen.*",
+    "**/metro.config.js",
+    "**/CHANGELOG.md",
+    "**/*.yml",
+    "**/swagger.*",
+    "**/*.d.ts"
+  ]
+}

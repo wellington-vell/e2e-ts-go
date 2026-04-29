@@ -1,0 +1,32 @@
+language: typescript
+layer: application
+
+fileGroups:
+  vite:
+    - "src/**/*"
+    - "index.html"
+    - "vite.config.ts"
+
+tasks:
+  dev:
+    command: "bun run vite dev"
+
+  clean:
+    command: "rm -rf node_modules"
+
+  build:
+    command: "bun run vite build"
+    inputs:
+      - "@group(vite)"
+    outputs:
+      - "dist"
+  check:
+    script: 'bun run oxlint --type-aware --type-check && bun run oxfmt --write .'
+  
+  check-types:
+    command: 'tsgo --noEmit'
+
+workspace:
+  inheritedTasks:
+    exclude:
+      - build

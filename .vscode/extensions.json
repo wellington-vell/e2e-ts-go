@@ -1,0 +1,8 @@
+{
+  "recommendations": [
+    "golang.go",
+    "oxc.oxc-vscode",
+    "blazejkustra.react-compiler-marker",
+    "bradlc.vscode-tailwindcss"
+  ]
+}

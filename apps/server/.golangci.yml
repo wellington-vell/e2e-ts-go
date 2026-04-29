@@ -1,0 +1,31 @@
+version: "2"
+run:
+  tests: true
+linters:
+  enable:
+    - gocyclo
+  exclusions:
+    generated: lax
+    presets:
+      - comments
+      - common-false-positives
+      - legacy
+      - std-error-handling
+    rules:
+      - linters:
+          - gocyclo
+        text: function is too complex
+    paths:
+      - third_party$
+      - builtin$
+      - examples$
+issues:
+  max-issues-per-linter: 10
+  max-same-issues: 3
+formatters:
+  exclusions:
+    generated: lax
+    paths:
+      - third_party$
+      - builtin$
+      - examples$

@@ -1,0 +1,62 @@
+language: go
+layer: application
+
+tasks:
+  dev:
+    command: 'go tool air -c .air.toml'
+
+  build:
+    command: "go build -o dist/main cmd/main.go"
+    inputs:
+      - "cmd/**/*"
+      - "internal/**/*"
+    outputs:
+      - "dist/main"
+
+  clean:
+    script: "rm -rf .tmp dist && go clean -cache -testcache -modcache"
+
+  check:
+    script: 'golangci-lint run && go tool gofumpt -w -l .'
+
+  start:
+    command: "dist/main"
+    deps:
+      - "server:build"
+
+  swagger:
+    command: "swag init -g cmd/main.go -o docs --parseDependency --parseInternal"
+
+  migrate-create:
+    script: "GOOSE_DRIVER=postgres GOOSE_DBSTRING=${DATABASE_URL} goose create -dir internal/db/migrations ${MIGRATION_NAME} ${MIGRATION_TYPE}"
+    options:
+      envFile: true
+    env:
+      MIGRATION_NAME: "${MIGRATION_NAME}"
+      MIGRATION_TYPE: "${MIGRATION_TYPE}"
+    inputs:
+      - "internal/db/migrations/*.sql"
+
+  migrate-up:
+    command: "goose postgres ${DATABASE_URL} up -dir internal/db/migrations"
+    options:
+      envFile: true
+
+  migrate-down:
+    command: "goose postgres ${DATABASE_URL} down -dir internal/db/migrations"
+    options:
+      envFile: true
+
+  migrate-up-to:
+    command: "goose postgres ${DATABASE_URL} up-to -dir internal/db/migrations ${MIGRATION_VERSION}"
+    options:
+      envFile: true
+    env:
+      MIGRATION_VERSION: "${MIGRATION_VERSION}"
+
+  migrate-down-to:
+    command: "goose postgres ${DATABASE_URL} down-to -dir internal/db/migrations ${MIGRATION_VERSION}"
+    options:
+      envFile: true
+    env:
+      MIGRATION_VERSION: "${MIGRATION_VERSION}"

@@ -9,27 +9,34 @@ import (
 	"syscall"
 	"time"
 
-	"server/internal"
+	"server/internal/auth"
 	"server/internal/db"
+	"server/internal/lib"
 	"server/internal/routers"
 )
 
 func main() {
+	lib.LoadEnv()
+	port := lib.Env.ServerPort
+
 	if err := db.InitDB(); err != nil {
 		panic(fmt.Sprintf("Failed to initialize database: %v", err))
 	}
 	db.InitQueries()
 
-	port := internal.Env("SERVER_PORT")
-	router := routers.Router()
+	authInstance, err := auth.NewAuthula()
+	if err != nil {
+		panic(fmt.Sprintf("Failed to initialize auth: %v", err))
+	}
+	router := routers.Router(authInstance)
 
 	srv := &http.Server{
-		Addr:    fmt.Sprintf(":%s", port),
+		Addr:    fmt.Sprintf(":%d", port),
 		Handler: router,
 	}
 
 	go func() {
-		fmt.Printf("Server started on port %s\n", port)
+		fmt.Printf("Server started on port %d\n", port)
 		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			panic(fmt.Sprintf("Server failed: %v", err))
 		}

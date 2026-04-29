@@ -10,7 +10,16 @@ import { env } from '@/lib/env';
 export const queryClient = new QueryClient({
   queryCache: new QueryCache({
     onError: (error, query) => {
-      toast.error(`Error: ${error.message}`, {
+      let message = error.message;
+      try {
+        const parsed = JSON.parse(message);
+        if (parsed?.message) {
+          message = parsed.message;
+        }
+      } catch {
+        // Not JSON, keep original
+      }
+      toast.error(`Error: ${message}`, {
         action: {
           label: 'retry',
           onClick: () => query.invalidate(),

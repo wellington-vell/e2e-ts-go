@@ -77,8 +77,8 @@ Edit the `.env` file to set your environment variables as needed.
 ### Development
 
 ```bash
-# Start Docker containers for required services (database, auth provider)
-docker compose up -d --build
+# Start Docker dev containers
+bun run docker-dev
 
 # Start both server and web app in development mode
 bun dev

@@ -19,7 +19,7 @@ import (
 // @Produce json
 // @Success 200 {array} models.Todo
 // @Router /api/v1/todos [get]
-func HandleGetTodos(w http.ResponseWriter, r *http.Request) {
+func GetTodos(w http.ResponseWriter, r *http.Request) {
 	query := `SELECT id, text, status, label, priority, estimated_hours, actual_hours, progress, cost, due_date, completed_at, created_at, updated_at FROM todos ORDER BY created_at DESC`
 	rows, err := db.Query.QueryContext(r.Context(), query)
 	if err != nil {
@@ -60,7 +60,7 @@ func HandleGetTodos(w http.ResponseWriter, r *http.Request) {
 // @Failure 400 {string} string "Invalid ID"
 // @Failure 404 {string} string "Todo not found"
 // @Router /api/v1/todos/{id} [get]
-func HandleGetTodo(w http.ResponseWriter, r *http.Request) {
+func GetTodo(w http.ResponseWriter, r *http.Request) {
 	idStr := r.PathValue("id")
 	id, err := uuid.Parse(idStr)
 	if err != nil {
@@ -94,7 +94,7 @@ func HandleGetTodo(w http.ResponseWriter, r *http.Request) {
 // @Success 201 {object} models.Todo
 // @Failure 400 {string} string "Invalid request body or missing text"
 // @Router /api/v1/todos [post]
-func HandleCreateTodo(w http.ResponseWriter, r *http.Request) {
+func CreateTodo(w http.ResponseWriter, r *http.Request) {
 	var req models.CreateTodoRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		http.Error(w, "Invalid request body", http.StatusBadRequest)
@@ -155,7 +155,7 @@ func HandleCreateTodo(w http.ResponseWriter, r *http.Request) {
 // @Failure 400 {string} string "Invalid ID or request body"
 // @Failure 404 {string} string "Todo not found"
 // @Router /api/v1/todos/{id} [put]
-func HandleUpdateTodo(w http.ResponseWriter, r *http.Request) {
+func UpdateTodo(w http.ResponseWriter, r *http.Request) {
 	idStr := r.PathValue("id")
 	id, err := uuid.Parse(idStr)
 	if err != nil {
@@ -221,7 +221,7 @@ func HandleUpdateTodo(w http.ResponseWriter, r *http.Request) {
 // @Failure 400 {string} string "Invalid ID"
 // @Failure 404 {string} string "Todo not found"
 // @Router /api/v1/todos/{id} [delete]
-func HandleDeleteTodo(w http.ResponseWriter, r *http.Request) {
+func DeleteTodo(w http.ResponseWriter, r *http.Request) {
 	idStr := r.PathValue("id")
 	id, err := uuid.Parse(idStr)
 	if err != nil {

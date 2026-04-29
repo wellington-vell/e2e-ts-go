@@ -7,7 +7,7 @@ import (
 	"os"
 	"time"
 
-	"server/internal"
+	"server/internal/lib"
 
 	_ "github.com/lib/pq"
 	"github.com/pressly/goose/v3"
@@ -72,10 +72,10 @@ func (q *Queries) QueryRowContext(ctx context.Context, query string, args ...any
 }
 
 func InitDB() error {
-	dbURL := internal.Env("DATABASE_URL")
+	dbUrl := lib.Env.DatabaseURL
 
 	var err error
-	DB, err = sql.Open("postgres", dbURL)
+	DB, err = sql.Open("postgres", dbUrl)
 	if err != nil {
 		return fmt.Errorf("failed to open database connection: %w", err)
 	}

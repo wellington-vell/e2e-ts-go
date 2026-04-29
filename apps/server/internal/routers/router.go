@@ -5,13 +5,15 @@ import (
 	"time"
 
 	"server/internal"
+	"server/internal/lib"
 
+	"github.com/Authula/authula"
 	"github.com/go-chi/chi/v5"
 	chiMiddleware "github.com/go-chi/chi/v5/middleware"
 	"github.com/rs/cors"
 )
 
-func Router() http.Handler {
+func Router(auth *authula.Auth) http.Handler {
 	r := chi.NewRouter()
 
 	r.Use(chiMiddleware.Recoverer)
@@ -19,10 +21,11 @@ func Router() http.Handler {
 	r.Use(chiMiddleware.Logger)
 	r.Use(chiMiddleware.Timeout(10 * time.Second))
 
+	origins := lib.Env.CorsOrigin
 	r.Use(cors.New(cors.Options{
-		AllowedOrigins:   []string{internal.Env("CORS_ORIGIN")},
+		AllowedOrigins:   []string{origins},
 		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
-		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-Requested-With"},
+		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-Requested-With", "Set-Cookie", "Cookie"},
 		AllowCredentials: true,
 		MaxAge:           300,
 	}).Handler)
@@ -35,12 +38,14 @@ func Router() http.Handler {
 		r.Get("/scalar", internal.ScalarUI)
 	})
 
+	r.Handle("/auth/*", auth.Handler())
+
 	r.Route("/api/v1/todos", func(r chi.Router) {
-		r.Get("/", HandleGetTodos)
-		r.Post("/", HandleCreateTodo)
-		r.Get("/{id}", HandleGetTodo)
-		r.Put("/{id}", HandleUpdateTodo)
-		r.Delete("/{id}", HandleDeleteTodo)
+		r.Get("/", GetTodos)
+		r.Post("/", CreateTodo)
+		r.Get("/{id}", GetTodo)
+		r.Put("/{id}", UpdateTodo)
+		r.Delete("/{id}", DeleteTodo)
 	})
 
 	return r

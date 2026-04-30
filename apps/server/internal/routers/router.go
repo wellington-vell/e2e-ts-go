@@ -38,6 +38,8 @@ func Router(auth *authula.Auth) http.Handler {
 		r.Get("/scalar", internal.ScalarUI)
 	})
 
+	SetAuthProxy(auth.Handler())
+	RegisterAuthRoutes(r)
 	r.Handle("/auth/*", auth.Handler())
 
 	r.Route("/api/v1/todos", func(r chi.Router) {

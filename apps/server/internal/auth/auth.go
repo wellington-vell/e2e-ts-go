@@ -14,11 +14,11 @@ import (
 	adminplugin "github.com/Authula/authula/plugins/admin"
 	adminplugintypes "github.com/Authula/authula/plugins/admin/types"
 	csrfplugin "github.com/Authula/authula/plugins/csrf"
-	emailplugin "github.com/Authula/authula/plugins/email"
 	emailpasswordplugin "github.com/Authula/authula/plugins/email-password"
 	emailpasswordtypes "github.com/Authula/authula/plugins/email-password/types"
-	emailplugintypes "github.com/Authula/authula/plugins/email/types"
 	sessionplugin "github.com/Authula/authula/plugins/session"
+	// emailplugin "github.com/Authula/authula/plugins/email"
+	// emailplugintypes "github.com/Authula/authula/plugins/email/types"
 	// ratelimitplugin "github.com/Authula/authula/plugins/rate-limit"
 	// organizationsplugin "github.com/authula/authula/plugins/organizations"
 	// organizationsplugintypes "github.com/authula/authula/plugins/organizations/types"
@@ -258,12 +258,11 @@ func NewAuthula() (*authula.Auth, error) {
 	authInstance := authula.New(&authula.AuthConfig{
 		Config: config,
 		Plugins: []authulamodels.Plugin{
-			// This cannot be disabled
-			emailplugin.New(emailplugintypes.EmailPluginConfig{
-				Enabled:     true,
-				Provider:    emailplugintypes.ProviderSMTP,
-				FromAddress: "email@domain.com",
-			}),
+			// emailplugin.New(emailplugintypes.EmailPluginConfig{
+			// 	Enabled:     false,
+			// 	Provider:    emailplugintypes.ProviderSMTP,
+			// 	FromAddress: "email@domain.com",
+			// }),
 			emailpasswordplugin.New(emailpasswordtypes.EmailPasswordPluginConfig{
 				Enabled:                     true,
 				MinPasswordLength:           8,
@@ -288,7 +287,7 @@ func NewAuthula() (*authula.Auth, error) {
 				ImpersonationMaxExpiresIn: 15 * time.Minute,
 			}),
 			csrfplugin.New(csrfplugin.CSRFPluginConfig{
-				Enabled:                false,
+				Enabled:                true,
 				CookieName:             "csrf_token",
 				HeaderName:             "X-CSRF-TOKEN",
 				Secure:                 lib.Env.NodeEnv == lib.NodeEnvProduction,

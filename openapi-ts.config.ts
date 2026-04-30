@@ -7,6 +7,16 @@ export default defineConfig({
     entryFile: false,
     postProcess: ['oxfmt'],
   },
+  parser: {
+    transforms: {
+      schemaName: (name) => {
+        return name
+          .replace(/^server_internal_models\./i, '')
+          .replace(/^types\./i, '')
+          .replace(/^models\./i, '');
+      },
+    },
+  },
   plugins: [
     {
       name: 'zod',

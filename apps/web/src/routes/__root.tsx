@@ -1,5 +1,6 @@
 import { TanStackDevtools } from '@tanstack/react-devtools';
 import { formDevtoolsPlugin } from '@tanstack/react-form-devtools';
+import type { QueryClient } from '@tanstack/react-query';
 import { ReactQueryDevtoolsPanel } from '@tanstack/react-query-devtools';
 import {
   HeadContent,
@@ -10,14 +11,31 @@ import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools';
 
 import { Header } from '@/components/header';
 import { Toaster } from '@/components/ui/sonner';
-import { AuthProvider } from '@/context/auth';
 import { ThemeProvider } from '@/context/theme';
+import type { GetMeResponse } from '@/lib/api/types.gen';
 import { env } from '@/lib/env';
+import { orpc } from '@/lib/orpc';
 
 import '@/index.css';
 
-export const Route = createRootRouteWithContext()({
+interface RouterContext {
+  queryClient: QueryClient;
+  orpc: typeof orpc;
+  session: GetMeResponse | null;
+}
+
+export const Route = createRootRouteWithContext<RouterContext>()({
   component: RootComponent,
+  beforeLoad: async ({ context }) => {
+    try {
+      const response = await context.queryClient.fetchQuery(
+        orpc.getAuthMe.queryOptions(),
+      );
+      return { session: response.body ?? null };
+    } catch {
+      return { session: null };
+    }
+  },
   head: () => ({
     meta: [
       {
@@ -47,13 +65,11 @@ function RootComponent() {
         disableTransitionOnChange
         storageKey="vite-ui-theme"
       >
-        <AuthProvider>
-          <main className="grid grid-rows-[auto_1fr] h-svh">
-            <Header />
-            <Outlet />
-          </main>
-          <Toaster richColors />
-        </AuthProvider>
+        <main className="grid grid-rows-[auto_1fr] h-svh">
+          <Header />
+          <Outlet />
+        </main>
+        <Toaster richColors />
       </ThemeProvider>
 
       {env.VITE_NODE_ENV === 'development' && (

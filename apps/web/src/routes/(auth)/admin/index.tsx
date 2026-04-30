@@ -1,6 +1,7 @@
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
-import type { AdminUserState, BanUserRequest } from 'authula/plugins';
 import React from 'react';
+import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -12,35 +13,86 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { useAuth } from '@/context/auth';
-import { useAdminUsers, useBannedUsers } from '@/context/auth';
+import type { AdminUserState, BanUserRequest } from '@/lib/api/types.gen';
+import { orpc, queryClient } from '@/lib/orpc';
 
 export const Route = createFileRoute('/(auth)/admin/')({
   component: AdminPage,
 });
 
 function AdminPage() {
-  const { banUser, unbanUser, deleteUser, impersonate } = useAuth();
+  const { data: usersData, isLoading: usersLoading } = useQuery(
+    orpc.getAuthAdminUsers.queryOptions(),
+  );
+  const { data: bannedData, isLoading: bannedLoading } = useQuery(
+    orpc.getAuthAdminUsersStatesBanned.queryOptions(),
+  );
 
-  const { data: usersData, isLoading: usersLoading } = useAdminUsers();
-  const { data: bannedData, isLoading: bannedLoading } = useBannedUsers();
+  const impersonate = useMutation(
+    orpc.postAuthAdminImpersonations.mutationOptions({
+      onSuccess: () => {
+        toast.success('Impersonation started');
+        void queryClient.invalidateQueries({
+          queryKey: orpc.getAuthMe.key(),
+        });
+      },
+    }),
+  );
 
-  const users = usersData?.users ?? [];
+  const banUser = useMutation(
+    orpc.postAuthAdminUsersByUserIdBan.mutationOptions({
+      onSuccess: () => {
+        toast.success('User banned successfully');
+        void queryClient.invalidateQueries({
+          queryKey: orpc.getAuthAdminUsersStatesBanned.key(),
+        });
+        void queryClient.invalidateQueries({
+          queryKey: orpc.getAuthMe.key(),
+        });
+      },
+    }),
+  );
+
+  const unbanUser = useMutation(
+    orpc.postAuthAdminUsersByUserIdUnban.mutationOptions({
+      onSuccess: () => {
+        toast.success('User unbanned successfully');
+        void queryClient.invalidateQueries({
+          queryKey: orpc.getAuthAdminUsersStatesBanned.key(),
+        });
+        void queryClient.invalidateQueries({
+          queryKey: orpc.getAuthMe.key(),
+        });
+      },
+    }),
+  );
+
+  const deleteUser = useMutation(
+    orpc.deleteAuthAdminUsersByUserId.mutationOptions({
+      onSuccess: () => {
+        toast.success('User deleted successfully');
+        void queryClient.invalidateQueries({
+          queryKey: orpc.getAuthAdminUsers.key(),
+        });
+        void queryClient.invalidateQueries({
+          queryKey: orpc.getAuthMe.key(),
+        });
+      },
+    }),
+  );
+
+  const users = usersData?.body?.users ?? [];
   const bannedMap = React.useMemo(() => {
     const map = new Map<string, AdminUserState>();
-    bannedData?.forEach((state) => {
-      map.set(state.userId, state);
+    bannedData?.body?.forEach((state) => {
+      if (state.user_id) {
+        map.set(state.user_id, state);
+      }
     });
     return map;
   }, [bannedData]);
 
   const isLoading = usersLoading || bannedLoading;
-
-  const isActionLoading = (userId: string) =>
-    (impersonate.isPending && impersonate.variables?.targetUserId === userId) ||
-    (banUser.isPending && banUser.variables?.userId === userId) ||
-    (unbanUser.isPending && unbanUser.variables === userId) ||
-    (deleteUser.isPending && deleteUser.variables === userId);
 
   return (
     <div className="p-6">
@@ -67,7 +119,7 @@ function AdminPage() {
                 <TableCell>{user.name}</TableCell>
                 <TableCell>{user.email}</TableCell>
                 <TableCell>
-                  {bannedMap.has(user.id) ? (
+                  {bannedMap.has(user.id ?? '') ? (
                     <span className="text-destructive">Banned</span>
                   ) : (
                     <span className="text-green-600">Active</span>
@@ -77,22 +129,28 @@ function AdminPage() {
                   <Button
                     size="sm"
                     variant="outline"
-                    disabled={isActionLoading(user.id)}
+                    disabled={impersonate.isPending}
                     onClick={() =>
                       void impersonate.mutateAsync({
-                        targetUserId: user.id,
-                        reason: 'Admin action',
+                        body: {
+                          target_user_id: user.id ?? '',
+                          reason: 'Admin action',
+                        },
                       })
                     }
                   >
                     Impersonate
                   </Button>
-                  {bannedMap.has(user.id) ? (
+                  {bannedMap.has(user.id ?? '') ? (
                     <Button
                       size="sm"
                       variant="secondary"
-                      disabled={isActionLoading(user.id)}
-                      onClick={() => void unbanUser.mutateAsync(user.id)}
+                      disabled={bannedLoading}
+                      onClick={() =>
+                        void unbanUser.mutateAsync({
+                          path: { user_id: user.id ?? '' },
+                        })
+                      }
                     >
                       Unban
                     </Button>
@@ -100,10 +158,15 @@ function AdminPage() {
                     <Button
                       size="sm"
                       variant="destructive"
-                      disabled={isActionLoading(user.id)}
+                      disabled={bannedLoading}
                       onClick={() => {
-                        const params: BanUserRequest = { reason: 'Admin ban' };
-                        void banUser.mutateAsync({ userId: user.id, params });
+                        const params: BanUserRequest = {
+                          reason: 'Admin ban',
+                        };
+                        void banUser.mutateAsync({
+                          path: { user_id: user.id ?? '' },
+                          body: params,
+                        });
                       }}
                     >
                       Ban
@@ -112,8 +175,12 @@ function AdminPage() {
                   <Button
                     size="sm"
                     variant="destructive"
-                    disabled={isActionLoading(user.id)}
-                    onClick={() => void deleteUser.mutateAsync(user.id)}
+                    disabled={deleteUser.isPending}
+                    onClick={() =>
+                      void deleteUser.mutateAsync({
+                        path: { user_id: user.id ?? '' },
+                      })
+                    }
                   >
                     Delete
                   </Button>
@@ -127,7 +194,7 @@ function AdminPage() {
   );
 }
 
-function AdminPageV2() {
+export function AdminPageV2() {
   return (
     <div className="container mx-auto py-6 space-y-6">
       <div className="flex flex-col gap-1.5">

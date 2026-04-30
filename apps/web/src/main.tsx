@@ -4,16 +4,14 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 
 import { Loader } from '@/components/loader';
-import { queryClient } from '@/lib/orpc';
+import { orpc, queryClient } from '@/lib/orpc';
 import { routeTree } from '@/routeTree.gen';
 
 const router = createRouter({
   routeTree,
   defaultPreload: 'intent',
   defaultPendingComponent: () => <Loader />,
-  context: {
-    queryClient,
-  },
+  context: { orpc, queryClient, session: null },
   Wrap: function WrapComponent({ children }: { children: React.ReactNode }) {
     return (
       <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>

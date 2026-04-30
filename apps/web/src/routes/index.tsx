@@ -1,5 +1,5 @@
 import { useSuspenseQuery } from '@tanstack/react-query';
-import { createFileRoute } from '@tanstack/react-router';
+import { createFileRoute, useRouteContext } from '@tanstack/react-router';
 import React from 'react';
 
 import { orpc } from '@/lib/orpc';
@@ -14,9 +14,11 @@ export const Route = createFileRoute('/')({
 
 function HomeComponent() {
   const healthCheck = useSuspenseQuery(orpc.getApiV1Health.queryOptions());
+  const { session } = useRouteContext({ from: '__root__' });
 
   return (
     <div className="container mx-auto px-4 py-2 my-auto">
+      {JSON.stringify(session, null, 2)}
       <div className="grid gap-6">
         <React.Suspense fallback={<div>Loading...</div>}>
           <section className="rounded-lg border p-4">

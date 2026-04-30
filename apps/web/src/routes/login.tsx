@@ -1,13 +1,35 @@
-import { createFileRoute } from '@tanstack/react-router';
-import type { User } from 'authula';
+import { useMutation } from '@tanstack/react-query';
+import {
+  createFileRoute,
+  redirect,
+  useNavigate,
+  useRouter,
+} from '@tanstack/react-router';
 import React from 'react';
+import { toast } from 'sonner';
 import { z } from 'zod';
 
 import { useAppForm } from '@/components/form/hooks';
 import { Button } from '@/components/ui/button';
-import { useAuth } from '@/context/auth';
+import type { User } from '@/lib/api/types.gen';
+import { orpc, queryClient } from '@/lib/orpc';
+
+function sanitizeRedirect(url: unknown): string {
+  if (typeof url !== 'string' || !url.startsWith('/') || url.startsWith('//')) {
+    return '/';
+  }
+  return url;
+}
 
 export const Route = createFileRoute('/login')({
+  validateSearch: z.object({
+    redirect: z.string().optional().transform(sanitizeRedirect).default('/'),
+  }),
+  beforeLoad: async ({ context, search }) => {
+    if (context.session?.user) {
+      throw redirect({ to: search.redirect });
+    }
+  },
   component: RouteComponent,
 });
 
@@ -32,7 +54,9 @@ export function SignInForm({
 }: {
   onSwitchToSignUp: () => void;
 }) {
-  const { signIn } = useAuth();
+  const search = Route.useSearch();
+  const navigate = useNavigate();
+  const router = useRouter();
   const defaultValues: Pick<User, 'email'> & { password: string } = {
     email: '',
     password: '',
@@ -43,12 +67,27 @@ export function SignInForm({
     password: z.string().min(8, 'Password must be at least 8 characters'),
   });
 
+  const signIn = useMutation(
+    orpc.postAuthEmailPasswordSignIn.mutationOptions({
+      onSuccess: async () => {
+        toast.success('Successfully signed in!');
+        await queryClient.invalidateQueries({
+          queryKey: orpc.getAuthMe.key(),
+        });
+        await router.invalidate();
+        void navigate({ to: search.redirect });
+      },
+    }),
+  );
+
   const form = useAppForm({
     defaultValues,
     onSubmit: async ({ value }) => {
       await signIn.mutateAsync({
-        email: value.email,
-        password: value.password,
+        body: {
+          email: value.email,
+          password: value.password,
+        },
       });
     },
     validators: {
@@ -125,8 +164,10 @@ export function SignUpForm({
 }: {
   onSwitchToSignIn: () => void;
 }) {
-  const { signUp } = useAuth();
-  const defaultValues: Pick<User, 'email' | 'name'> & { password: string } = {
+  const router = useRouter();
+  const defaultValues: Pick<User, 'email' | 'name'> & {
+    password: string;
+  } = {
     email: '',
     password: '',
     name: '',
@@ -138,13 +179,27 @@ export function SignUpForm({
     password: z.string().min(8, 'Password must be at least 8 characters'),
   });
 
+  const signUp = useMutation(
+    orpc.postAuthEmailPasswordSignUp.mutationOptions({
+      onSuccess: async () => {
+        toast.success('Successfully signed up!');
+        await queryClient.invalidateQueries({
+          queryKey: orpc.getAuthMe.key(),
+        });
+        await router.invalidate();
+      },
+    }),
+  );
+
   const form = useAppForm({
     defaultValues,
     onSubmit: async ({ value }) => {
       await signUp.mutateAsync({
-        email: value.email,
-        password: value.password,
-        name: value.name,
+        body: {
+          email: value.email,
+          password: value.password,
+          name: value.name,
+        },
       });
     },
     validators: {

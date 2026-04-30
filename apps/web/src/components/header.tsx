@@ -1,7 +1,15 @@
-import { Link, type LinkProps } from '@tanstack/react-router';
+import { useMutation } from '@tanstack/react-query';
+import {
+  Link,
+  useNavigate,
+  useRouteContext,
+  useRouter,
+  type LinkProps,
+} from '@tanstack/react-router';
 import { AlertTriangle, Moon, Sun } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import React from 'react';
+import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -13,7 +21,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { useAuth } from '@/context/auth';
+import { orpc, queryClient } from '@/lib/orpc';
 import type { routeTree } from '@/routeTree.gen';
 
 export function Header() {
@@ -83,17 +91,26 @@ export function Header() {
 }
 
 function UserMenu() {
-  const { user, session, isLoading, signOut } = useAuth();
+  const navigate = useNavigate();
+  const router = useRouter();
+  const { session } = useRouteContext({ from: '__root__' });
 
-  if (isLoading) {
-    return (
-      <Button variant="outline" disabled>
-        Loading...
-      </Button>
-    );
-  }
+  const signOut = useMutation(
+    orpc.postAuthSignOut.mutationOptions({
+      onSuccess: () => {
+        toast.success('Successfully signed out!');
+        queryClient.removeQueries({
+          queryKey: orpc.getAuthMe.key(),
+        });
+        void router.invalidate();
+        void navigate({
+          to: '/login',
+        });
+      },
+    }),
+  );
 
-  if (!session || !user) {
+  if (!session?.user || !session?.session) {
     return (
       <Link to="/login">
         <Button variant="outline">Sign In</Button>
@@ -104,13 +121,13 @@ function UserMenu() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger render={<Button variant="outline" />}>
-        {user.name}
+        {session.user.name}
       </DropdownMenuTrigger>
       <DropdownMenuContent className="bg-card w-full">
         <DropdownMenuGroup>
           <DropdownMenuLabel>My Account</DropdownMenuLabel>
           <DropdownMenuSeparator />
-          <DropdownMenuItem>{user.email}</DropdownMenuItem>
+          <DropdownMenuItem>{session.user.email}</DropdownMenuItem>
           <DropdownMenuItem
             variant="destructive"
             onClick={async () => {

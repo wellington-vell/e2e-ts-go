@@ -80,7 +80,7 @@ func GetTodo(w http.ResponseWriter, r *http.Request) {
 	}
 	w.Header().Set("Content-Type", "application/json")
 	if err := json.NewEncoder(w).Encode(&t); err != nil {
-		log.Printf("JSON encode error in HandleGetTodo: %v", err)
+		log.Printf("JSON encode error in GetTodo: %v", err)
 		http.Error(w, "Internal server error", http.StatusInternalServerError)
 	}
 }
@@ -139,7 +139,7 @@ func CreateTodo(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
 	if err := json.NewEncoder(w).Encode(&t); err != nil {
-		log.Printf("JSON encode error in HandleCreateTodo: %v", err)
+		log.Printf("JSON encode error in CreateTodo: %v", err)
 		http.Error(w, "Internal server error", http.StatusInternalServerError)
 	}
 }
@@ -208,7 +208,7 @@ func UpdateTodo(w http.ResponseWriter, r *http.Request) {
 	}
 	w.Header().Set("Content-Type", "application/json")
 	if err := json.NewEncoder(w).Encode(&t); err != nil {
-		log.Printf("JSON encode error in HandleUpdateTodo: %v", err)
+		log.Printf("JSON encode error in UpdateTodo: %v", err)
 		http.Error(w, "Internal server error", http.StatusInternalServerError)
 	}
 }

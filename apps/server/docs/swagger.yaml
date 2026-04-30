@@ -1,4 +1,41 @@
 definitions:
+  models.Account:
+    properties:
+      access_token:
+        type: string
+      access_token_expires_at:
+        type: string
+      account_id:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: string
+      id_token:
+        type: string
+      password:
+        description: for email/password auth
+        type: string
+      provider_id:
+        type: string
+      refresh_token:
+        type: string
+      refresh_token_expires_at:
+        type: string
+      scope:
+        type: string
+      updated_at:
+        type: string
+      user_id:
+        type: string
+    type: object
+  server_internal_models.AdminUserSession:
+    properties:
+      session:
+        $ref: '#/definitions/server_internal_models.Session'
+      state:
+        $ref: '#/definitions/types.AdminSessionState'
+    type: object
   server_internal_models.CreateTodoRequest:
     properties:
       actualHours:
@@ -45,6 +82,37 @@ definitions:
     required:
     - text
     type: object
+  server_internal_models.CreateUserRequest:
+    properties:
+      email:
+        type: string
+      email_verified:
+        type: boolean
+      image:
+        type: string
+      metadata:
+        additionalProperties: {}
+        type: object
+      name:
+        type: string
+    type: object
+  server_internal_models.CreateUserResponse:
+    properties:
+      user:
+        $ref: '#/definitions/server_internal_models.User'
+    type: object
+  server_internal_models.GetMeResponse:
+    properties:
+      session:
+        $ref: '#/definitions/server_internal_models.Session'
+      user:
+        $ref: '#/definitions/server_internal_models.User'
+    type: object
+  server_internal_models.GetUserByIDResponse:
+    properties:
+      user:
+        $ref: '#/definitions/server_internal_models.User'
+    type: object
   server_internal_models.HealthResponse:
     properties:
       arch:
@@ -74,6 +142,76 @@ definitions:
         type: number
       version:
         type: string
+    type: object
+  server_internal_models.Session:
+    properties:
+      created_at:
+        type: string
+      expires_at:
+        type: string
+      id:
+        type: string
+      ip_address:
+        type: string
+      token:
+        type: string
+      updated_at:
+        type: string
+      user_agent:
+        type: string
+      user_id:
+        type: string
+    type: object
+  server_internal_models.SignInRequest:
+    properties:
+      callback_url:
+        type: string
+      email:
+        type: string
+      password:
+        type: string
+    type: object
+  server_internal_models.SignInResponse:
+    properties:
+      session:
+        $ref: '#/definitions/server_internal_models.Session'
+      user:
+        $ref: '#/definitions/server_internal_models.User'
+    type: object
+  server_internal_models.SignOutRequest:
+    properties:
+      session_id:
+        type: string
+      sign_out_all:
+        type: boolean
+    type: object
+  server_internal_models.SignOutResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  server_internal_models.SignUpRequest:
+    properties:
+      callback_url:
+        type: string
+      email:
+        type: string
+      image:
+        type: string
+      metadata:
+        additionalProperties: {}
+        type: object
+      name:
+        type: string
+      password:
+        type: string
+    type: object
+  server_internal_models.SignUpResponse:
+    properties:
+      session:
+        $ref: '#/definitions/server_internal_models.Session'
+      user:
+        $ref: '#/definitions/server_internal_models.User'
     type: object
   server_internal_models.Todo:
     properties:
@@ -180,6 +318,576 @@ definitions:
       text:
         minLength: 1
         type: string
+    type: object
+  server_internal_models.UpdateUserRequest:
+    properties:
+      email:
+        type: string
+      email_verified:
+        type: boolean
+      image:
+        type: string
+      metadata:
+        additionalProperties: {}
+        type: object
+      name:
+        type: string
+    type: object
+  server_internal_models.UpdateUserResponse:
+    properties:
+      user:
+        $ref: '#/definitions/server_internal_models.User'
+    type: object
+  server_internal_models.User:
+    properties:
+      created_at:
+        type: string
+      email:
+        type: string
+      email_verified:
+        type: boolean
+      id:
+        type: string
+      image:
+        type: string
+      metadata:
+        additionalProperties: {}
+        type: object
+      name:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  server_internal_models.UsersPage:
+    properties:
+      next_cursor:
+        type: string
+      users:
+        items:
+          $ref: '#/definitions/server_internal_models.User'
+        type: array
+    type: object
+  types.AddRolePermissionRequest:
+    properties:
+      permission_id:
+        type: string
+    type: object
+  types.AddRolePermissionResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  types.AdminSessionState:
+    properties:
+      created_at:
+        type: string
+      impersonation_expires_at:
+        type: string
+      impersonation_reason:
+        type: string
+      impersonator_user_id:
+        type: string
+      revoked_at:
+        type: string
+      revoked_by_user_id:
+        type: string
+      revoked_reason:
+        type: string
+      session_id:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  types.AdminUserState:
+    properties:
+      banned:
+        type: boolean
+      banned_at:
+        type: string
+      banned_by_user_id:
+        type: string
+      banned_reason:
+        type: string
+      banned_until:
+        type: string
+      created_at:
+        type: string
+      updated_at:
+        type: string
+      user_id:
+        type: string
+    type: object
+  types.AssignUserRoleRequest:
+    properties:
+      expires_at:
+        type: string
+      role_id:
+        type: string
+    type: object
+  types.AssignUserRoleResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  types.BanUserRequest:
+    properties:
+      banned_until:
+        type: string
+      reason:
+        type: string
+    type: object
+  types.BanUserResponse:
+    properties:
+      state:
+        $ref: '#/definitions/types.AdminUserState'
+    type: object
+  types.ChangePasswordRequest:
+    properties:
+      password:
+        type: string
+      token:
+        type: string
+    type: object
+  types.ChangePasswordResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  types.CheckUserPermissionsRequest:
+    properties:
+      permission_keys:
+        items:
+          type: string
+        type: array
+    type: object
+  types.CheckUserPermissionsResponse:
+    properties:
+      has_permissions:
+        type: boolean
+    type: object
+  types.CreateAccountRequest:
+    properties:
+      access_token:
+        type: string
+      access_token_expires_at:
+        type: string
+      account_id:
+        type: string
+      id_token:
+        type: string
+      password:
+        type: string
+      provider_id:
+        type: string
+      refresh_token:
+        type: string
+      refresh_token_expires_at:
+        type: string
+      scope:
+        type: string
+    type: object
+  types.CreateAccountResponse:
+    properties:
+      account:
+        $ref: '#/definitions/models.Account'
+    type: object
+  types.CreatePermissionRequest:
+    properties:
+      description:
+        type: string
+      is_system:
+        type: boolean
+      key:
+        type: string
+    type: object
+  types.CreatePermissionResponse:
+    properties:
+      permission:
+        $ref: '#/definitions/types.Permission'
+    type: object
+  types.CreateRoleRequest:
+    properties:
+      description:
+        type: string
+      is_system:
+        type: boolean
+      name:
+        type: string
+      weight:
+        type: integer
+    type: object
+  types.CreateRoleResponse:
+    properties:
+      role:
+        $ref: '#/definitions/types.Role'
+    type: object
+  types.CreateSessionStateRequest:
+    properties:
+      impersonation_expires_at:
+        type: string
+      impersonation_reason:
+        type: string
+      impersonator_user_id:
+        type: string
+      revoke:
+        type: boolean
+      revoked_reason:
+        type: string
+    type: object
+  types.CreateUserStateRequest:
+    properties:
+      banned:
+        type: boolean
+      banned_reason:
+        type: string
+      banned_until:
+        type: string
+    type: object
+  types.DeleteAccountResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  types.DeletePermissionResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  types.DeleteRoleResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  types.DeleteSessionStateResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  types.DeleteUserResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  types.DeleteUserStateResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  types.GetAccountByIDResponse:
+    properties:
+      account:
+        $ref: '#/definitions/models.Account'
+    type: object
+  types.GetImpersonationByIDResponse:
+    properties:
+      impersonation:
+        $ref: '#/definitions/types.Impersonation'
+    type: object
+  types.GetSessionStateResponse:
+    properties:
+      state:
+        $ref: '#/definitions/types.AdminSessionState'
+    type: object
+  types.GetUserPermissionsResponse:
+    properties:
+      permissions:
+        items:
+          $ref: '#/definitions/types.UserPermissionInfo'
+        type: array
+    type: object
+  types.GetUserStateResponse:
+    properties:
+      state:
+        $ref: '#/definitions/types.AdminUserState'
+    type: object
+  types.Impersonation:
+    properties:
+      actor_session_id:
+        type: string
+      actor_user_id:
+        type: string
+      created_at:
+        type: string
+      ended_at:
+        type: string
+      ended_by_user_id:
+        type: string
+      expires_at:
+        type: string
+      id:
+        type: string
+      impersonation_session_id:
+        type: string
+      reason:
+        type: string
+      started_at:
+        type: string
+      target_user_id:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  types.Permission:
+    properties:
+      created_at:
+        type: string
+      description:
+        type: string
+      id:
+        type: string
+      is_system:
+        type: boolean
+      key:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  types.PermissionGrantSource:
+    properties:
+      granted_at:
+        type: string
+      granted_by_user_id:
+        type: string
+      role_id:
+        type: string
+      role_name:
+        type: string
+    type: object
+  types.RemoveRolePermissionResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  types.RemoveUserRoleResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  types.ReplaceRolePermissionResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  types.ReplaceRolePermissionsRequest:
+    properties:
+      permission_ids:
+        items:
+          type: string
+        type: array
+    type: object
+  types.ReplaceUserRolesRequest:
+    properties:
+      role_ids:
+        items:
+          type: string
+        type: array
+    type: object
+  types.ReplaceUserRolesResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  types.RequestEmailChangeRequest:
+    properties:
+      callback_url:
+        type: string
+      new_email:
+        type: string
+    type: object
+  types.RequestPasswordResetRequest:
+    properties:
+      callback_url:
+        type: string
+      email:
+        type: string
+    type: object
+  types.RevokeSessionRequest:
+    properties:
+      reason:
+        type: string
+    type: object
+  types.RevokeSessionResponse:
+    properties:
+      state:
+        $ref: '#/definitions/types.AdminSessionState'
+    type: object
+  types.Role:
+    properties:
+      created_at:
+        type: string
+      description:
+        type: string
+      id:
+        type: string
+      is_system:
+        type: boolean
+      name:
+        type: string
+      updated_at:
+        type: string
+      weight:
+        type: integer
+    type: object
+  types.RoleDetails:
+    properties:
+      permissions:
+        items:
+          $ref: '#/definitions/types.UserPermissionInfo'
+        type: array
+      role:
+        $ref: '#/definitions/types.Role'
+    type: object
+  types.SendEmailVerificationRequest:
+    properties:
+      callback_url:
+        type: string
+    type: object
+  types.StartImpersonationRequest:
+    properties:
+      expires_in_seconds:
+        type: integer
+      reason:
+        type: string
+      target_user_id:
+        type: string
+    type: object
+  types.StartImpersonationResponse:
+    properties:
+      impersonation:
+        $ref: '#/definitions/types.Impersonation'
+    type: object
+  types.StopImpersonationResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  types.UnbanUserResponse:
+    properties:
+      state:
+        $ref: '#/definitions/types.AdminUserState'
+    type: object
+  types.UpdateAccountRequest:
+    properties:
+      access_token:
+        type: string
+      access_token_expires_at:
+        type: string
+      account_id:
+        type: string
+      id_token:
+        type: string
+      password:
+        type: string
+      provider_id:
+        type: string
+      refresh_token:
+        type: string
+      refresh_token_expires_at:
+        type: string
+      scope:
+        type: string
+    type: object
+  types.UpdateAccountResponse:
+    properties:
+      account:
+        $ref: '#/definitions/models.Account'
+    type: object
+  types.UpdatePermissionRequest:
+    properties:
+      description:
+        type: string
+    type: object
+  types.UpdatePermissionResponse:
+    properties:
+      permission:
+        $ref: '#/definitions/types.Permission'
+    type: object
+  types.UpdateRoleRequest:
+    properties:
+      description:
+        type: string
+      name:
+        type: string
+      weight:
+        type: integer
+    type: object
+  types.UpdateRoleResponse:
+    properties:
+      role:
+        $ref: '#/definitions/types.Role'
+    type: object
+  types.UpsertSessionStateRequest:
+    properties:
+      impersonation_expires_at:
+        type: string
+      impersonation_reason:
+        type: string
+      impersonator_user_id:
+        type: string
+      revoke:
+        type: boolean
+      revoked_reason:
+        type: string
+    type: object
+  types.UpsertSessionStateResponse:
+    properties:
+      state:
+        $ref: '#/definitions/types.AdminSessionState'
+    type: object
+  types.UpsertUserStateRequest:
+    properties:
+      banned:
+        type: boolean
+      banned_reason:
+        type: string
+      banned_until:
+        type: string
+    type: object
+  types.UpsertUserStateResponse:
+    properties:
+      state:
+        $ref: '#/definitions/types.AdminUserState'
+    type: object
+  types.UserAccountsResponse:
+    properties:
+      accounts:
+        items:
+          $ref: '#/definitions/models.Account'
+        type: array
+    type: object
+  types.UserPermissionInfo:
+    properties:
+      granted_at:
+        type: string
+      granted_by_user_id:
+        type: string
+      permission_description:
+        type: string
+      permission_id:
+        type: string
+      permission_key:
+        type: string
+      sources:
+        items:
+          $ref: '#/definitions/types.PermissionGrantSource'
+        type: array
+    type: object
+  types.UserRoleInfo:
+    properties:
+      assigned_at:
+        type: string
+      assigned_by_user_id:
+        type: string
+      expires_at:
+        type: string
+      role_description:
+        type: string
+      role_id:
+        type: string
+      role_name:
+        type: string
+      role_weight:
+        type: integer
     type: object
 info:
   contact: {}
@@ -321,4 +1029,1627 @@ paths:
       summary: Update a todo
       tags:
       - Todos
+  /auth/access-control/permissions:
+    get:
+      description: Retrieves all permissions (admin only).
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/types.Permission'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+      summary: Get all permissions
+      tags:
+      - Auth Access Control
+    post:
+      consumes:
+      - application/json
+      description: Creates a new permission (admin only).
+      parameters:
+      - description: Create permission request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/types.CreatePermissionRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/types.CreatePermissionResponse'
+        "400":
+          description: Bad request
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+      summary: Create permission
+      tags:
+      - Auth Access Control
+  /auth/access-control/permissions/{permission_id}:
+    delete:
+      description: Deletes a permission by ID (admin only).
+      parameters:
+      - description: Permission ID
+        in: path
+        name: permission_id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.DeletePermissionResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "404":
+          description: Not found
+          schema:
+            type: string
+      summary: Delete permission
+      tags:
+      - Auth Access Control
+    get:
+      description: Retrieves a single permission by ID (admin only).
+      parameters:
+      - description: Permission ID
+        in: path
+        name: permission_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.Permission'
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "404":
+          description: Not found
+          schema:
+            type: string
+      summary: Get permission by ID
+      tags:
+      - Auth Access Control
+    patch:
+      consumes:
+      - application/json
+      description: Updates an existing permission by ID (admin only).
+      parameters:
+      - description: Permission ID
+        in: path
+        name: permission_id
+        required: true
+        type: string
+      - description: Update permission request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/types.UpdatePermissionRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.UpdatePermissionResponse'
+        "400":
+          description: Bad request
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "404":
+          description: Not found
+          schema:
+            type: string
+      summary: Update permission
+      tags:
+      - Auth Access Control
+  /auth/access-control/roles:
+    get:
+      description: Retrieves all roles (admin only).
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/types.Role'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+      summary: Get all roles
+      tags:
+      - Auth Access Control
+    post:
+      consumes:
+      - application/json
+      description: Creates a new role (admin only).
+      parameters:
+      - description: Create role request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/types.CreateRoleRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/types.CreateRoleResponse'
+        "400":
+          description: Bad request
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+      summary: Create role
+      tags:
+      - Auth Access Control
+  /auth/access-control/roles/{role_id}:
+    delete:
+      description: Deletes a role by ID (admin only).
+      parameters:
+      - description: Role ID
+        in: path
+        name: role_id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.DeleteRoleResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "404":
+          description: Not found
+          schema:
+            type: string
+      summary: Delete role
+      tags:
+      - Auth Access Control
+    get:
+      description: Retrieves a single role by ID with its permissions (admin only).
+      parameters:
+      - description: Role ID
+        in: path
+        name: role_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.RoleDetails'
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "404":
+          description: Not found
+          schema:
+            type: string
+      summary: Get role by ID
+      tags:
+      - Auth Access Control
+    patch:
+      consumes:
+      - application/json
+      description: Updates an existing role by ID (admin only).
+      parameters:
+      - description: Role ID
+        in: path
+        name: role_id
+        required: true
+        type: string
+      - description: Update role request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/types.UpdateRoleRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.UpdateRoleResponse'
+        "400":
+          description: Bad request
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "404":
+          description: Not found
+          schema:
+            type: string
+      summary: Update role
+      tags:
+      - Auth Access Control
+  /auth/access-control/roles/{role_id}/permissions:
+    get:
+      description: Retrieves all permissions assigned to a role (admin only).
+      parameters:
+      - description: Role ID
+        in: path
+        name: role_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/types.Permission'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+      summary: Get role permissions
+      tags:
+      - Auth Access Control
+    post:
+      consumes:
+      - application/json
+      description: Adds a permission to a role (admin only).
+      parameters:
+      - description: Role ID
+        in: path
+        name: role_id
+        required: true
+        type: string
+      - description: Add role permission request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/types.AddRolePermissionRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.AddRolePermissionResponse'
+        "400":
+          description: Bad request
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+      summary: Add permission to role
+      tags:
+      - Auth Access Control
+    put:
+      consumes:
+      - application/json
+      description: Replaces all permissions for a role (admin only).
+      parameters:
+      - description: Role ID
+        in: path
+        name: role_id
+        required: true
+        type: string
+      - description: Replace role permissions request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/types.ReplaceRolePermissionsRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.ReplaceRolePermissionResponse'
+        "400":
+          description: Bad request
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+      summary: Replace role permissions
+      tags:
+      - Auth Access Control
+  /auth/access-control/roles/{role_id}/permissions/{permission_id}:
+    delete:
+      description: Removes a permission from a role (admin only).
+      parameters:
+      - description: Role ID
+        in: path
+        name: role_id
+        required: true
+        type: string
+      - description: Permission ID
+        in: path
+        name: permission_id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.RemoveRolePermissionResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+      summary: Remove permission from role
+      tags:
+      - Auth Access Control
+  /auth/access-control/roles/by-name/{role_name}:
+    get:
+      description: Retrieves a single role by name (admin only).
+      parameters:
+      - description: Role name
+        in: path
+        name: role_name
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.Role'
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "404":
+          description: Not found
+          schema:
+            type: string
+      summary: Get role by name
+      tags:
+      - Auth Access Control
+  /auth/access-control/users/{user_id}/permissions:
+    get:
+      description: Retrieves all permissions for a user (admin only).
+      parameters:
+      - description: User ID
+        in: path
+        name: user_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.GetUserPermissionsResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+      summary: Get user permissions
+      tags:
+      - Auth Access Control
+  /auth/access-control/users/{user_id}/permissions/check:
+    post:
+      consumes:
+      - application/json
+      description: Checks if a user has the specified permissions (admin only).
+      parameters:
+      - description: User ID
+        in: path
+        name: user_id
+        required: true
+        type: string
+      - description: Check user permissions request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/types.CheckUserPermissionsRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.CheckUserPermissionsResponse'
+        "400":
+          description: Bad request
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+      summary: Check user permissions
+      tags:
+      - Auth Access Control
+  /auth/access-control/users/{user_id}/roles:
+    get:
+      description: Retrieves all roles assigned to a user (admin only).
+      parameters:
+      - description: User ID
+        in: path
+        name: user_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/types.UserRoleInfo'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+      summary: Get user roles
+      tags:
+      - Auth Access Control
+    post:
+      consumes:
+      - application/json
+      description: Assigns a role to a user (admin only).
+      parameters:
+      - description: User ID
+        in: path
+        name: user_id
+        required: true
+        type: string
+      - description: Assign user role request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/types.AssignUserRoleRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.AssignUserRoleResponse'
+        "400":
+          description: Bad request
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+      summary: Assign role to user
+      tags:
+      - Auth Access Control
+    put:
+      consumes:
+      - application/json
+      description: Replaces all roles for a user (admin only).
+      parameters:
+      - description: User ID
+        in: path
+        name: user_id
+        required: true
+        type: string
+      - description: Replace user roles request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/types.ReplaceUserRolesRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.ReplaceUserRolesResponse'
+        "400":
+          description: Bad request
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+      summary: Replace user roles
+      tags:
+      - Auth Access Control
+  /auth/access-control/users/{user_id}/roles/{role_id}:
+    delete:
+      description: Removes a role from a user (admin only).
+      parameters:
+      - description: User ID
+        in: path
+        name: user_id
+        required: true
+        type: string
+      - description: Role ID
+        in: path
+        name: role_id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.RemoveUserRoleResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+      summary: Remove role from user
+      tags:
+      - Auth Access Control
+  /auth/admin/accounts/{id}:
+    delete:
+      description: Deletes an account by ID (admin only).
+      parameters:
+      - description: Account ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.DeleteAccountResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "404":
+          description: Not found
+          schema:
+            type: string
+      summary: Delete account
+      tags:
+      - Auth Admin
+    get:
+      description: Retrieves a single account by ID (admin only).
+      parameters:
+      - description: Account ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.GetAccountByIDResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "404":
+          description: Not found
+          schema:
+            type: string
+      summary: Get account by ID
+      tags:
+      - Auth Admin
+    patch:
+      consumes:
+      - application/json
+      description: Updates an existing account by ID (admin only).
+      parameters:
+      - description: Account ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Update account request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/types.UpdateAccountRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.UpdateAccountResponse'
+        "400":
+          description: Bad request
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "404":
+          description: Not found
+          schema:
+            type: string
+      summary: Update account
+      tags:
+      - Auth Admin
+  /auth/admin/impersonations:
+    get:
+      description: Retrieves all impersonation records (admin only).
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/types.Impersonation'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+      summary: Get all impersonations
+      tags:
+      - Auth Admin
+    post:
+      consumes:
+      - application/json
+      description: Starts an impersonation session for a target user (admin only).
+      parameters:
+      - description: Start impersonation request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/types.StartImpersonationRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/types.StartImpersonationResponse'
+        "400":
+          description: Bad request
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+      summary: Start impersonation
+      tags:
+      - Auth Admin
+  /auth/admin/impersonations/{impersonation_id}:
+    get:
+      description: Retrieves a single impersonation record by ID (admin only).
+      parameters:
+      - description: Impersonation ID
+        in: path
+        name: impersonation_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.GetImpersonationByIDResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "404":
+          description: Not found
+          schema:
+            type: string
+      summary: Get impersonation by ID
+      tags:
+      - Auth Admin
+  /auth/admin/impersonations/{impersonation_id}/stop:
+    post:
+      description: Stops an active impersonation session by ID.
+      parameters:
+      - description: Impersonation ID
+        in: path
+        name: impersonation_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.StopImpersonationResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "404":
+          description: Not found
+          schema:
+            type: string
+      summary: Stop impersonation
+      tags:
+      - Auth Admin
+  /auth/admin/sessions/{session_id}/revoke:
+    post:
+      consumes:
+      - application/json
+      description: Revokes a session by ID (admin only).
+      parameters:
+      - description: Session ID
+        in: path
+        name: session_id
+        required: true
+        type: string
+      - description: Revoke session request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/types.RevokeSessionRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.RevokeSessionResponse'
+        "400":
+          description: Bad request
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+      summary: Revoke session
+      tags:
+      - Auth Admin
+  /auth/admin/sessions/{session_id}/state:
+    delete:
+      description: Deletes the state record for a session (admin only).
+      parameters:
+      - description: Session ID
+        in: path
+        name: session_id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.DeleteSessionStateResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "404":
+          description: Not found
+          schema:
+            type: string
+      summary: Delete session state
+      tags:
+      - Auth Admin
+    get:
+      description: Retrieves the state of a session (admin only).
+      parameters:
+      - description: Session ID
+        in: path
+        name: session_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.GetSessionStateResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "404":
+          description: Not found
+          schema:
+            type: string
+      summary: Get session state
+      tags:
+      - Auth Admin
+    patch:
+      consumes:
+      - application/json
+      description: Updates the state record for a session (admin only).
+      parameters:
+      - description: Session ID
+        in: path
+        name: session_id
+        required: true
+        type: string
+      - description: Update session state request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/types.UpsertSessionStateRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.UpsertSessionStateResponse'
+        "400":
+          description: Bad request
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+      summary: Update session state
+      tags:
+      - Auth Admin
+    post:
+      consumes:
+      - application/json
+      description: Creates a state record for a session (admin only).
+      parameters:
+      - description: Session ID
+        in: path
+        name: session_id
+        required: true
+        type: string
+      - description: Create session state request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/types.CreateSessionStateRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/types.UpsertSessionStateResponse'
+        "400":
+          description: Bad request
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+      summary: Create session state
+      tags:
+      - Auth Admin
+  /auth/admin/sessions/states/revoked:
+    get:
+      description: Retrieves all revoked session states (admin only).
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/types.AdminSessionState'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+      summary: Get revoked session states
+      tags:
+      - Auth Admin
+  /auth/admin/users:
+    get:
+      description: Retrieves a paginated list of all users (admin only).
+      parameters:
+      - description: Pagination cursor
+        in: query
+        name: cursor
+        type: string
+      - description: Pagination limit
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/server_internal_models.UsersPage'
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+      summary: Get all users
+      tags:
+      - Auth Admin
+    post:
+      consumes:
+      - application/json
+      description: Creates a new user account (admin only).
+      parameters:
+      - description: Create user request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/server_internal_models.CreateUserRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/server_internal_models.CreateUserResponse'
+        "400":
+          description: Bad request
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+      summary: Create user
+      tags:
+      - Auth Admin
+  /auth/admin/users/{user_id}:
+    delete:
+      description: Deletes a user by ID (admin only).
+      parameters:
+      - description: User ID
+        in: path
+        name: user_id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.DeleteUserResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "404":
+          description: Not found
+          schema:
+            type: string
+      summary: Delete user
+      tags:
+      - Auth Admin
+    get:
+      description: Retrieves a single user by ID (admin only).
+      parameters:
+      - description: User ID
+        in: path
+        name: user_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/server_internal_models.GetUserByIDResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "404":
+          description: Not found
+          schema:
+            type: string
+      summary: Get user by ID
+      tags:
+      - Auth Admin
+    patch:
+      consumes:
+      - application/json
+      description: Updates an existing user by ID (admin only).
+      parameters:
+      - description: User ID
+        in: path
+        name: user_id
+        required: true
+        type: string
+      - description: Update user request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/server_internal_models.UpdateUserRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/server_internal_models.UpdateUserResponse'
+        "400":
+          description: Bad request
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "404":
+          description: Not found
+          schema:
+            type: string
+      summary: Update user
+      tags:
+      - Auth Admin
+  /auth/admin/users/{user_id}/accounts:
+    get:
+      description: Retrieves all accounts for a user (admin only).
+      parameters:
+      - description: User ID
+        in: path
+        name: user_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.UserAccountsResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "404":
+          description: Not found
+          schema:
+            type: string
+      summary: Get user accounts
+      tags:
+      - Auth Admin
+    post:
+      consumes:
+      - application/json
+      description: Creates an account for a user (admin only).
+      parameters:
+      - description: User ID
+        in: path
+        name: user_id
+        required: true
+        type: string
+      - description: Create account request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/types.CreateAccountRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/types.CreateAccountResponse'
+        "400":
+          description: Bad request
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+      summary: Create account
+      tags:
+      - Auth Admin
+  /auth/admin/users/{user_id}/ban:
+    post:
+      consumes:
+      - application/json
+      description: Bans a user by ID (admin only).
+      parameters:
+      - description: User ID
+        in: path
+        name: user_id
+        required: true
+        type: string
+      - description: Ban user request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/types.BanUserRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.BanUserResponse'
+        "400":
+          description: Bad request
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+      summary: Ban user
+      tags:
+      - Auth Admin
+  /auth/admin/users/{user_id}/sessions:
+    get:
+      description: Retrieves all sessions for a user (admin only).
+      parameters:
+      - description: User ID
+        in: path
+        name: user_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/server_internal_models.AdminUserSession'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+      summary: Get user sessions
+      tags:
+      - Auth Admin
+  /auth/admin/users/{user_id}/state:
+    delete:
+      description: Deletes the state record for a user (admin only).
+      parameters:
+      - description: User ID
+        in: path
+        name: user_id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.DeleteUserStateResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "404":
+          description: Not found
+          schema:
+            type: string
+      summary: Delete user state
+      tags:
+      - Auth Admin
+    get:
+      description: Retrieves the state (banned status) of a user (admin only).
+      parameters:
+      - description: User ID
+        in: path
+        name: user_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.GetUserStateResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "404":
+          description: Not found
+          schema:
+            type: string
+      summary: Get user state
+      tags:
+      - Auth Admin
+    patch:
+      consumes:
+      - application/json
+      description: Updates the state record for a user (admin only).
+      parameters:
+      - description: User ID
+        in: path
+        name: user_id
+        required: true
+        type: string
+      - description: Update user state request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/types.UpsertUserStateRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.UpsertUserStateResponse'
+        "400":
+          description: Bad request
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+      summary: Update user state
+      tags:
+      - Auth Admin
+    post:
+      consumes:
+      - application/json
+      description: Creates a state record for a user (admin only).
+      parameters:
+      - description: User ID
+        in: path
+        name: user_id
+        required: true
+        type: string
+      - description: Create user state request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/types.CreateUserStateRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/types.UpsertUserStateResponse'
+        "400":
+          description: Bad request
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+      summary: Create user state
+      tags:
+      - Auth Admin
+  /auth/admin/users/{user_id}/unban:
+    post:
+      description: Unbans a user by ID (admin only).
+      parameters:
+      - description: User ID
+        in: path
+        name: user_id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.UnbanUserResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "404":
+          description: Not found
+          schema:
+            type: string
+      summary: Unban user
+      tags:
+      - Auth Admin
+  /auth/admin/users/states/banned:
+    get:
+      description: Retrieves all banned user states (admin only).
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/types.AdminUserState'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+      summary: Get banned user states
+      tags:
+      - Auth Admin
+  /auth/email-password/change-password:
+    post:
+      consumes:
+      - application/json
+      description: Changes the user's password using a reset token.
+      parameters:
+      - description: Change password request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/types.ChangePasswordRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.ChangePasswordResponse'
+        "400":
+          description: Bad request
+          schema:
+            type: string
+      summary: Change password
+      tags:
+      - Auth Email Password
+  /auth/email-password/request-email-change:
+    post:
+      consumes:
+      - application/json
+      description: Requests an email change for the authenticated user.
+      parameters:
+      - description: Request email change request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/types.RequestEmailChangeRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Email change requested
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad request
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+      summary: Request email change
+      tags:
+      - Auth Email Password
+  /auth/email-password/request-password-reset:
+    post:
+      consumes:
+      - application/json
+      description: Requests a password reset for the specified email.
+      parameters:
+      - description: Request password reset request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/types.RequestPasswordResetRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Password reset requested
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad request
+          schema:
+            type: string
+      summary: Request password reset
+      tags:
+      - Auth Email Password
+  /auth/email-password/send-email-verification:
+    post:
+      consumes:
+      - application/json
+      description: Sends an email verification link to the specified email.
+      parameters:
+      - description: Send email verification request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/types.SendEmailVerificationRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Email verification sent
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad request
+          schema:
+            type: string
+      summary: Send email verification
+      tags:
+      - Auth Email Password
+  /auth/email-password/sign-in:
+    post:
+      consumes:
+      - application/json
+      description: Authenticates a user with email and password.
+      parameters:
+      - description: Sign in request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/server_internal_models.SignInRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/server_internal_models.SignInResponse'
+        "400":
+          description: Bad request
+          schema:
+            type: string
+      summary: Sign in with email and password
+      tags:
+      - Auth Email Password
+  /auth/email-password/sign-up:
+    post:
+      consumes:
+      - application/json
+      description: Creates a new user account with email and password.
+      parameters:
+      - description: Sign up request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/server_internal_models.SignUpRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/server_internal_models.SignUpResponse'
+        "400":
+          description: Bad request
+          schema:
+            type: string
+      summary: Sign up with email and password
+      tags:
+      - Auth Email Password
+  /auth/email-password/verify-email:
+    get:
+      description: Verifies a user's email using a token. Redirects if callback_url
+        is provided.
+      parameters:
+      - description: Verification token
+        in: query
+        name: token
+        required: true
+        type: string
+      - description: Callback URL
+        in: query
+        name: callback_url
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Email verified successfully
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad request
+          schema:
+            type: string
+      summary: Verify email
+      tags:
+      - Auth Email Password
+  /auth/me:
+    get:
+      description: Returns the currently authenticated user and active session.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/server_internal_models.GetMeResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+      summary: Get current authenticated user
+      tags:
+      - Auth
+  /auth/sign-out:
+    post:
+      consumes:
+      - application/json
+      description: Signs out the current user. Optionally signs out all sessions.
+      parameters:
+      - description: Sign out request
+        in: body
+        name: request
+        schema:
+          $ref: '#/definitions/server_internal_models.SignOutRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/server_internal_models.SignOutResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+      summary: Sign out
+      tags:
+      - Auth
 swagger: "2.0"

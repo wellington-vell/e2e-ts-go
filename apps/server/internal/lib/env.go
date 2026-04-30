@@ -122,7 +122,7 @@ func validateHex(name, raw string) error {
 	}
 	for i := 0; i < len(raw); i++ {
 		c := raw[i]
-		if !((c >= '0' && c <= '9') || (c >= 'a' && c <= 'f') || (c >= 'A' && c <= 'F')) {
+		if (c < '0' || c > '9') && (c < 'a' || c > 'f') && (c < 'A' || c > 'F') {
 			return fmt.Errorf("%s must be a valid hex string", name)
 		}
 	}

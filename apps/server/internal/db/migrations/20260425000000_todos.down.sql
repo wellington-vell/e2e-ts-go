@@ -1,0 +1,5 @@
+DROP TABLE IF EXISTS todos;
+DROP TYPE IF EXISTS todo_priority;
+DROP TYPE IF EXISTS todo_label;
+DROP TYPE IF EXISTS todo_status;
+DROP EXTENSION IF EXISTS "uuid-ossp";

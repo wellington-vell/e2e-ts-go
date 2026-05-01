@@ -1,10 +1,25 @@
--- +goose Up
--- +goose StatementBegin
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
-CREATE TYPE todo_status AS ENUM ('backlog', 'todo', 'in_progress', 'done', 'canceled');
-CREATE TYPE todo_label AS ENUM ('bug', 'feature', 'doc');
-CREATE TYPE todo_priority AS ENUM ('low', 'medium', 'high');
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'todo_status') THEN
+        CREATE TYPE todo_status AS ENUM ('backlog', 'todo', 'in_progress', 'done', 'canceled');
+    END IF;
+END$$;
+
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'todo_label') THEN
+        CREATE TYPE todo_label AS ENUM ('bug', 'feature', 'doc');
+    END IF;
+END$$;
+
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'todo_priority') THEN
+        CREATE TYPE todo_priority AS ENUM ('low', 'medium', 'high');
+    END IF;
+END$$;
 
 CREATE TABLE IF NOT EXISTS todos (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -27,13 +42,3 @@ CREATE INDEX IF NOT EXISTS idx_todos_label ON todos(label);
 CREATE INDEX IF NOT EXISTS idx_todos_priority ON todos(priority);
 CREATE INDEX IF NOT EXISTS idx_todos_due_date ON todos(due_date);
 CREATE INDEX IF NOT EXISTS idx_todos_created_at ON todos(created_at);
--- +goose StatementEnd
-
--- +goose Down
--- +goose StatementBegin
-DROP TABLE IF EXISTS todos;
-DROP TYPE IF EXISTS todo_priority;
-DROP TYPE IF EXISTS todo_label;
-DROP TYPE IF EXISTS todo_status;
-DROP EXTENSION IF EXISTS "uuid-ossp";
--- +goose StatementEnd

@@ -7,10 +7,11 @@ require (
 	github.com/MarceloPetrucio/go-scalar-api-reference v0.0.0-20240521013641-ce5d2efe0e06
 	github.com/go-chi/chi/v5 v5.2.5
 	github.com/google/uuid v1.6.0
-	github.com/lib/pq v1.12.3
-	github.com/pressly/goose/v3 v3.27.1
 	github.com/rs/cors v1.11.1
 	github.com/swaggo/swag v1.16.6
+	github.com/uptrace/bun v1.2.18
+	github.com/uptrace/bun/dialect/pgdialect v1.2.18
+	github.com/uptrace/bun/driver/pgdriver v1.2.18
 )
 
 require (
@@ -97,6 +98,7 @@ require (
 	github.com/lestrrat-go/httprc/v3 v3.0.2 // indirect
 	github.com/lestrrat-go/jwx/v3 v3.0.13 // indirect
 	github.com/lestrrat-go/option/v2 v2.0.0 // indirect
+	github.com/lib/pq v1.12.0 // indirect
 	github.com/lithammer/shortuuid/v3 v3.0.7 // indirect
 	github.com/lmittmann/tint v1.1.3 // indirect
 	github.com/lufia/plan9stats v0.0.0-20211012122336-39d0f177ccd0 // indirect
@@ -105,7 +107,6 @@ require (
 	github.com/mattn/go-colorable v0.1.14 // indirect
 	github.com/mattn/go-isatty v0.0.21 // indirect
 	github.com/mattn/go-sqlite3 v1.14.37 // indirect
-	github.com/mfridman/interpolate v0.0.2 // indirect
 	github.com/moby/docker-image-spec v1.3.1 // indirect
 	github.com/moby/go-archive v0.2.0 // indirect
 	github.com/moby/patternmatcher v0.6.0 // indirect
@@ -134,7 +135,6 @@ require (
 	github.com/remyoudompheng/bigfft v0.0.0-20230129092748-24d4a6f8daec // indirect
 	github.com/resend/resend-go/v3 v3.2.0 // indirect
 	github.com/segmentio/asm v1.2.1 // indirect
-	github.com/sethvargo/go-retry v0.3.0 // indirect
 	github.com/shirou/gopsutil/v4 v4.26.2 // indirect
 	github.com/sirupsen/logrus v1.9.3 // indirect
 	github.com/sony/gobreaker v1.0.0 // indirect
@@ -150,9 +150,7 @@ require (
 	github.com/tklauser/go-sysconf v0.3.16 // indirect
 	github.com/tklauser/numcpus v0.11.0 // indirect
 	github.com/tmthrgd/go-hex v0.0.0-20190904060850-447a3041c3bc // indirect
-	github.com/uptrace/bun v1.2.18 // indirect
 	github.com/uptrace/bun/dialect/mysqldialect v1.2.18 // indirect
-	github.com/uptrace/bun/dialect/pgdialect v1.2.18 // indirect
 	github.com/uptrace/bun/dialect/sqlitedialect v1.2.18 // indirect
 	github.com/uptrace/bun/extra/bundebug v1.2.18 // indirect
 	github.com/valyala/fastjson v1.6.7 // indirect
@@ -167,7 +165,6 @@ require (
 	go.opentelemetry.io/otel/metric v1.43.0 // indirect
 	go.opentelemetry.io/otel/trace v1.43.0 // indirect
 	go.uber.org/atomic v1.11.0 // indirect
-	go.uber.org/multierr v1.11.0 // indirect
 	golang.org/x/crypto v0.50.0 // indirect
 	golang.org/x/mod v0.35.0 // indirect
 	golang.org/x/net v0.53.0 // indirect
@@ -179,6 +176,7 @@ require (
 	google.golang.org/appengine v1.6.8 // indirect
 	google.golang.org/protobuf v1.36.11 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
+	mellium.im/sasl v0.3.2 // indirect
 	modernc.org/libc v1.72.1 // indirect
 	modernc.org/mathutil v1.7.1 // indirect
 	modernc.org/memory v1.11.0 // indirect

@@ -27,36 +27,17 @@ tasks:
   swagger:
     command: "swag init -g cmd/main.go -o docs --parseDependency --parseInternal"
 
-  migrate-create:
-    script: "GOOSE_DRIVER=postgres GOOSE_DBSTRING=${DATABASE_URL} goose create -dir internal/db/migrations ${MIGRATION_NAME} ${MIGRATION_TYPE}"
+  migrate-status:
+    command: "go run cmd/migrate/main.go status"
     options:
       envFile: true
-    env:
-      MIGRATION_NAME: "${MIGRATION_NAME}"
-      MIGRATION_TYPE: "${MIGRATION_TYPE}"
-    inputs:
-      - "internal/db/migrations/*.sql"
 
   migrate-up:
-    command: "goose postgres ${DATABASE_URL} up -dir internal/db/migrations"
+    command: "go run cmd/migrate/main.go up"
     options:
       envFile: true
 
   migrate-down:
-    command: "goose postgres ${DATABASE_URL} down -dir internal/db/migrations"
+    command: "go run cmd/migrate/main.go down"
     options:
       envFile: true
-
-  migrate-up-to:
-    command: "goose postgres ${DATABASE_URL} up-to -dir internal/db/migrations ${MIGRATION_VERSION}"
-    options:
-      envFile: true
-    env:
-      MIGRATION_VERSION: "${MIGRATION_VERSION}"
-
-  migrate-down-to:
-    command: "goose postgres ${DATABASE_URL} down-to -dir internal/db/migrations ${MIGRATION_VERSION}"
-    options:
-      envFile: true
-    env:
-      MIGRATION_VERSION: "${MIGRATION_VERSION}"

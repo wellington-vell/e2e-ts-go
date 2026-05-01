@@ -22,7 +22,6 @@ func main() {
 	if err := db.InitDB(); err != nil {
 		panic(fmt.Sprintf("Failed to initialize database: %v", err))
 	}
-	db.InitQueries()
 
 	authInstance, err := auth.NewAuthula()
 	if err != nil {

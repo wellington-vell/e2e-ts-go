@@ -6,6 +6,7 @@ import (
 	"errors"
 	"log"
 	"net/http"
+	"strings"
 
 	"server/internal/db"
 	"server/internal/models"
@@ -20,24 +21,12 @@ import (
 // @Success 200 {array} models.Todo
 // @Router /api/v1/todos [get]
 func GetTodos(w http.ResponseWriter, r *http.Request) {
-	query := `SELECT id, text, status, label, priority, estimated_hours, actual_hours, progress, cost, due_date, completed_at, created_at, updated_at FROM todos ORDER BY created_at DESC`
-	rows, err := db.Query.QueryContext(r.Context(), query)
-	if err != nil {
-		http.Error(w, "Internal server error", http.StatusInternalServerError)
-		return
-	}
-	defer rows.Close()
-
 	var todos []models.Todo
-	for rows.Next() {
-		var t models.Todo
-		if err := rows.Scan(&t.ID, &t.Text, &t.Status, &t.Label, &t.Priority, &t.EstimatedHours, &t.ActualHours, &t.Progress, &t.Cost, &t.DueDate, &t.CompletedAt, &t.CreatedAt, &t.UpdatedAt); err != nil {
-			http.Error(w, "Internal server error", http.StatusInternalServerError)
-			return
-		}
-		todos = append(todos, t)
-	}
-	if err := rows.Err(); err != nil {
+	err := db.DB.NewSelect().
+		Model(&todos).
+		Order("created_at DESC").
+		Scan(r.Context())
+	if err != nil {
 		http.Error(w, "Internal server error", http.StatusInternalServerError)
 		return
 	}
@@ -67,9 +56,11 @@ func GetTodo(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Invalid ID", http.StatusBadRequest)
 		return
 	}
-	query := `SELECT id, text, status, label, priority, estimated_hours, actual_hours, progress, cost, due_date, completed_at, created_at, updated_at FROM todos WHERE id = $1`
 	var t models.Todo
-	err = db.Query.QueryRowContext(r.Context(), query, id).Scan(&t.ID, &t.Text, &t.Status, &t.Label, &t.Priority, &t.EstimatedHours, &t.ActualHours, &t.Progress, &t.Cost, &t.DueDate, &t.CompletedAt, &t.CreatedAt, &t.UpdatedAt)
+	err = db.DB.NewSelect().
+		Model(&t).
+		Where("id = ?", id).
+		Scan(r.Context())
 	if errors.Is(err, sql.ErrNoRows) {
 		http.Error(w, "Todo not found", http.StatusNotFound)
 		return
@@ -125,11 +116,24 @@ func CreateTodo(w http.ResponseWriter, r *http.Request) {
 		cost = *req.Cost
 	}
 
-	query := `INSERT INTO todos (text, status, label, priority, estimated_hours, actual_hours, progress, cost, due_date) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id, text, status, label, priority, estimated_hours, actual_hours, progress, cost, due_date, completed_at, created_at, updated_at`
-	var t models.Todo
-	err := db.Query.QueryRowContext(r.Context(), query, req.Text, status, req.Label, priority, estimatedHours, actualHours, progress, cost, req.DueDate).Scan(&t.ID, &t.Text, &t.Status, &t.Label, &t.Priority, &t.EstimatedHours, &t.ActualHours, &t.Progress, &t.Cost, &t.DueDate, &t.CompletedAt, &t.CreatedAt, &t.UpdatedAt)
+	t := models.Todo{
+		Text:           req.Text,
+		Status:         status,
+		Label:          req.Label,
+		Priority:       priority,
+		EstimatedHours: estimatedHours,
+		ActualHours:    actualHours,
+		Progress:       progress,
+		Cost:           cost,
+		DueDate:        req.DueDate,
+	}
+
+	_, err := db.DB.NewInsert().
+		Model(&t).
+		Returning("*").
+		Exec(r.Context())
 	if err != nil {
-		if errors.Is(err, db.ErrUniqueViolation) {
+		if strings.Contains(err.Error(), "duplicate key") || strings.Contains(err.Error(), "unique constraint") {
 			http.Error(w, "Duplicate entry", http.StatusConflict)
 			return
 		}
@@ -167,37 +171,47 @@ func UpdateTodo(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Invalid request body", http.StatusBadRequest)
 		return
 	}
-	query := `
-		UPDATE todos SET
-			text = COALESCE($1, text),
-			status = COALESCE($2, status),
-			label = COALESCE($3, label),
-			priority = COALESCE($4, priority),
-			estimated_hours = COALESCE($5, estimated_hours),
-			actual_hours = COALESCE($6, actual_hours),
-			progress = COALESCE($7, progress),
-			cost = COALESCE($8, cost),
-			due_date = COALESCE($9, due_date),
-			completed_at = COALESCE($10, completed_at),
-			updated_at = NOW()
-		WHERE id = $11
-		RETURNING id, text, status, label, priority, estimated_hours, actual_hours, progress, cost, due_date, completed_at, created_at, updated_at
-	`
-	var t models.Todo
-	err = db.Query.QueryRowContext(r.Context(), query,
-		req.Text,
-		req.Status,
-		req.Label,
-		req.Priority,
-		req.EstimatedHours,
-		req.ActualHours,
-		req.Progress,
-		req.Cost,
-		req.DueDate,
-		req.CompletedAt,
-		id,
-	).Scan(&t.ID, &t.Text, &t.Status, &t.Label, &t.Priority, &t.EstimatedHours, &t.ActualHours, &t.Progress, &t.Cost, &t.DueDate, &t.CompletedAt, &t.CreatedAt, &t.UpdatedAt)
 
+	var t models.Todo
+	query := db.DB.NewUpdate().
+		Model(&t).
+		Where("id = ?", id).
+		Returning("*")
+
+	if req.Text != nil {
+		query.Set("text = ?", *req.Text)
+	}
+	if req.Status != nil {
+		query.Set("status = ?", *req.Status)
+	}
+	if req.Label != nil {
+		query.Set("label = ?", req.Label)
+	}
+	if req.Priority != nil {
+		query.Set("priority = ?", *req.Priority)
+	}
+	if req.EstimatedHours != nil {
+		query.Set("estimated_hours = ?", *req.EstimatedHours)
+	}
+	if req.ActualHours != nil {
+		query.Set("actual_hours = ?", *req.ActualHours)
+	}
+	if req.Progress != nil {
+		query.Set("progress = ?", *req.Progress)
+	}
+	if req.Cost != nil {
+		query.Set("cost = ?", *req.Cost)
+	}
+	if req.DueDate != nil {
+		query.Set("due_date = ?", req.DueDate)
+	}
+	if req.CompletedAt != nil {
+		query.Set("completed_at = ?", req.CompletedAt)
+	}
+
+	query.Set("updated_at = NOW()")
+
+	err = query.Scan(r.Context())
 	if errors.Is(err, sql.ErrNoRows) {
 		http.Error(w, "Todo not found", http.StatusNotFound)
 		return
@@ -228,8 +242,10 @@ func DeleteTodo(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Invalid ID", http.StatusBadRequest)
 		return
 	}
-	query := `DELETE FROM todos WHERE id = $1`
-	result, err := db.Query.ExecContext(r.Context(), query, id)
+	result, err := db.DB.NewDelete().
+		Model((*models.Todo)(nil)).
+		Where("id = ?", id).
+		Exec(r.Context())
 	if err != nil {
 		http.Error(w, "Internal server error", http.StatusInternalServerError)
 		return

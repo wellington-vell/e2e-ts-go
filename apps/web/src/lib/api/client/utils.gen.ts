@@ -9,7 +9,12 @@ import {
   serializePrimitiveParam,
 } from '../core/pathSerializer.gen';
 import { getUrl } from '../core/utils.gen';
-import type { Client, ClientOptions, Config, RequestOptions } from './types.gen';
+import type {
+  Client,
+  ClientOptions,
+  Config,
+  RequestOptions,
+} from './types.gen';
 
 export const createQuerySerializer = <T = unknown>({
   parameters = {},
@@ -65,7 +70,9 @@ export const createQuerySerializer = <T = unknown>({
 /**
  * Infers parseAs value from provided Content-Type header.
  */
-export const getParseAs = (contentType: string | null): Exclude<Config['parseAs'], 'auto'> => {
+export const getParseAs = (
+  contentType: string | null,
+): Exclude<Config['parseAs'], 'auto'> => {
   if (!contentType) {
     // If no Content-Type header is provided, the best we can do is return the raw response body,
     // which is effectively the same as the 'stream' option.
@@ -78,7 +85,10 @@ export const getParseAs = (contentType: string | null): Exclude<Config['parseAs'
     return;
   }
 
-  if (cleanContent.startsWith('application/json') || cleanContent.endsWith('+json')) {
+  if (
+    cleanContent.startsWith('application/json') ||
+    cleanContent.endsWith('+json')
+  ) {
     return 'json';
   }
 
@@ -87,7 +97,9 @@ export const getParseAs = (contentType: string | null): Exclude<Config['parseAs'
   }
 
   if (
-    ['application/', 'audio/', 'image/', 'video/'].some((type) => cleanContent.startsWith(type))
+    ['application/', 'audio/', 'image/', 'video/'].some((type) =>
+      cleanContent.startsWith(type),
+    )
   ) {
     return 'blob';
   }
@@ -194,7 +206,10 @@ export const mergeHeaders = (
       continue;
     }
 
-    const iterator = header instanceof Headers ? headersEntries(header) : Object.entries(header);
+    const iterator =
+      header instanceof Headers
+        ? headersEntries(header)
+        : Object.entries(header);
 
     for (const [key, value] of iterator) {
       if (value === null) {
@@ -218,12 +233,17 @@ export const mergeHeaders = (
 
 type ErrInterceptor<Err, Res, Req, Options> = (
   error: Err,
-  response: Res,
-  request: Req,
+  /** response may be undefined due to a network error where no response object is produced */
+  response: Res | undefined,
+  /** request may be undefined, because error may be from building the request object itself */
+  request: Req | undefined,
   options: Options,
 ) => Err | Promise<Err>;
 
-type ReqInterceptor<Req, Options> = (request: Req, options: Options) => Req | Promise<Req>;
+type ReqInterceptor<Req, Options> = (
+  request: Req,
+  options: Options,
+) => Req | Promise<Req>;
 
 type ResInterceptor<Res, Req, Options> = (
   response: Res,
@@ -257,7 +277,10 @@ class Interceptors<Interceptor> {
     return this.fns.indexOf(id);
   }
 
-  update(id: number | Interceptor, fn: Interceptor): number | Interceptor | false {
+  update(
+    id: number | Interceptor,
+    fn: Interceptor,
+  ): number | Interceptor | false {
     const index = this.getInterceptorIndex(id);
     if (this.fns[index]) {
       this.fns[index] = fn;

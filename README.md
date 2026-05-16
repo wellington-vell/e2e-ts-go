@@ -10,7 +10,11 @@
 ### Backend
 
 - **[Go](https://go.dev/doc/)** - High-performance backend server
-- **[godotenv](https://github.com/joho/godotenv)** - Environment variable management
+- **[Authula](https://authula.vercel.app/docs/)** - Authentication
+- **[Bun](https://bun.uptrace.dev/)** - ORM
+- **[Chi](https://go-chi.io/)** - Router
+- **[Faker](https://github.com/jaswdr/faker)** - Fake data generation
+- **[Swagger](https://github.com/swaggo/swag) & [Scalar](https://scalar.com/)** - API documentation
 
 ### Frontend
 
@@ -21,6 +25,8 @@
 - **[TanStack Query](https://tanstack.com/query/latest/docs/framework/react/overview)** - Data fetching and state management
 - **[Tailwind CSS](https://tailwindcss.com/docs/installation/using-vite)** - Utility-first CSS framework
 - **[Zod](https://zod.dev/)** - Runtime type validation
+- **[oRPC](https://orpc.unnoq.com/)** - End-to-end type-safe API
+- **[HeyApi](https://heyapi.dev/)** - OpenAPI client generation
 
 ### Tooling
 
@@ -52,7 +58,7 @@ e2e-ts-go/
 
 ### Prerequisites
 
-- [Go](https://go.dev/) 1.25.5 or later
+- [Go](https://go.dev/) 1.26.2 or later
 - [Bun](https://bun.sh/) 1.3.5 or later
 - [Docker](https://www.docker.com/) (containerized development/deployment)
 - [Golangci Lint](https://golangci-lint.run/docs/welcome/install/local/) linter for golang language
@@ -82,33 +88,15 @@ bun run docker-dev
 
 # Start both server and web app in development mode
 bun dev
+
+# Seed the database
+bun run db-seed
 ```
 
 This will start:
 
 - Go server (default port from `SERVER_PORT` env variable)
 - Vite dev server for the frontend (default port from `VITE_WEB_PORT` env variable)
-
-### Database Migrations
-
-Database migrations are managed with [goose](https://github.com/pressly/goose). Make sure `DATABASE_URL` is set in your `.env` file.
-
-```bash
-# Create a new migration
-bun run migrate-create -- add_users sql
-
-# Run all pending migrations
-bun run migrate-up
-
-# Roll back the last migration
-bun run migrate-down
-
-# Migrate to a specific version
-bun run migrate-up-to -- 20260425000000
-
-# Roll back to version 0 (all migrations)
-bun run migrate-down-to -- 0
-```
 
 ## License
 

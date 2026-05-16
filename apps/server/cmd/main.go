@@ -19,13 +19,13 @@ func main() {
 	lib.LoadEnv()
 	port := lib.Env.ServerPort
 
-	if err := db.InitDB(); err != nil {
-		panic(fmt.Sprintf("Failed to initialize database: %v", err))
-	}
-
 	authInstance, err := auth.NewAuthula()
 	if err != nil {
 		panic(fmt.Sprintf("Failed to initialize auth: %v", err))
+	}
+
+	if err := db.InitDB(); err != nil {
+		panic(fmt.Sprintf("Failed to initialize database: %v", err))
 	}
 	router := routers.Router(authInstance)
 

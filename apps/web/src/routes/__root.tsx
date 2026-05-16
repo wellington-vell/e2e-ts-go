@@ -12,6 +12,7 @@ import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools';
 import { Header } from '@/components/header';
 import { Toaster } from '@/components/ui/sonner';
 import { ThemeProvider } from '@/context/theme';
+import { TimezoneProvider } from '@/context/timezone';
 import type { GetMeResponse } from '@/lib/api/types.gen';
 import { env } from '@/lib/env';
 import { orpc } from '@/lib/orpc';
@@ -29,7 +30,7 @@ export const Route = createRootRouteWithContext<RouterContext>()({
   beforeLoad: async ({ context }) => {
     try {
       const response = await context.queryClient.fetchQuery(
-        orpc.getAuthMe.queryOptions(),
+        context.orpc.getAuthMe.queryOptions(),
       );
       return { session: response.body ?? null };
     } catch {
@@ -65,11 +66,13 @@ function RootComponent() {
         disableTransitionOnChange
         storageKey="vite-ui-theme"
       >
-        <main className="grid grid-rows-[auto_1fr] h-svh">
-          <Header />
-          <Outlet />
-        </main>
-        <Toaster richColors />
+        <TimezoneProvider>
+          <main className="grid grid-rows-[auto_1fr] h-svh">
+            <Header />
+            <Outlet />
+          </main>
+          <Toaster richColors />
+        </TimezoneProvider>
       </ThemeProvider>
 
       {env.VITE_NODE_ENV === 'development' && (

@@ -7,6 +7,7 @@ require (
 	github.com/MarceloPetrucio/go-scalar-api-reference v0.0.0-20240521013641-ce5d2efe0e06
 	github.com/go-chi/chi/v5 v5.2.5
 	github.com/google/uuid v1.6.0
+	github.com/jaswdr/faker v1.19.1
 	github.com/rs/cors v1.11.1
 	github.com/swaggo/swag v1.16.6
 	github.com/uptrace/bun v1.2.18

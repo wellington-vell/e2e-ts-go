@@ -41,3 +41,8 @@ tasks:
     command: "go run cmd/migrate/main.go down"
     options:
       envFile: true
+
+  seed:
+    command: "go run cmd/seed/main.go"
+    options:
+      envFile: true

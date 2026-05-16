@@ -98,6 +98,7 @@ type Todo struct {
 	CompletedAt    *time.Time   `bun:"completed_at,nullzero" json:"completedAt,omitempty" swaggertype:"string" format:"date" description:"Timestamp when completed"`
 	CreatedAt      time.Time    `bun:"created_at,notnull,default:now()" json:"createdAt" swaggertype:"string" format:"date" description:"Timestamp when created"`
 	UpdatedAt      time.Time    `bun:"updated_at,notnull,default:now()" json:"updatedAt" swaggertype:"string" format:"date" description:"Timestamp when last updated"`
+	UserID         *string      `bun:"user_id" json:"userId,omitempty" description:"ID of the user who owns this todo"`
 }
 
 type CreateTodoRequest struct {

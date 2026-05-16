@@ -3050,6 +3050,9 @@ const docTemplate = `{
                 "updatedAt": {
                     "type": "string",
                     "format": "date"
+                },
+                "userId": {
+                    "type": "string"
                 }
             }
         },

@@ -4,775 +4,1825 @@ import * as z from 'zod';
 
 import type { Client, Options as Options2, TDataShape } from './client';
 import { client } from './client.gen';
-import type { DeleteApiV1TodosByIdData, DeleteApiV1TodosByIdErrors, DeleteApiV1TodosByIdResponses, DeleteAuthAccessControlPermissionsByPermissionIdData, DeleteAuthAccessControlPermissionsByPermissionIdErrors, DeleteAuthAccessControlPermissionsByPermissionIdResponses, DeleteAuthAccessControlRolesByRoleIdData, DeleteAuthAccessControlRolesByRoleIdErrors, DeleteAuthAccessControlRolesByRoleIdPermissionsByPermissionIdData, DeleteAuthAccessControlRolesByRoleIdPermissionsByPermissionIdErrors, DeleteAuthAccessControlRolesByRoleIdPermissionsByPermissionIdResponses, DeleteAuthAccessControlRolesByRoleIdResponses, DeleteAuthAccessControlUsersByUserIdRolesByRoleIdData, DeleteAuthAccessControlUsersByUserIdRolesByRoleIdErrors, DeleteAuthAccessControlUsersByUserIdRolesByRoleIdResponses, DeleteAuthAdminAccountsByIdData, DeleteAuthAdminAccountsByIdErrors, DeleteAuthAdminAccountsByIdResponses, DeleteAuthAdminSessionsBySessionIdStateData, DeleteAuthAdminSessionsBySessionIdStateErrors, DeleteAuthAdminSessionsBySessionIdStateResponses, DeleteAuthAdminUsersByUserIdData, DeleteAuthAdminUsersByUserIdErrors, DeleteAuthAdminUsersByUserIdResponses, DeleteAuthAdminUsersByUserIdStateData, DeleteAuthAdminUsersByUserIdStateErrors, DeleteAuthAdminUsersByUserIdStateResponses, GetApiV1HealthData, GetApiV1HealthResponses, GetApiV1TodosByIdData, GetApiV1TodosByIdErrors, GetApiV1TodosByIdResponses, GetApiV1TodosData, GetApiV1TodosResponses, GetAuthAccessControlPermissionsByPermissionIdData, GetAuthAccessControlPermissionsByPermissionIdErrors, GetAuthAccessControlPermissionsByPermissionIdResponses, GetAuthAccessControlPermissionsData, GetAuthAccessControlPermissionsErrors, GetAuthAccessControlPermissionsResponses, GetAuthAccessControlRolesByNameByRoleNameData, GetAuthAccessControlRolesByNameByRoleNameErrors, GetAuthAccessControlRolesByNameByRoleNameResponses, GetAuthAccessControlRolesByRoleIdData, GetAuthAccessControlRolesByRoleIdErrors, GetAuthAccessControlRolesByRoleIdPermissionsData, GetAuthAccessControlRolesByRoleIdPermissionsErrors, GetAuthAccessControlRolesByRoleIdPermissionsResponses, GetAuthAccessControlRolesByRoleIdResponses, GetAuthAccessControlRolesData, GetAuthAccessControlRolesErrors, GetAuthAccessControlRolesResponses, GetAuthAccessControlUsersByUserIdPermissionsData, GetAuthAccessControlUsersByUserIdPermissionsErrors, GetAuthAccessControlUsersByUserIdPermissionsResponses, GetAuthAccessControlUsersByUserIdRolesData, GetAuthAccessControlUsersByUserIdRolesErrors, GetAuthAccessControlUsersByUserIdRolesResponses, GetAuthAdminAccountsByIdData, GetAuthAdminAccountsByIdErrors, GetAuthAdminAccountsByIdResponses, GetAuthAdminImpersonationsByImpersonationIdData, GetAuthAdminImpersonationsByImpersonationIdErrors, GetAuthAdminImpersonationsByImpersonationIdResponses, GetAuthAdminImpersonationsData, GetAuthAdminImpersonationsErrors, GetAuthAdminImpersonationsResponses, GetAuthAdminSessionsBySessionIdStateData, GetAuthAdminSessionsBySessionIdStateErrors, GetAuthAdminSessionsBySessionIdStateResponses, GetAuthAdminSessionsStatesRevokedData, GetAuthAdminSessionsStatesRevokedErrors, GetAuthAdminSessionsStatesRevokedResponses, GetAuthAdminUsersByUserIdAccountsData, GetAuthAdminUsersByUserIdAccountsErrors, GetAuthAdminUsersByUserIdAccountsResponses, GetAuthAdminUsersByUserIdData, GetAuthAdminUsersByUserIdErrors, GetAuthAdminUsersByUserIdResponses, GetAuthAdminUsersByUserIdSessionsData, GetAuthAdminUsersByUserIdSessionsErrors, GetAuthAdminUsersByUserIdSessionsResponses, GetAuthAdminUsersByUserIdStateData, GetAuthAdminUsersByUserIdStateErrors, GetAuthAdminUsersByUserIdStateResponses, GetAuthAdminUsersData, GetAuthAdminUsersErrors, GetAuthAdminUsersResponses, GetAuthAdminUsersStatesBannedData, GetAuthAdminUsersStatesBannedErrors, GetAuthAdminUsersStatesBannedResponses, GetAuthEmailPasswordVerifyEmailData, GetAuthEmailPasswordVerifyEmailErrors, GetAuthEmailPasswordVerifyEmailResponses, GetAuthMeData, GetAuthMeErrors, GetAuthMeResponses, PatchAuthAccessControlPermissionsByPermissionIdData, PatchAuthAccessControlPermissionsByPermissionIdErrors, PatchAuthAccessControlPermissionsByPermissionIdResponses, PatchAuthAccessControlRolesByRoleIdData, PatchAuthAccessControlRolesByRoleIdErrors, PatchAuthAccessControlRolesByRoleIdResponses, PatchAuthAdminAccountsByIdData, PatchAuthAdminAccountsByIdErrors, PatchAuthAdminAccountsByIdResponses, PatchAuthAdminSessionsBySessionIdStateData, PatchAuthAdminSessionsBySessionIdStateErrors, PatchAuthAdminSessionsBySessionIdStateResponses, PatchAuthAdminUsersByUserIdData, PatchAuthAdminUsersByUserIdErrors, PatchAuthAdminUsersByUserIdResponses, PatchAuthAdminUsersByUserIdStateData, PatchAuthAdminUsersByUserIdStateErrors, PatchAuthAdminUsersByUserIdStateResponses, PostApiV1TodosData, PostApiV1TodosErrors, PostApiV1TodosResponses, PostAuthAccessControlPermissionsData, PostAuthAccessControlPermissionsErrors, PostAuthAccessControlPermissionsResponses, PostAuthAccessControlRolesByRoleIdPermissionsData, PostAuthAccessControlRolesByRoleIdPermissionsErrors, PostAuthAccessControlRolesByRoleIdPermissionsResponses, PostAuthAccessControlRolesData, PostAuthAccessControlRolesErrors, PostAuthAccessControlRolesResponses, PostAuthAccessControlUsersByUserIdPermissionsCheckData, PostAuthAccessControlUsersByUserIdPermissionsCheckErrors, PostAuthAccessControlUsersByUserIdPermissionsCheckResponses, PostAuthAccessControlUsersByUserIdRolesData, PostAuthAccessControlUsersByUserIdRolesErrors, PostAuthAccessControlUsersByUserIdRolesResponses, PostAuthAdminImpersonationsByImpersonationIdStopData, PostAuthAdminImpersonationsByImpersonationIdStopErrors, PostAuthAdminImpersonationsByImpersonationIdStopResponses, PostAuthAdminImpersonationsData, PostAuthAdminImpersonationsErrors, PostAuthAdminImpersonationsResponses, PostAuthAdminSessionsBySessionIdRevokeData, PostAuthAdminSessionsBySessionIdRevokeErrors, PostAuthAdminSessionsBySessionIdRevokeResponses, PostAuthAdminSessionsBySessionIdStateData, PostAuthAdminSessionsBySessionIdStateErrors, PostAuthAdminSessionsBySessionIdStateResponses, PostAuthAdminUsersByUserIdAccountsData, PostAuthAdminUsersByUserIdAccountsErrors, PostAuthAdminUsersByUserIdAccountsResponses, PostAuthAdminUsersByUserIdBanData, PostAuthAdminUsersByUserIdBanErrors, PostAuthAdminUsersByUserIdBanResponses, PostAuthAdminUsersByUserIdStateData, PostAuthAdminUsersByUserIdStateErrors, PostAuthAdminUsersByUserIdStateResponses, PostAuthAdminUsersByUserIdUnbanData, PostAuthAdminUsersByUserIdUnbanErrors, PostAuthAdminUsersByUserIdUnbanResponses, PostAuthAdminUsersData, PostAuthAdminUsersErrors, PostAuthAdminUsersResponses, PostAuthEmailPasswordChangePasswordData, PostAuthEmailPasswordChangePasswordErrors, PostAuthEmailPasswordChangePasswordResponses, PostAuthEmailPasswordRequestEmailChangeData, PostAuthEmailPasswordRequestEmailChangeErrors, PostAuthEmailPasswordRequestEmailChangeResponses, PostAuthEmailPasswordRequestPasswordResetData, PostAuthEmailPasswordRequestPasswordResetErrors, PostAuthEmailPasswordRequestPasswordResetResponses, PostAuthEmailPasswordSendEmailVerificationData, PostAuthEmailPasswordSendEmailVerificationErrors, PostAuthEmailPasswordSendEmailVerificationResponses, PostAuthEmailPasswordSignInData, PostAuthEmailPasswordSignInErrors, PostAuthEmailPasswordSignInResponses, PostAuthEmailPasswordSignUpData, PostAuthEmailPasswordSignUpErrors, PostAuthEmailPasswordSignUpResponses, PostAuthSignOutData, PostAuthSignOutErrors, PostAuthSignOutResponses, PutApiV1TodosByIdData, PutApiV1TodosByIdErrors, PutApiV1TodosByIdResponses, PutAuthAccessControlRolesByRoleIdPermissionsData, PutAuthAccessControlRolesByRoleIdPermissionsErrors, PutAuthAccessControlRolesByRoleIdPermissionsResponses, PutAuthAccessControlUsersByUserIdRolesData, PutAuthAccessControlUsersByUserIdRolesErrors, PutAuthAccessControlUsersByUserIdRolesResponses } from './types.gen';
-import { z_delete_api_v1_todos_by_id_path, z_delete_auth_access_control_permissions_by_permission_id_path, z_delete_auth_access_control_roles_by_role_id_path, z_delete_auth_access_control_roles_by_role_id_permissions_by_permission_id_path, z_delete_auth_access_control_users_by_user_id_roles_by_role_id_path, z_delete_auth_admin_accounts_by_id_path, z_delete_auth_admin_sessions_by_session_id_state_path, z_delete_auth_admin_users_by_user_id_path, z_delete_auth_admin_users_by_user_id_state_path, z_get_api_v1_todos_by_id_path, z_get_auth_access_control_permissions_by_permission_id_path, z_get_auth_access_control_roles_by_name_by_role_name_path, z_get_auth_access_control_roles_by_role_id_path, z_get_auth_access_control_roles_by_role_id_permissions_path, z_get_auth_access_control_users_by_user_id_permissions_path, z_get_auth_access_control_users_by_user_id_roles_path, z_get_auth_admin_accounts_by_id_path, z_get_auth_admin_impersonations_by_impersonation_id_path, z_get_auth_admin_sessions_by_session_id_state_path, z_get_auth_admin_users_by_user_id_accounts_path, z_get_auth_admin_users_by_user_id_path, z_get_auth_admin_users_by_user_id_sessions_path, z_get_auth_admin_users_by_user_id_state_path, z_get_auth_admin_users_query, z_get_auth_email_password_verify_email_query, z_patch_auth_access_control_permissions_by_permission_id_body, z_patch_auth_access_control_permissions_by_permission_id_path, z_patch_auth_access_control_roles_by_role_id_body, z_patch_auth_access_control_roles_by_role_id_path, z_patch_auth_admin_accounts_by_id_body, z_patch_auth_admin_accounts_by_id_path, z_patch_auth_admin_sessions_by_session_id_state_body, z_patch_auth_admin_sessions_by_session_id_state_path, z_patch_auth_admin_users_by_user_id_body, z_patch_auth_admin_users_by_user_id_path, z_patch_auth_admin_users_by_user_id_state_body, z_patch_auth_admin_users_by_user_id_state_path, z_post_api_v1_todos_body, z_post_auth_access_control_permissions_body, z_post_auth_access_control_roles_body, z_post_auth_access_control_roles_by_role_id_permissions_body, z_post_auth_access_control_roles_by_role_id_permissions_path, z_post_auth_access_control_users_by_user_id_permissions_check_body, z_post_auth_access_control_users_by_user_id_permissions_check_path, z_post_auth_access_control_users_by_user_id_roles_body, z_post_auth_access_control_users_by_user_id_roles_path, z_post_auth_admin_impersonations_body, z_post_auth_admin_impersonations_by_impersonation_id_stop_path, z_post_auth_admin_sessions_by_session_id_revoke_body, z_post_auth_admin_sessions_by_session_id_revoke_path, z_post_auth_admin_sessions_by_session_id_state_body, z_post_auth_admin_sessions_by_session_id_state_path, z_post_auth_admin_users_body, z_post_auth_admin_users_by_user_id_accounts_body, z_post_auth_admin_users_by_user_id_accounts_path, z_post_auth_admin_users_by_user_id_ban_body, z_post_auth_admin_users_by_user_id_ban_path, z_post_auth_admin_users_by_user_id_state_body, z_post_auth_admin_users_by_user_id_state_path, z_post_auth_admin_users_by_user_id_unban_path, z_post_auth_email_password_change_password_body, z_post_auth_email_password_request_email_change_body, z_post_auth_email_password_request_password_reset_body, z_post_auth_email_password_send_email_verification_body, z_post_auth_email_password_sign_in_body, z_post_auth_email_password_sign_up_body, z_post_auth_sign_out_body, z_put_api_v1_todos_by_id_body, z_put_api_v1_todos_by_id_path, z_put_auth_access_control_roles_by_role_id_permissions_body, z_put_auth_access_control_roles_by_role_id_permissions_path, z_put_auth_access_control_users_by_user_id_roles_body, z_put_auth_access_control_users_by_user_id_roles_path } from './zod.gen';
+import type {
+  DeleteApiV1TodosByIdData,
+  DeleteApiV1TodosByIdErrors,
+  DeleteApiV1TodosByIdResponses,
+  DeleteAuthAccessControlPermissionsByPermissionIdData,
+  DeleteAuthAccessControlPermissionsByPermissionIdErrors,
+  DeleteAuthAccessControlPermissionsByPermissionIdResponses,
+  DeleteAuthAccessControlRolesByRoleIdData,
+  DeleteAuthAccessControlRolesByRoleIdErrors,
+  DeleteAuthAccessControlRolesByRoleIdPermissionsByPermissionIdData,
+  DeleteAuthAccessControlRolesByRoleIdPermissionsByPermissionIdErrors,
+  DeleteAuthAccessControlRolesByRoleIdPermissionsByPermissionIdResponses,
+  DeleteAuthAccessControlRolesByRoleIdResponses,
+  DeleteAuthAccessControlUsersByUserIdRolesByRoleIdData,
+  DeleteAuthAccessControlUsersByUserIdRolesByRoleIdErrors,
+  DeleteAuthAccessControlUsersByUserIdRolesByRoleIdResponses,
+  DeleteAuthAdminAccountsByIdData,
+  DeleteAuthAdminAccountsByIdErrors,
+  DeleteAuthAdminAccountsByIdResponses,
+  DeleteAuthAdminSessionsBySessionIdStateData,
+  DeleteAuthAdminSessionsBySessionIdStateErrors,
+  DeleteAuthAdminSessionsBySessionIdStateResponses,
+  DeleteAuthAdminUsersByUserIdData,
+  DeleteAuthAdminUsersByUserIdErrors,
+  DeleteAuthAdminUsersByUserIdResponses,
+  DeleteAuthAdminUsersByUserIdStateData,
+  DeleteAuthAdminUsersByUserIdStateErrors,
+  DeleteAuthAdminUsersByUserIdStateResponses,
+  GetApiV1HealthData,
+  GetApiV1HealthResponses,
+  GetApiV1TodosByIdData,
+  GetApiV1TodosByIdErrors,
+  GetApiV1TodosByIdResponses,
+  GetApiV1TodosData,
+  GetApiV1TodosResponses,
+  GetAuthAccessControlPermissionsByPermissionIdData,
+  GetAuthAccessControlPermissionsByPermissionIdErrors,
+  GetAuthAccessControlPermissionsByPermissionIdResponses,
+  GetAuthAccessControlPermissionsData,
+  GetAuthAccessControlPermissionsErrors,
+  GetAuthAccessControlPermissionsResponses,
+  GetAuthAccessControlRolesByNameByRoleNameData,
+  GetAuthAccessControlRolesByNameByRoleNameErrors,
+  GetAuthAccessControlRolesByNameByRoleNameResponses,
+  GetAuthAccessControlRolesByRoleIdData,
+  GetAuthAccessControlRolesByRoleIdErrors,
+  GetAuthAccessControlRolesByRoleIdPermissionsData,
+  GetAuthAccessControlRolesByRoleIdPermissionsErrors,
+  GetAuthAccessControlRolesByRoleIdPermissionsResponses,
+  GetAuthAccessControlRolesByRoleIdResponses,
+  GetAuthAccessControlRolesData,
+  GetAuthAccessControlRolesErrors,
+  GetAuthAccessControlRolesResponses,
+  GetAuthAccessControlUsersByUserIdPermissionsData,
+  GetAuthAccessControlUsersByUserIdPermissionsErrors,
+  GetAuthAccessControlUsersByUserIdPermissionsResponses,
+  GetAuthAccessControlUsersByUserIdRolesData,
+  GetAuthAccessControlUsersByUserIdRolesErrors,
+  GetAuthAccessControlUsersByUserIdRolesResponses,
+  GetAuthAdminAccountsByIdData,
+  GetAuthAdminAccountsByIdErrors,
+  GetAuthAdminAccountsByIdResponses,
+  GetAuthAdminImpersonationsByImpersonationIdData,
+  GetAuthAdminImpersonationsByImpersonationIdErrors,
+  GetAuthAdminImpersonationsByImpersonationIdResponses,
+  GetAuthAdminImpersonationsData,
+  GetAuthAdminImpersonationsErrors,
+  GetAuthAdminImpersonationsResponses,
+  GetAuthAdminSessionsBySessionIdStateData,
+  GetAuthAdminSessionsBySessionIdStateErrors,
+  GetAuthAdminSessionsBySessionIdStateResponses,
+  GetAuthAdminSessionsStatesRevokedData,
+  GetAuthAdminSessionsStatesRevokedErrors,
+  GetAuthAdminSessionsStatesRevokedResponses,
+  GetAuthAdminUsersByUserIdAccountsData,
+  GetAuthAdminUsersByUserIdAccountsErrors,
+  GetAuthAdminUsersByUserIdAccountsResponses,
+  GetAuthAdminUsersByUserIdData,
+  GetAuthAdminUsersByUserIdErrors,
+  GetAuthAdminUsersByUserIdResponses,
+  GetAuthAdminUsersByUserIdSessionsData,
+  GetAuthAdminUsersByUserIdSessionsErrors,
+  GetAuthAdminUsersByUserIdSessionsResponses,
+  GetAuthAdminUsersByUserIdStateData,
+  GetAuthAdminUsersByUserIdStateErrors,
+  GetAuthAdminUsersByUserIdStateResponses,
+  GetAuthAdminUsersData,
+  GetAuthAdminUsersErrors,
+  GetAuthAdminUsersResponses,
+  GetAuthAdminUsersStatesBannedData,
+  GetAuthAdminUsersStatesBannedErrors,
+  GetAuthAdminUsersStatesBannedResponses,
+  GetAuthEmailPasswordVerifyEmailData,
+  GetAuthEmailPasswordVerifyEmailErrors,
+  GetAuthEmailPasswordVerifyEmailResponses,
+  GetAuthMeData,
+  GetAuthMeErrors,
+  GetAuthMeResponses,
+  PatchAuthAccessControlPermissionsByPermissionIdData,
+  PatchAuthAccessControlPermissionsByPermissionIdErrors,
+  PatchAuthAccessControlPermissionsByPermissionIdResponses,
+  PatchAuthAccessControlRolesByRoleIdData,
+  PatchAuthAccessControlRolesByRoleIdErrors,
+  PatchAuthAccessControlRolesByRoleIdResponses,
+  PatchAuthAdminAccountsByIdData,
+  PatchAuthAdminAccountsByIdErrors,
+  PatchAuthAdminAccountsByIdResponses,
+  PatchAuthAdminSessionsBySessionIdStateData,
+  PatchAuthAdminSessionsBySessionIdStateErrors,
+  PatchAuthAdminSessionsBySessionIdStateResponses,
+  PatchAuthAdminUsersByUserIdData,
+  PatchAuthAdminUsersByUserIdErrors,
+  PatchAuthAdminUsersByUserIdResponses,
+  PatchAuthAdminUsersByUserIdStateData,
+  PatchAuthAdminUsersByUserIdStateErrors,
+  PatchAuthAdminUsersByUserIdStateResponses,
+  PostApiV1TodosData,
+  PostApiV1TodosErrors,
+  PostApiV1TodosResponses,
+  PostAuthAccessControlPermissionsData,
+  PostAuthAccessControlPermissionsErrors,
+  PostAuthAccessControlPermissionsResponses,
+  PostAuthAccessControlRolesByRoleIdPermissionsData,
+  PostAuthAccessControlRolesByRoleIdPermissionsErrors,
+  PostAuthAccessControlRolesByRoleIdPermissionsResponses,
+  PostAuthAccessControlRolesData,
+  PostAuthAccessControlRolesErrors,
+  PostAuthAccessControlRolesResponses,
+  PostAuthAccessControlUsersByUserIdPermissionsCheckData,
+  PostAuthAccessControlUsersByUserIdPermissionsCheckErrors,
+  PostAuthAccessControlUsersByUserIdPermissionsCheckResponses,
+  PostAuthAccessControlUsersByUserIdRolesData,
+  PostAuthAccessControlUsersByUserIdRolesErrors,
+  PostAuthAccessControlUsersByUserIdRolesResponses,
+  PostAuthAdminImpersonationsByImpersonationIdStopData,
+  PostAuthAdminImpersonationsByImpersonationIdStopErrors,
+  PostAuthAdminImpersonationsByImpersonationIdStopResponses,
+  PostAuthAdminImpersonationsData,
+  PostAuthAdminImpersonationsErrors,
+  PostAuthAdminImpersonationsResponses,
+  PostAuthAdminSessionsBySessionIdRevokeData,
+  PostAuthAdminSessionsBySessionIdRevokeErrors,
+  PostAuthAdminSessionsBySessionIdRevokeResponses,
+  PostAuthAdminSessionsBySessionIdStateData,
+  PostAuthAdminSessionsBySessionIdStateErrors,
+  PostAuthAdminSessionsBySessionIdStateResponses,
+  PostAuthAdminUsersByUserIdAccountsData,
+  PostAuthAdminUsersByUserIdAccountsErrors,
+  PostAuthAdminUsersByUserIdAccountsResponses,
+  PostAuthAdminUsersByUserIdBanData,
+  PostAuthAdminUsersByUserIdBanErrors,
+  PostAuthAdminUsersByUserIdBanResponses,
+  PostAuthAdminUsersByUserIdStateData,
+  PostAuthAdminUsersByUserIdStateErrors,
+  PostAuthAdminUsersByUserIdStateResponses,
+  PostAuthAdminUsersByUserIdUnbanData,
+  PostAuthAdminUsersByUserIdUnbanErrors,
+  PostAuthAdminUsersByUserIdUnbanResponses,
+  PostAuthAdminUsersData,
+  PostAuthAdminUsersErrors,
+  PostAuthAdminUsersResponses,
+  PostAuthEmailPasswordChangePasswordData,
+  PostAuthEmailPasswordChangePasswordErrors,
+  PostAuthEmailPasswordChangePasswordResponses,
+  PostAuthEmailPasswordRequestEmailChangeData,
+  PostAuthEmailPasswordRequestEmailChangeErrors,
+  PostAuthEmailPasswordRequestEmailChangeResponses,
+  PostAuthEmailPasswordRequestPasswordResetData,
+  PostAuthEmailPasswordRequestPasswordResetErrors,
+  PostAuthEmailPasswordRequestPasswordResetResponses,
+  PostAuthEmailPasswordSendEmailVerificationData,
+  PostAuthEmailPasswordSendEmailVerificationErrors,
+  PostAuthEmailPasswordSendEmailVerificationResponses,
+  PostAuthEmailPasswordSignInData,
+  PostAuthEmailPasswordSignInErrors,
+  PostAuthEmailPasswordSignInResponses,
+  PostAuthEmailPasswordSignUpData,
+  PostAuthEmailPasswordSignUpErrors,
+  PostAuthEmailPasswordSignUpResponses,
+  PostAuthSignOutData,
+  PostAuthSignOutErrors,
+  PostAuthSignOutResponses,
+  PutApiV1TodosByIdData,
+  PutApiV1TodosByIdErrors,
+  PutApiV1TodosByIdResponses,
+  PutAuthAccessControlRolesByRoleIdPermissionsData,
+  PutAuthAccessControlRolesByRoleIdPermissionsErrors,
+  PutAuthAccessControlRolesByRoleIdPermissionsResponses,
+  PutAuthAccessControlUsersByUserIdRolesData,
+  PutAuthAccessControlUsersByUserIdRolesErrors,
+  PutAuthAccessControlUsersByUserIdRolesResponses,
+} from './types.gen';
+import {
+  z_delete_api_v1_todos_by_id_path,
+  z_delete_auth_access_control_permissions_by_permission_id_path,
+  z_delete_auth_access_control_roles_by_role_id_path,
+  z_delete_auth_access_control_roles_by_role_id_permissions_by_permission_id_path,
+  z_delete_auth_access_control_users_by_user_id_roles_by_role_id_path,
+  z_delete_auth_admin_accounts_by_id_path,
+  z_delete_auth_admin_sessions_by_session_id_state_path,
+  z_delete_auth_admin_users_by_user_id_path,
+  z_delete_auth_admin_users_by_user_id_state_path,
+  z_get_api_v1_todos_by_id_path,
+  z_get_auth_access_control_permissions_by_permission_id_path,
+  z_get_auth_access_control_roles_by_name_by_role_name_path,
+  z_get_auth_access_control_roles_by_role_id_path,
+  z_get_auth_access_control_roles_by_role_id_permissions_path,
+  z_get_auth_access_control_users_by_user_id_permissions_path,
+  z_get_auth_access_control_users_by_user_id_roles_path,
+  z_get_auth_admin_accounts_by_id_path,
+  z_get_auth_admin_impersonations_by_impersonation_id_path,
+  z_get_auth_admin_sessions_by_session_id_state_path,
+  z_get_auth_admin_users_by_user_id_accounts_path,
+  z_get_auth_admin_users_by_user_id_path,
+  z_get_auth_admin_users_by_user_id_sessions_path,
+  z_get_auth_admin_users_by_user_id_state_path,
+  z_get_auth_admin_users_query,
+  z_get_auth_email_password_verify_email_query,
+  z_patch_auth_access_control_permissions_by_permission_id_body,
+  z_patch_auth_access_control_permissions_by_permission_id_path,
+  z_patch_auth_access_control_roles_by_role_id_body,
+  z_patch_auth_access_control_roles_by_role_id_path,
+  z_patch_auth_admin_accounts_by_id_body,
+  z_patch_auth_admin_accounts_by_id_path,
+  z_patch_auth_admin_sessions_by_session_id_state_body,
+  z_patch_auth_admin_sessions_by_session_id_state_path,
+  z_patch_auth_admin_users_by_user_id_body,
+  z_patch_auth_admin_users_by_user_id_path,
+  z_patch_auth_admin_users_by_user_id_state_body,
+  z_patch_auth_admin_users_by_user_id_state_path,
+  z_post_api_v1_todos_body,
+  z_post_auth_access_control_permissions_body,
+  z_post_auth_access_control_roles_body,
+  z_post_auth_access_control_roles_by_role_id_permissions_body,
+  z_post_auth_access_control_roles_by_role_id_permissions_path,
+  z_post_auth_access_control_users_by_user_id_permissions_check_body,
+  z_post_auth_access_control_users_by_user_id_permissions_check_path,
+  z_post_auth_access_control_users_by_user_id_roles_body,
+  z_post_auth_access_control_users_by_user_id_roles_path,
+  z_post_auth_admin_impersonations_body,
+  z_post_auth_admin_impersonations_by_impersonation_id_stop_path,
+  z_post_auth_admin_sessions_by_session_id_revoke_body,
+  z_post_auth_admin_sessions_by_session_id_revoke_path,
+  z_post_auth_admin_sessions_by_session_id_state_body,
+  z_post_auth_admin_sessions_by_session_id_state_path,
+  z_post_auth_admin_users_body,
+  z_post_auth_admin_users_by_user_id_accounts_body,
+  z_post_auth_admin_users_by_user_id_accounts_path,
+  z_post_auth_admin_users_by_user_id_ban_body,
+  z_post_auth_admin_users_by_user_id_ban_path,
+  z_post_auth_admin_users_by_user_id_state_body,
+  z_post_auth_admin_users_by_user_id_state_path,
+  z_post_auth_admin_users_by_user_id_unban_path,
+  z_post_auth_email_password_change_password_body,
+  z_post_auth_email_password_request_email_change_body,
+  z_post_auth_email_password_request_password_reset_body,
+  z_post_auth_email_password_send_email_verification_body,
+  z_post_auth_email_password_sign_in_body,
+  z_post_auth_email_password_sign_up_body,
+  z_post_auth_sign_out_body,
+  z_put_api_v1_todos_by_id_body,
+  z_put_api_v1_todos_by_id_path,
+  z_put_auth_access_control_roles_by_role_id_permissions_body,
+  z_put_auth_access_control_roles_by_role_id_permissions_path,
+  z_put_auth_access_control_users_by_user_id_roles_body,
+  z_put_auth_access_control_users_by_user_id_roles_path,
+} from './zod.gen';
 
-export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean, TResponse = unknown> = Options2<TData, ThrowOnError, TResponse> & {
-    /**
-     * You can provide a client instance returned by `createClient()` instead of
-     * individual options. This might be also useful if you want to implement a
-     * custom client.
-     */
-    client?: Client;
-    /**
-     * You can pass arbitrary values through the `meta` object. This can be
-     * used to access values that aren't defined as part of the SDK function.
-     */
-    meta?: Record<string, unknown>;
+export type Options<
+  TData extends TDataShape = TDataShape,
+  ThrowOnError extends boolean = boolean,
+  TResponse = unknown,
+> = Options2<TData, ThrowOnError, TResponse> & {
+  /**
+   * You can provide a client instance returned by `createClient()` instead of
+   * individual options. This might be also useful if you want to implement a
+   * custom client.
+   */
+  client?: Client;
+  /**
+   * You can pass arbitrary values through the `meta` object. This can be
+   * used to access values that aren't defined as part of the SDK function.
+   */
+  meta?: Record<string, unknown>;
 };
 
-export const getApiV1Health = <ThrowOnError extends boolean = false>(options?: Options<GetApiV1HealthData, ThrowOnError>) => (options?.client ?? client).get<GetApiV1HealthResponses, unknown, ThrowOnError>({
-    requestValidator: async (data) => await z.object({
-        body: z.never().optional(),
-        path: z.never().optional(),
-        query: z.never().optional()
-    }).parseAsync(data),
+export const getApiV1Health = <ThrowOnError extends boolean = false>(
+  options?: Options<GetApiV1HealthData, ThrowOnError>,
+) =>
+  (options?.client ?? client).get<
+    GetApiV1HealthResponses,
+    unknown,
+    ThrowOnError
+  >({
+    requestValidator: async (data) =>
+      await z
+        .object({
+          body: z.never().optional(),
+          path: z.never().optional(),
+          query: z.never().optional(),
+        })
+        .parseAsync(data),
     url: '/api/v1/health',
-    ...options
-});
+    ...options,
+  });
 
-export const getApiV1Todos = <ThrowOnError extends boolean = false>(options?: Options<GetApiV1TodosData, ThrowOnError>) => (options?.client ?? client).get<GetApiV1TodosResponses, unknown, ThrowOnError>({
-    requestValidator: async (data) => await z.object({
-        body: z.never().optional(),
-        path: z.never().optional(),
-        query: z.never().optional()
-    }).parseAsync(data),
+export const getApiV1Todos = <ThrowOnError extends boolean = false>(
+  options?: Options<GetApiV1TodosData, ThrowOnError>,
+) =>
+  (options?.client ?? client).get<
+    GetApiV1TodosResponses,
+    unknown,
+    ThrowOnError
+  >({
+    requestValidator: async (data) =>
+      await z
+        .object({
+          body: z.never().optional(),
+          path: z.never().optional(),
+          query: z.never().optional(),
+        })
+        .parseAsync(data),
     url: '/api/v1/todos',
-    ...options
-});
+    ...options,
+  });
 
-export const postApiV1Todos = <ThrowOnError extends boolean = false>(options: Options<PostApiV1TodosData, ThrowOnError>) => (options.client ?? client).post<PostApiV1TodosResponses, PostApiV1TodosErrors, ThrowOnError>({
-    requestValidator: async (data) => await z.object({
-        body: z_post_api_v1_todos_body,
-        path: z.never().optional(),
-        query: z.never().optional()
-    }).parseAsync(data),
+export const postApiV1Todos = <ThrowOnError extends boolean = false>(
+  options: Options<PostApiV1TodosData, ThrowOnError>,
+) =>
+  (options.client ?? client).post<
+    PostApiV1TodosResponses,
+    PostApiV1TodosErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) =>
+      await z
+        .object({
+          body: z_post_api_v1_todos_body,
+          path: z.never().optional(),
+          query: z.never().optional(),
+        })
+        .parseAsync(data),
     url: '/api/v1/todos',
     ...options,
     headers: {
-        'Content-Type': 'application/json',
-        ...options.headers
-    }
-});
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
 
-export const deleteApiV1TodosById = <ThrowOnError extends boolean = false>(options: Options<DeleteApiV1TodosByIdData, ThrowOnError>) => (options.client ?? client).delete<DeleteApiV1TodosByIdResponses, DeleteApiV1TodosByIdErrors, ThrowOnError>({
-    requestValidator: async (data) => await z.object({
-        body: z.never().optional(),
-        path: z_delete_api_v1_todos_by_id_path,
-        query: z.never().optional()
-    }).parseAsync(data),
+export const deleteApiV1TodosById = <ThrowOnError extends boolean = false>(
+  options: Options<DeleteApiV1TodosByIdData, ThrowOnError>,
+) =>
+  (options.client ?? client).delete<
+    DeleteApiV1TodosByIdResponses,
+    DeleteApiV1TodosByIdErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) =>
+      await z
+        .object({
+          body: z.never().optional(),
+          path: z_delete_api_v1_todos_by_id_path,
+          query: z.never().optional(),
+        })
+        .parseAsync(data),
     url: '/api/v1/todos/{id}',
-    ...options
-});
+    ...options,
+  });
 
-export const getApiV1TodosById = <ThrowOnError extends boolean = false>(options: Options<GetApiV1TodosByIdData, ThrowOnError>) => (options.client ?? client).get<GetApiV1TodosByIdResponses, GetApiV1TodosByIdErrors, ThrowOnError>({
-    requestValidator: async (data) => await z.object({
-        body: z.never().optional(),
-        path: z_get_api_v1_todos_by_id_path,
-        query: z.never().optional()
-    }).parseAsync(data),
+export const getApiV1TodosById = <ThrowOnError extends boolean = false>(
+  options: Options<GetApiV1TodosByIdData, ThrowOnError>,
+) =>
+  (options.client ?? client).get<
+    GetApiV1TodosByIdResponses,
+    GetApiV1TodosByIdErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) =>
+      await z
+        .object({
+          body: z.never().optional(),
+          path: z_get_api_v1_todos_by_id_path,
+          query: z.never().optional(),
+        })
+        .parseAsync(data),
     url: '/api/v1/todos/{id}',
-    ...options
-});
+    ...options,
+  });
 
-export const putApiV1TodosById = <ThrowOnError extends boolean = false>(options: Options<PutApiV1TodosByIdData, ThrowOnError>) => (options.client ?? client).put<PutApiV1TodosByIdResponses, PutApiV1TodosByIdErrors, ThrowOnError>({
-    requestValidator: async (data) => await z.object({
-        body: z_put_api_v1_todos_by_id_body,
-        path: z_put_api_v1_todos_by_id_path,
-        query: z.never().optional()
-    }).parseAsync(data),
+export const putApiV1TodosById = <ThrowOnError extends boolean = false>(
+  options: Options<PutApiV1TodosByIdData, ThrowOnError>,
+) =>
+  (options.client ?? client).put<
+    PutApiV1TodosByIdResponses,
+    PutApiV1TodosByIdErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) =>
+      await z
+        .object({
+          body: z_put_api_v1_todos_by_id_body,
+          path: z_put_api_v1_todos_by_id_path,
+          query: z.never().optional(),
+        })
+        .parseAsync(data),
     url: '/api/v1/todos/{id}',
     ...options,
     headers: {
-        'Content-Type': 'application/json',
-        ...options.headers
-    }
-});
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
 
-export const getAuthAccessControlPermissions = <ThrowOnError extends boolean = false>(options?: Options<GetAuthAccessControlPermissionsData, ThrowOnError>) => (options?.client ?? client).get<GetAuthAccessControlPermissionsResponses, GetAuthAccessControlPermissionsErrors, ThrowOnError>({
-    requestValidator: async (data) => await z.object({
-        body: z.never().optional(),
-        path: z.never().optional(),
-        query: z.never().optional()
-    }).parseAsync(data),
+export const getAuthAccessControlPermissions = <
+  ThrowOnError extends boolean = false,
+>(
+  options?: Options<GetAuthAccessControlPermissionsData, ThrowOnError>,
+) =>
+  (options?.client ?? client).get<
+    GetAuthAccessControlPermissionsResponses,
+    GetAuthAccessControlPermissionsErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) =>
+      await z
+        .object({
+          body: z.never().optional(),
+          path: z.never().optional(),
+          query: z.never().optional(),
+        })
+        .parseAsync(data),
     url: '/auth/access-control/permissions',
-    ...options
-});
+    ...options,
+  });
 
-export const postAuthAccessControlPermissions = <ThrowOnError extends boolean = false>(options: Options<PostAuthAccessControlPermissionsData, ThrowOnError>) => (options.client ?? client).post<PostAuthAccessControlPermissionsResponses, PostAuthAccessControlPermissionsErrors, ThrowOnError>({
-    requestValidator: async (data) => await z.object({
-        body: z_post_auth_access_control_permissions_body,
-        path: z.never().optional(),
-        query: z.never().optional()
-    }).parseAsync(data),
+export const postAuthAccessControlPermissions = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<PostAuthAccessControlPermissionsData, ThrowOnError>,
+) =>
+  (options.client ?? client).post<
+    PostAuthAccessControlPermissionsResponses,
+    PostAuthAccessControlPermissionsErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) =>
+      await z
+        .object({
+          body: z_post_auth_access_control_permissions_body,
+          path: z.never().optional(),
+          query: z.never().optional(),
+        })
+        .parseAsync(data),
     url: '/auth/access-control/permissions',
     ...options,
     headers: {
-        'Content-Type': 'application/json',
-        ...options.headers
-    }
-});
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
 
-export const deleteAuthAccessControlPermissionsByPermissionId = <ThrowOnError extends boolean = false>(options: Options<DeleteAuthAccessControlPermissionsByPermissionIdData, ThrowOnError>) => (options.client ?? client).delete<DeleteAuthAccessControlPermissionsByPermissionIdResponses, DeleteAuthAccessControlPermissionsByPermissionIdErrors, ThrowOnError>({
-    requestValidator: async (data) => await z.object({
-        body: z.never().optional(),
-        path: z_delete_auth_access_control_permissions_by_permission_id_path,
-        query: z.never().optional()
-    }).parseAsync(data),
+export const deleteAuthAccessControlPermissionsByPermissionId = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<
+    DeleteAuthAccessControlPermissionsByPermissionIdData,
+    ThrowOnError
+  >,
+) =>
+  (options.client ?? client).delete<
+    DeleteAuthAccessControlPermissionsByPermissionIdResponses,
+    DeleteAuthAccessControlPermissionsByPermissionIdErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) =>
+      await z
+        .object({
+          body: z.never().optional(),
+          path: z_delete_auth_access_control_permissions_by_permission_id_path,
+          query: z.never().optional(),
+        })
+        .parseAsync(data),
     url: '/auth/access-control/permissions/{permission_id}',
-    ...options
-});
+    ...options,
+  });
 
-export const getAuthAccessControlPermissionsByPermissionId = <ThrowOnError extends boolean = false>(options: Options<GetAuthAccessControlPermissionsByPermissionIdData, ThrowOnError>) => (options.client ?? client).get<GetAuthAccessControlPermissionsByPermissionIdResponses, GetAuthAccessControlPermissionsByPermissionIdErrors, ThrowOnError>({
-    requestValidator: async (data) => await z.object({
-        body: z.never().optional(),
-        path: z_get_auth_access_control_permissions_by_permission_id_path,
-        query: z.never().optional()
-    }).parseAsync(data),
+export const getAuthAccessControlPermissionsByPermissionId = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<
+    GetAuthAccessControlPermissionsByPermissionIdData,
+    ThrowOnError
+  >,
+) =>
+  (options.client ?? client).get<
+    GetAuthAccessControlPermissionsByPermissionIdResponses,
+    GetAuthAccessControlPermissionsByPermissionIdErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) =>
+      await z
+        .object({
+          body: z.never().optional(),
+          path: z_get_auth_access_control_permissions_by_permission_id_path,
+          query: z.never().optional(),
+        })
+        .parseAsync(data),
     url: '/auth/access-control/permissions/{permission_id}',
-    ...options
-});
+    ...options,
+  });
 
-export const patchAuthAccessControlPermissionsByPermissionId = <ThrowOnError extends boolean = false>(options: Options<PatchAuthAccessControlPermissionsByPermissionIdData, ThrowOnError>) => (options.client ?? client).patch<PatchAuthAccessControlPermissionsByPermissionIdResponses, PatchAuthAccessControlPermissionsByPermissionIdErrors, ThrowOnError>({
-    requestValidator: async (data) => await z.object({
-        body: z_patch_auth_access_control_permissions_by_permission_id_body,
-        path: z_patch_auth_access_control_permissions_by_permission_id_path,
-        query: z.never().optional()
-    }).parseAsync(data),
+export const patchAuthAccessControlPermissionsByPermissionId = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<
+    PatchAuthAccessControlPermissionsByPermissionIdData,
+    ThrowOnError
+  >,
+) =>
+  (options.client ?? client).patch<
+    PatchAuthAccessControlPermissionsByPermissionIdResponses,
+    PatchAuthAccessControlPermissionsByPermissionIdErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) =>
+      await z
+        .object({
+          body: z_patch_auth_access_control_permissions_by_permission_id_body,
+          path: z_patch_auth_access_control_permissions_by_permission_id_path,
+          query: z.never().optional(),
+        })
+        .parseAsync(data),
     url: '/auth/access-control/permissions/{permission_id}',
     ...options,
     headers: {
-        'Content-Type': 'application/json',
-        ...options.headers
-    }
-});
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
 
-export const getAuthAccessControlRoles = <ThrowOnError extends boolean = false>(options?: Options<GetAuthAccessControlRolesData, ThrowOnError>) => (options?.client ?? client).get<GetAuthAccessControlRolesResponses, GetAuthAccessControlRolesErrors, ThrowOnError>({
-    requestValidator: async (data) => await z.object({
-        body: z.never().optional(),
-        path: z.never().optional(),
-        query: z.never().optional()
-    }).parseAsync(data),
+export const getAuthAccessControlRoles = <ThrowOnError extends boolean = false>(
+  options?: Options<GetAuthAccessControlRolesData, ThrowOnError>,
+) =>
+  (options?.client ?? client).get<
+    GetAuthAccessControlRolesResponses,
+    GetAuthAccessControlRolesErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) =>
+      await z
+        .object({
+          body: z.never().optional(),
+          path: z.never().optional(),
+          query: z.never().optional(),
+        })
+        .parseAsync(data),
     url: '/auth/access-control/roles',
-    ...options
-});
+    ...options,
+  });
 
-export const postAuthAccessControlRoles = <ThrowOnError extends boolean = false>(options: Options<PostAuthAccessControlRolesData, ThrowOnError>) => (options.client ?? client).post<PostAuthAccessControlRolesResponses, PostAuthAccessControlRolesErrors, ThrowOnError>({
-    requestValidator: async (data) => await z.object({
-        body: z_post_auth_access_control_roles_body,
-        path: z.never().optional(),
-        query: z.never().optional()
-    }).parseAsync(data),
+export const postAuthAccessControlRoles = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<PostAuthAccessControlRolesData, ThrowOnError>,
+) =>
+  (options.client ?? client).post<
+    PostAuthAccessControlRolesResponses,
+    PostAuthAccessControlRolesErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) =>
+      await z
+        .object({
+          body: z_post_auth_access_control_roles_body,
+          path: z.never().optional(),
+          query: z.never().optional(),
+        })
+        .parseAsync(data),
     url: '/auth/access-control/roles',
     ...options,
     headers: {
-        'Content-Type': 'application/json',
-        ...options.headers
-    }
-});
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
 
-export const getAuthAccessControlRolesByNameByRoleName = <ThrowOnError extends boolean = false>(options: Options<GetAuthAccessControlRolesByNameByRoleNameData, ThrowOnError>) => (options.client ?? client).get<GetAuthAccessControlRolesByNameByRoleNameResponses, GetAuthAccessControlRolesByNameByRoleNameErrors, ThrowOnError>({
-    requestValidator: async (data) => await z.object({
-        body: z.never().optional(),
-        path: z_get_auth_access_control_roles_by_name_by_role_name_path,
-        query: z.never().optional()
-    }).parseAsync(data),
+export const getAuthAccessControlRolesByNameByRoleName = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<GetAuthAccessControlRolesByNameByRoleNameData, ThrowOnError>,
+) =>
+  (options.client ?? client).get<
+    GetAuthAccessControlRolesByNameByRoleNameResponses,
+    GetAuthAccessControlRolesByNameByRoleNameErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) =>
+      await z
+        .object({
+          body: z.never().optional(),
+          path: z_get_auth_access_control_roles_by_name_by_role_name_path,
+          query: z.never().optional(),
+        })
+        .parseAsync(data),
     url: '/auth/access-control/roles/by-name/{role_name}',
-    ...options
-});
+    ...options,
+  });
 
-export const deleteAuthAccessControlRolesByRoleId = <ThrowOnError extends boolean = false>(options: Options<DeleteAuthAccessControlRolesByRoleIdData, ThrowOnError>) => (options.client ?? client).delete<DeleteAuthAccessControlRolesByRoleIdResponses, DeleteAuthAccessControlRolesByRoleIdErrors, ThrowOnError>({
-    requestValidator: async (data) => await z.object({
-        body: z.never().optional(),
-        path: z_delete_auth_access_control_roles_by_role_id_path,
-        query: z.never().optional()
-    }).parseAsync(data),
+export const deleteAuthAccessControlRolesByRoleId = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<DeleteAuthAccessControlRolesByRoleIdData, ThrowOnError>,
+) =>
+  (options.client ?? client).delete<
+    DeleteAuthAccessControlRolesByRoleIdResponses,
+    DeleteAuthAccessControlRolesByRoleIdErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) =>
+      await z
+        .object({
+          body: z.never().optional(),
+          path: z_delete_auth_access_control_roles_by_role_id_path,
+          query: z.never().optional(),
+        })
+        .parseAsync(data),
     url: '/auth/access-control/roles/{role_id}',
-    ...options
-});
+    ...options,
+  });
 
-export const getAuthAccessControlRolesByRoleId = <ThrowOnError extends boolean = false>(options: Options<GetAuthAccessControlRolesByRoleIdData, ThrowOnError>) => (options.client ?? client).get<GetAuthAccessControlRolesByRoleIdResponses, GetAuthAccessControlRolesByRoleIdErrors, ThrowOnError>({
-    requestValidator: async (data) => await z.object({
-        body: z.never().optional(),
-        path: z_get_auth_access_control_roles_by_role_id_path,
-        query: z.never().optional()
-    }).parseAsync(data),
+export const getAuthAccessControlRolesByRoleId = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<GetAuthAccessControlRolesByRoleIdData, ThrowOnError>,
+) =>
+  (options.client ?? client).get<
+    GetAuthAccessControlRolesByRoleIdResponses,
+    GetAuthAccessControlRolesByRoleIdErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) =>
+      await z
+        .object({
+          body: z.never().optional(),
+          path: z_get_auth_access_control_roles_by_role_id_path,
+          query: z.never().optional(),
+        })
+        .parseAsync(data),
     url: '/auth/access-control/roles/{role_id}',
-    ...options
-});
+    ...options,
+  });
 
-export const patchAuthAccessControlRolesByRoleId = <ThrowOnError extends boolean = false>(options: Options<PatchAuthAccessControlRolesByRoleIdData, ThrowOnError>) => (options.client ?? client).patch<PatchAuthAccessControlRolesByRoleIdResponses, PatchAuthAccessControlRolesByRoleIdErrors, ThrowOnError>({
-    requestValidator: async (data) => await z.object({
-        body: z_patch_auth_access_control_roles_by_role_id_body,
-        path: z_patch_auth_access_control_roles_by_role_id_path,
-        query: z.never().optional()
-    }).parseAsync(data),
+export const patchAuthAccessControlRolesByRoleId = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<PatchAuthAccessControlRolesByRoleIdData, ThrowOnError>,
+) =>
+  (options.client ?? client).patch<
+    PatchAuthAccessControlRolesByRoleIdResponses,
+    PatchAuthAccessControlRolesByRoleIdErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) =>
+      await z
+        .object({
+          body: z_patch_auth_access_control_roles_by_role_id_body,
+          path: z_patch_auth_access_control_roles_by_role_id_path,
+          query: z.never().optional(),
+        })
+        .parseAsync(data),
     url: '/auth/access-control/roles/{role_id}',
     ...options,
     headers: {
-        'Content-Type': 'application/json',
-        ...options.headers
-    }
-});
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
 
-export const getAuthAccessControlRolesByRoleIdPermissions = <ThrowOnError extends boolean = false>(options: Options<GetAuthAccessControlRolesByRoleIdPermissionsData, ThrowOnError>) => (options.client ?? client).get<GetAuthAccessControlRolesByRoleIdPermissionsResponses, GetAuthAccessControlRolesByRoleIdPermissionsErrors, ThrowOnError>({
-    requestValidator: async (data) => await z.object({
-        body: z.never().optional(),
-        path: z_get_auth_access_control_roles_by_role_id_permissions_path,
-        query: z.never().optional()
-    }).parseAsync(data),
+export const getAuthAccessControlRolesByRoleIdPermissions = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<
+    GetAuthAccessControlRolesByRoleIdPermissionsData,
+    ThrowOnError
+  >,
+) =>
+  (options.client ?? client).get<
+    GetAuthAccessControlRolesByRoleIdPermissionsResponses,
+    GetAuthAccessControlRolesByRoleIdPermissionsErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) =>
+      await z
+        .object({
+          body: z.never().optional(),
+          path: z_get_auth_access_control_roles_by_role_id_permissions_path,
+          query: z.never().optional(),
+        })
+        .parseAsync(data),
     url: '/auth/access-control/roles/{role_id}/permissions',
-    ...options
-});
+    ...options,
+  });
 
-export const postAuthAccessControlRolesByRoleIdPermissions = <ThrowOnError extends boolean = false>(options: Options<PostAuthAccessControlRolesByRoleIdPermissionsData, ThrowOnError>) => (options.client ?? client).post<PostAuthAccessControlRolesByRoleIdPermissionsResponses, PostAuthAccessControlRolesByRoleIdPermissionsErrors, ThrowOnError>({
-    requestValidator: async (data) => await z.object({
-        body: z_post_auth_access_control_roles_by_role_id_permissions_body,
-        path: z_post_auth_access_control_roles_by_role_id_permissions_path,
-        query: z.never().optional()
-    }).parseAsync(data),
+export const postAuthAccessControlRolesByRoleIdPermissions = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<
+    PostAuthAccessControlRolesByRoleIdPermissionsData,
+    ThrowOnError
+  >,
+) =>
+  (options.client ?? client).post<
+    PostAuthAccessControlRolesByRoleIdPermissionsResponses,
+    PostAuthAccessControlRolesByRoleIdPermissionsErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) =>
+      await z
+        .object({
+          body: z_post_auth_access_control_roles_by_role_id_permissions_body,
+          path: z_post_auth_access_control_roles_by_role_id_permissions_path,
+          query: z.never().optional(),
+        })
+        .parseAsync(data),
     url: '/auth/access-control/roles/{role_id}/permissions',
     ...options,
     headers: {
-        'Content-Type': 'application/json',
-        ...options.headers
-    }
-});
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
 
-export const putAuthAccessControlRolesByRoleIdPermissions = <ThrowOnError extends boolean = false>(options: Options<PutAuthAccessControlRolesByRoleIdPermissionsData, ThrowOnError>) => (options.client ?? client).put<PutAuthAccessControlRolesByRoleIdPermissionsResponses, PutAuthAccessControlRolesByRoleIdPermissionsErrors, ThrowOnError>({
-    requestValidator: async (data) => await z.object({
-        body: z_put_auth_access_control_roles_by_role_id_permissions_body,
-        path: z_put_auth_access_control_roles_by_role_id_permissions_path,
-        query: z.never().optional()
-    }).parseAsync(data),
+export const putAuthAccessControlRolesByRoleIdPermissions = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<
+    PutAuthAccessControlRolesByRoleIdPermissionsData,
+    ThrowOnError
+  >,
+) =>
+  (options.client ?? client).put<
+    PutAuthAccessControlRolesByRoleIdPermissionsResponses,
+    PutAuthAccessControlRolesByRoleIdPermissionsErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) =>
+      await z
+        .object({
+          body: z_put_auth_access_control_roles_by_role_id_permissions_body,
+          path: z_put_auth_access_control_roles_by_role_id_permissions_path,
+          query: z.never().optional(),
+        })
+        .parseAsync(data),
     url: '/auth/access-control/roles/{role_id}/permissions',
     ...options,
     headers: {
-        'Content-Type': 'application/json',
-        ...options.headers
-    }
-});
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
 
-export const deleteAuthAccessControlRolesByRoleIdPermissionsByPermissionId = <ThrowOnError extends boolean = false>(options: Options<DeleteAuthAccessControlRolesByRoleIdPermissionsByPermissionIdData, ThrowOnError>) => (options.client ?? client).delete<DeleteAuthAccessControlRolesByRoleIdPermissionsByPermissionIdResponses, DeleteAuthAccessControlRolesByRoleIdPermissionsByPermissionIdErrors, ThrowOnError>({
-    requestValidator: async (data) => await z.object({
-        body: z.never().optional(),
-        path: z_delete_auth_access_control_roles_by_role_id_permissions_by_permission_id_path,
-        query: z.never().optional()
-    }).parseAsync(data),
+export const deleteAuthAccessControlRolesByRoleIdPermissionsByPermissionId = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<
+    DeleteAuthAccessControlRolesByRoleIdPermissionsByPermissionIdData,
+    ThrowOnError
+  >,
+) =>
+  (options.client ?? client).delete<
+    DeleteAuthAccessControlRolesByRoleIdPermissionsByPermissionIdResponses,
+    DeleteAuthAccessControlRolesByRoleIdPermissionsByPermissionIdErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) =>
+      await z
+        .object({
+          body: z.never().optional(),
+          path: z_delete_auth_access_control_roles_by_role_id_permissions_by_permission_id_path,
+          query: z.never().optional(),
+        })
+        .parseAsync(data),
     url: '/auth/access-control/roles/{role_id}/permissions/{permission_id}',
-    ...options
-});
+    ...options,
+  });
 
-export const getAuthAccessControlUsersByUserIdPermissions = <ThrowOnError extends boolean = false>(options: Options<GetAuthAccessControlUsersByUserIdPermissionsData, ThrowOnError>) => (options.client ?? client).get<GetAuthAccessControlUsersByUserIdPermissionsResponses, GetAuthAccessControlUsersByUserIdPermissionsErrors, ThrowOnError>({
-    requestValidator: async (data) => await z.object({
-        body: z.never().optional(),
-        path: z_get_auth_access_control_users_by_user_id_permissions_path,
-        query: z.never().optional()
-    }).parseAsync(data),
+export const getAuthAccessControlUsersByUserIdPermissions = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<
+    GetAuthAccessControlUsersByUserIdPermissionsData,
+    ThrowOnError
+  >,
+) =>
+  (options.client ?? client).get<
+    GetAuthAccessControlUsersByUserIdPermissionsResponses,
+    GetAuthAccessControlUsersByUserIdPermissionsErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) =>
+      await z
+        .object({
+          body: z.never().optional(),
+          path: z_get_auth_access_control_users_by_user_id_permissions_path,
+          query: z.never().optional(),
+        })
+        .parseAsync(data),
     url: '/auth/access-control/users/{user_id}/permissions',
-    ...options
-});
+    ...options,
+  });
 
-export const postAuthAccessControlUsersByUserIdPermissionsCheck = <ThrowOnError extends boolean = false>(options: Options<PostAuthAccessControlUsersByUserIdPermissionsCheckData, ThrowOnError>) => (options.client ?? client).post<PostAuthAccessControlUsersByUserIdPermissionsCheckResponses, PostAuthAccessControlUsersByUserIdPermissionsCheckErrors, ThrowOnError>({
-    requestValidator: async (data) => await z.object({
-        body: z_post_auth_access_control_users_by_user_id_permissions_check_body,
-        path: z_post_auth_access_control_users_by_user_id_permissions_check_path,
-        query: z.never().optional()
-    }).parseAsync(data),
+export const postAuthAccessControlUsersByUserIdPermissionsCheck = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<
+    PostAuthAccessControlUsersByUserIdPermissionsCheckData,
+    ThrowOnError
+  >,
+) =>
+  (options.client ?? client).post<
+    PostAuthAccessControlUsersByUserIdPermissionsCheckResponses,
+    PostAuthAccessControlUsersByUserIdPermissionsCheckErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) =>
+      await z
+        .object({
+          body: z_post_auth_access_control_users_by_user_id_permissions_check_body,
+          path: z_post_auth_access_control_users_by_user_id_permissions_check_path,
+          query: z.never().optional(),
+        })
+        .parseAsync(data),
     url: '/auth/access-control/users/{user_id}/permissions/check',
     ...options,
     headers: {
-        'Content-Type': 'application/json',
-        ...options.headers
-    }
-});
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
 
-export const getAuthAccessControlUsersByUserIdRoles = <ThrowOnError extends boolean = false>(options: Options<GetAuthAccessControlUsersByUserIdRolesData, ThrowOnError>) => (options.client ?? client).get<GetAuthAccessControlUsersByUserIdRolesResponses, GetAuthAccessControlUsersByUserIdRolesErrors, ThrowOnError>({
-    requestValidator: async (data) => await z.object({
-        body: z.never().optional(),
-        path: z_get_auth_access_control_users_by_user_id_roles_path,
-        query: z.never().optional()
-    }).parseAsync(data),
+export const getAuthAccessControlUsersByUserIdRoles = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<GetAuthAccessControlUsersByUserIdRolesData, ThrowOnError>,
+) =>
+  (options.client ?? client).get<
+    GetAuthAccessControlUsersByUserIdRolesResponses,
+    GetAuthAccessControlUsersByUserIdRolesErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) =>
+      await z
+        .object({
+          body: z.never().optional(),
+          path: z_get_auth_access_control_users_by_user_id_roles_path,
+          query: z.never().optional(),
+        })
+        .parseAsync(data),
     url: '/auth/access-control/users/{user_id}/roles',
-    ...options
-});
+    ...options,
+  });
 
-export const postAuthAccessControlUsersByUserIdRoles = <ThrowOnError extends boolean = false>(options: Options<PostAuthAccessControlUsersByUserIdRolesData, ThrowOnError>) => (options.client ?? client).post<PostAuthAccessControlUsersByUserIdRolesResponses, PostAuthAccessControlUsersByUserIdRolesErrors, ThrowOnError>({
-    requestValidator: async (data) => await z.object({
-        body: z_post_auth_access_control_users_by_user_id_roles_body,
-        path: z_post_auth_access_control_users_by_user_id_roles_path,
-        query: z.never().optional()
-    }).parseAsync(data),
+export const postAuthAccessControlUsersByUserIdRoles = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<PostAuthAccessControlUsersByUserIdRolesData, ThrowOnError>,
+) =>
+  (options.client ?? client).post<
+    PostAuthAccessControlUsersByUserIdRolesResponses,
+    PostAuthAccessControlUsersByUserIdRolesErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) =>
+      await z
+        .object({
+          body: z_post_auth_access_control_users_by_user_id_roles_body,
+          path: z_post_auth_access_control_users_by_user_id_roles_path,
+          query: z.never().optional(),
+        })
+        .parseAsync(data),
     url: '/auth/access-control/users/{user_id}/roles',
     ...options,
     headers: {
-        'Content-Type': 'application/json',
-        ...options.headers
-    }
-});
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
 
-export const putAuthAccessControlUsersByUserIdRoles = <ThrowOnError extends boolean = false>(options: Options<PutAuthAccessControlUsersByUserIdRolesData, ThrowOnError>) => (options.client ?? client).put<PutAuthAccessControlUsersByUserIdRolesResponses, PutAuthAccessControlUsersByUserIdRolesErrors, ThrowOnError>({
-    requestValidator: async (data) => await z.object({
-        body: z_put_auth_access_control_users_by_user_id_roles_body,
-        path: z_put_auth_access_control_users_by_user_id_roles_path,
-        query: z.never().optional()
-    }).parseAsync(data),
+export const putAuthAccessControlUsersByUserIdRoles = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<PutAuthAccessControlUsersByUserIdRolesData, ThrowOnError>,
+) =>
+  (options.client ?? client).put<
+    PutAuthAccessControlUsersByUserIdRolesResponses,
+    PutAuthAccessControlUsersByUserIdRolesErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) =>
+      await z
+        .object({
+          body: z_put_auth_access_control_users_by_user_id_roles_body,
+          path: z_put_auth_access_control_users_by_user_id_roles_path,
+          query: z.never().optional(),
+        })
+        .parseAsync(data),
     url: '/auth/access-control/users/{user_id}/roles',
     ...options,
     headers: {
-        'Content-Type': 'application/json',
-        ...options.headers
-    }
-});
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
 
-export const deleteAuthAccessControlUsersByUserIdRolesByRoleId = <ThrowOnError extends boolean = false>(options: Options<DeleteAuthAccessControlUsersByUserIdRolesByRoleIdData, ThrowOnError>) => (options.client ?? client).delete<DeleteAuthAccessControlUsersByUserIdRolesByRoleIdResponses, DeleteAuthAccessControlUsersByUserIdRolesByRoleIdErrors, ThrowOnError>({
-    requestValidator: async (data) => await z.object({
-        body: z.never().optional(),
-        path: z_delete_auth_access_control_users_by_user_id_roles_by_role_id_path,
-        query: z.never().optional()
-    }).parseAsync(data),
+export const deleteAuthAccessControlUsersByUserIdRolesByRoleId = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<
+    DeleteAuthAccessControlUsersByUserIdRolesByRoleIdData,
+    ThrowOnError
+  >,
+) =>
+  (options.client ?? client).delete<
+    DeleteAuthAccessControlUsersByUserIdRolesByRoleIdResponses,
+    DeleteAuthAccessControlUsersByUserIdRolesByRoleIdErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) =>
+      await z
+        .object({
+          body: z.never().optional(),
+          path: z_delete_auth_access_control_users_by_user_id_roles_by_role_id_path,
+          query: z.never().optional(),
+        })
+        .parseAsync(data),
     url: '/auth/access-control/users/{user_id}/roles/{role_id}',
-    ...options
-});
+    ...options,
+  });
 
-export const deleteAuthAdminAccountsById = <ThrowOnError extends boolean = false>(options: Options<DeleteAuthAdminAccountsByIdData, ThrowOnError>) => (options.client ?? client).delete<DeleteAuthAdminAccountsByIdResponses, DeleteAuthAdminAccountsByIdErrors, ThrowOnError>({
-    requestValidator: async (data) => await z.object({
-        body: z.never().optional(),
-        path: z_delete_auth_admin_accounts_by_id_path,
-        query: z.never().optional()
-    }).parseAsync(data),
+export const deleteAuthAdminAccountsById = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<DeleteAuthAdminAccountsByIdData, ThrowOnError>,
+) =>
+  (options.client ?? client).delete<
+    DeleteAuthAdminAccountsByIdResponses,
+    DeleteAuthAdminAccountsByIdErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) =>
+      await z
+        .object({
+          body: z.never().optional(),
+          path: z_delete_auth_admin_accounts_by_id_path,
+          query: z.never().optional(),
+        })
+        .parseAsync(data),
     url: '/auth/admin/accounts/{id}',
-    ...options
-});
+    ...options,
+  });
 
-export const getAuthAdminAccountsById = <ThrowOnError extends boolean = false>(options: Options<GetAuthAdminAccountsByIdData, ThrowOnError>) => (options.client ?? client).get<GetAuthAdminAccountsByIdResponses, GetAuthAdminAccountsByIdErrors, ThrowOnError>({
-    requestValidator: async (data) => await z.object({
-        body: z.never().optional(),
-        path: z_get_auth_admin_accounts_by_id_path,
-        query: z.never().optional()
-    }).parseAsync(data),
+export const getAuthAdminAccountsById = <ThrowOnError extends boolean = false>(
+  options: Options<GetAuthAdminAccountsByIdData, ThrowOnError>,
+) =>
+  (options.client ?? client).get<
+    GetAuthAdminAccountsByIdResponses,
+    GetAuthAdminAccountsByIdErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) =>
+      await z
+        .object({
+          body: z.never().optional(),
+          path: z_get_auth_admin_accounts_by_id_path,
+          query: z.never().optional(),
+        })
+        .parseAsync(data),
     url: '/auth/admin/accounts/{id}',
-    ...options
-});
+    ...options,
+  });
 
-export const patchAuthAdminAccountsById = <ThrowOnError extends boolean = false>(options: Options<PatchAuthAdminAccountsByIdData, ThrowOnError>) => (options.client ?? client).patch<PatchAuthAdminAccountsByIdResponses, PatchAuthAdminAccountsByIdErrors, ThrowOnError>({
-    requestValidator: async (data) => await z.object({
-        body: z_patch_auth_admin_accounts_by_id_body,
-        path: z_patch_auth_admin_accounts_by_id_path,
-        query: z.never().optional()
-    }).parseAsync(data),
+export const patchAuthAdminAccountsById = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<PatchAuthAdminAccountsByIdData, ThrowOnError>,
+) =>
+  (options.client ?? client).patch<
+    PatchAuthAdminAccountsByIdResponses,
+    PatchAuthAdminAccountsByIdErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) =>
+      await z
+        .object({
+          body: z_patch_auth_admin_accounts_by_id_body,
+          path: z_patch_auth_admin_accounts_by_id_path,
+          query: z.never().optional(),
+        })
+        .parseAsync(data),
     url: '/auth/admin/accounts/{id}',
     ...options,
     headers: {
-        'Content-Type': 'application/json',
-        ...options.headers
-    }
-});
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
 
-export const getAuthAdminImpersonations = <ThrowOnError extends boolean = false>(options?: Options<GetAuthAdminImpersonationsData, ThrowOnError>) => (options?.client ?? client).get<GetAuthAdminImpersonationsResponses, GetAuthAdminImpersonationsErrors, ThrowOnError>({
-    requestValidator: async (data) => await z.object({
-        body: z.never().optional(),
-        path: z.never().optional(),
-        query: z.never().optional()
-    }).parseAsync(data),
+export const getAuthAdminImpersonations = <
+  ThrowOnError extends boolean = false,
+>(
+  options?: Options<GetAuthAdminImpersonationsData, ThrowOnError>,
+) =>
+  (options?.client ?? client).get<
+    GetAuthAdminImpersonationsResponses,
+    GetAuthAdminImpersonationsErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) =>
+      await z
+        .object({
+          body: z.never().optional(),
+          path: z.never().optional(),
+          query: z.never().optional(),
+        })
+        .parseAsync(data),
     url: '/auth/admin/impersonations',
-    ...options
-});
+    ...options,
+  });
 
-export const postAuthAdminImpersonations = <ThrowOnError extends boolean = false>(options: Options<PostAuthAdminImpersonationsData, ThrowOnError>) => (options.client ?? client).post<PostAuthAdminImpersonationsResponses, PostAuthAdminImpersonationsErrors, ThrowOnError>({
-    requestValidator: async (data) => await z.object({
-        body: z_post_auth_admin_impersonations_body,
-        path: z.never().optional(),
-        query: z.never().optional()
-    }).parseAsync(data),
+export const postAuthAdminImpersonations = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<PostAuthAdminImpersonationsData, ThrowOnError>,
+) =>
+  (options.client ?? client).post<
+    PostAuthAdminImpersonationsResponses,
+    PostAuthAdminImpersonationsErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) =>
+      await z
+        .object({
+          body: z_post_auth_admin_impersonations_body,
+          path: z.never().optional(),
+          query: z.never().optional(),
+        })
+        .parseAsync(data),
     url: '/auth/admin/impersonations',
     ...options,
     headers: {
-        'Content-Type': 'application/json',
-        ...options.headers
-    }
-});
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
 
-export const getAuthAdminImpersonationsByImpersonationId = <ThrowOnError extends boolean = false>(options: Options<GetAuthAdminImpersonationsByImpersonationIdData, ThrowOnError>) => (options.client ?? client).get<GetAuthAdminImpersonationsByImpersonationIdResponses, GetAuthAdminImpersonationsByImpersonationIdErrors, ThrowOnError>({
-    requestValidator: async (data) => await z.object({
-        body: z.never().optional(),
-        path: z_get_auth_admin_impersonations_by_impersonation_id_path,
-        query: z.never().optional()
-    }).parseAsync(data),
+export const getAuthAdminImpersonationsByImpersonationId = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<
+    GetAuthAdminImpersonationsByImpersonationIdData,
+    ThrowOnError
+  >,
+) =>
+  (options.client ?? client).get<
+    GetAuthAdminImpersonationsByImpersonationIdResponses,
+    GetAuthAdminImpersonationsByImpersonationIdErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) =>
+      await z
+        .object({
+          body: z.never().optional(),
+          path: z_get_auth_admin_impersonations_by_impersonation_id_path,
+          query: z.never().optional(),
+        })
+        .parseAsync(data),
     url: '/auth/admin/impersonations/{impersonation_id}',
-    ...options
-});
+    ...options,
+  });
 
-export const postAuthAdminImpersonationsByImpersonationIdStop = <ThrowOnError extends boolean = false>(options: Options<PostAuthAdminImpersonationsByImpersonationIdStopData, ThrowOnError>) => (options.client ?? client).post<PostAuthAdminImpersonationsByImpersonationIdStopResponses, PostAuthAdminImpersonationsByImpersonationIdStopErrors, ThrowOnError>({
-    requestValidator: async (data) => await z.object({
-        body: z.never().optional(),
-        path: z_post_auth_admin_impersonations_by_impersonation_id_stop_path,
-        query: z.never().optional()
-    }).parseAsync(data),
+export const postAuthAdminImpersonationsByImpersonationIdStop = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<
+    PostAuthAdminImpersonationsByImpersonationIdStopData,
+    ThrowOnError
+  >,
+) =>
+  (options.client ?? client).post<
+    PostAuthAdminImpersonationsByImpersonationIdStopResponses,
+    PostAuthAdminImpersonationsByImpersonationIdStopErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) =>
+      await z
+        .object({
+          body: z.never().optional(),
+          path: z_post_auth_admin_impersonations_by_impersonation_id_stop_path,
+          query: z.never().optional(),
+        })
+        .parseAsync(data),
     url: '/auth/admin/impersonations/{impersonation_id}/stop',
-    ...options
-});
+    ...options,
+  });
 
-export const getAuthAdminSessionsStatesRevoked = <ThrowOnError extends boolean = false>(options?: Options<GetAuthAdminSessionsStatesRevokedData, ThrowOnError>) => (options?.client ?? client).get<GetAuthAdminSessionsStatesRevokedResponses, GetAuthAdminSessionsStatesRevokedErrors, ThrowOnError>({
-    requestValidator: async (data) => await z.object({
-        body: z.never().optional(),
-        path: z.never().optional(),
-        query: z.never().optional()
-    }).parseAsync(data),
+export const getAuthAdminSessionsStatesRevoked = <
+  ThrowOnError extends boolean = false,
+>(
+  options?: Options<GetAuthAdminSessionsStatesRevokedData, ThrowOnError>,
+) =>
+  (options?.client ?? client).get<
+    GetAuthAdminSessionsStatesRevokedResponses,
+    GetAuthAdminSessionsStatesRevokedErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) =>
+      await z
+        .object({
+          body: z.never().optional(),
+          path: z.never().optional(),
+          query: z.never().optional(),
+        })
+        .parseAsync(data),
     url: '/auth/admin/sessions/states/revoked',
-    ...options
-});
+    ...options,
+  });
 
-export const postAuthAdminSessionsBySessionIdRevoke = <ThrowOnError extends boolean = false>(options: Options<PostAuthAdminSessionsBySessionIdRevokeData, ThrowOnError>) => (options.client ?? client).post<PostAuthAdminSessionsBySessionIdRevokeResponses, PostAuthAdminSessionsBySessionIdRevokeErrors, ThrowOnError>({
-    requestValidator: async (data) => await z.object({
-        body: z_post_auth_admin_sessions_by_session_id_revoke_body,
-        path: z_post_auth_admin_sessions_by_session_id_revoke_path,
-        query: z.never().optional()
-    }).parseAsync(data),
+export const postAuthAdminSessionsBySessionIdRevoke = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<PostAuthAdminSessionsBySessionIdRevokeData, ThrowOnError>,
+) =>
+  (options.client ?? client).post<
+    PostAuthAdminSessionsBySessionIdRevokeResponses,
+    PostAuthAdminSessionsBySessionIdRevokeErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) =>
+      await z
+        .object({
+          body: z_post_auth_admin_sessions_by_session_id_revoke_body,
+          path: z_post_auth_admin_sessions_by_session_id_revoke_path,
+          query: z.never().optional(),
+        })
+        .parseAsync(data),
     url: '/auth/admin/sessions/{session_id}/revoke',
     ...options,
     headers: {
-        'Content-Type': 'application/json',
-        ...options.headers
-    }
-});
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
 
-export const deleteAuthAdminSessionsBySessionIdState = <ThrowOnError extends boolean = false>(options: Options<DeleteAuthAdminSessionsBySessionIdStateData, ThrowOnError>) => (options.client ?? client).delete<DeleteAuthAdminSessionsBySessionIdStateResponses, DeleteAuthAdminSessionsBySessionIdStateErrors, ThrowOnError>({
-    requestValidator: async (data) => await z.object({
-        body: z.never().optional(),
-        path: z_delete_auth_admin_sessions_by_session_id_state_path,
-        query: z.never().optional()
-    }).parseAsync(data),
+export const deleteAuthAdminSessionsBySessionIdState = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<DeleteAuthAdminSessionsBySessionIdStateData, ThrowOnError>,
+) =>
+  (options.client ?? client).delete<
+    DeleteAuthAdminSessionsBySessionIdStateResponses,
+    DeleteAuthAdminSessionsBySessionIdStateErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) =>
+      await z
+        .object({
+          body: z.never().optional(),
+          path: z_delete_auth_admin_sessions_by_session_id_state_path,
+          query: z.never().optional(),
+        })
+        .parseAsync(data),
     url: '/auth/admin/sessions/{session_id}/state',
-    ...options
-});
+    ...options,
+  });
 
-export const getAuthAdminSessionsBySessionIdState = <ThrowOnError extends boolean = false>(options: Options<GetAuthAdminSessionsBySessionIdStateData, ThrowOnError>) => (options.client ?? client).get<GetAuthAdminSessionsBySessionIdStateResponses, GetAuthAdminSessionsBySessionIdStateErrors, ThrowOnError>({
-    requestValidator: async (data) => await z.object({
-        body: z.never().optional(),
-        path: z_get_auth_admin_sessions_by_session_id_state_path,
-        query: z.never().optional()
-    }).parseAsync(data),
+export const getAuthAdminSessionsBySessionIdState = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<GetAuthAdminSessionsBySessionIdStateData, ThrowOnError>,
+) =>
+  (options.client ?? client).get<
+    GetAuthAdminSessionsBySessionIdStateResponses,
+    GetAuthAdminSessionsBySessionIdStateErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) =>
+      await z
+        .object({
+          body: z.never().optional(),
+          path: z_get_auth_admin_sessions_by_session_id_state_path,
+          query: z.never().optional(),
+        })
+        .parseAsync(data),
     url: '/auth/admin/sessions/{session_id}/state',
-    ...options
-});
+    ...options,
+  });
 
-export const patchAuthAdminSessionsBySessionIdState = <ThrowOnError extends boolean = false>(options: Options<PatchAuthAdminSessionsBySessionIdStateData, ThrowOnError>) => (options.client ?? client).patch<PatchAuthAdminSessionsBySessionIdStateResponses, PatchAuthAdminSessionsBySessionIdStateErrors, ThrowOnError>({
-    requestValidator: async (data) => await z.object({
-        body: z_patch_auth_admin_sessions_by_session_id_state_body,
-        path: z_patch_auth_admin_sessions_by_session_id_state_path,
-        query: z.never().optional()
-    }).parseAsync(data),
+export const patchAuthAdminSessionsBySessionIdState = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<PatchAuthAdminSessionsBySessionIdStateData, ThrowOnError>,
+) =>
+  (options.client ?? client).patch<
+    PatchAuthAdminSessionsBySessionIdStateResponses,
+    PatchAuthAdminSessionsBySessionIdStateErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) =>
+      await z
+        .object({
+          body: z_patch_auth_admin_sessions_by_session_id_state_body,
+          path: z_patch_auth_admin_sessions_by_session_id_state_path,
+          query: z.never().optional(),
+        })
+        .parseAsync(data),
     url: '/auth/admin/sessions/{session_id}/state',
     ...options,
     headers: {
-        'Content-Type': 'application/json',
-        ...options.headers
-    }
-});
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
 
-export const postAuthAdminSessionsBySessionIdState = <ThrowOnError extends boolean = false>(options: Options<PostAuthAdminSessionsBySessionIdStateData, ThrowOnError>) => (options.client ?? client).post<PostAuthAdminSessionsBySessionIdStateResponses, PostAuthAdminSessionsBySessionIdStateErrors, ThrowOnError>({
-    requestValidator: async (data) => await z.object({
-        body: z_post_auth_admin_sessions_by_session_id_state_body,
-        path: z_post_auth_admin_sessions_by_session_id_state_path,
-        query: z.never().optional()
-    }).parseAsync(data),
+export const postAuthAdminSessionsBySessionIdState = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<PostAuthAdminSessionsBySessionIdStateData, ThrowOnError>,
+) =>
+  (options.client ?? client).post<
+    PostAuthAdminSessionsBySessionIdStateResponses,
+    PostAuthAdminSessionsBySessionIdStateErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) =>
+      await z
+        .object({
+          body: z_post_auth_admin_sessions_by_session_id_state_body,
+          path: z_post_auth_admin_sessions_by_session_id_state_path,
+          query: z.never().optional(),
+        })
+        .parseAsync(data),
     url: '/auth/admin/sessions/{session_id}/state',
     ...options,
     headers: {
-        'Content-Type': 'application/json',
-        ...options.headers
-    }
-});
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
 
-export const getAuthAdminUsers = <ThrowOnError extends boolean = false>(options?: Options<GetAuthAdminUsersData, ThrowOnError>) => (options?.client ?? client).get<GetAuthAdminUsersResponses, GetAuthAdminUsersErrors, ThrowOnError>({
-    requestValidator: async (data) => await z.object({
-        body: z.never().optional(),
-        path: z.never().optional(),
-        query: z_get_auth_admin_users_query.optional()
-    }).parseAsync(data),
+export const getAuthAdminUsers = <ThrowOnError extends boolean = false>(
+  options?: Options<GetAuthAdminUsersData, ThrowOnError>,
+) =>
+  (options?.client ?? client).get<
+    GetAuthAdminUsersResponses,
+    GetAuthAdminUsersErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) =>
+      await z
+        .object({
+          body: z.never().optional(),
+          path: z.never().optional(),
+          query: z_get_auth_admin_users_query.optional(),
+        })
+        .parseAsync(data),
     url: '/auth/admin/users',
-    ...options
-});
+    ...options,
+  });
 
-export const postAuthAdminUsers = <ThrowOnError extends boolean = false>(options: Options<PostAuthAdminUsersData, ThrowOnError>) => (options.client ?? client).post<PostAuthAdminUsersResponses, PostAuthAdminUsersErrors, ThrowOnError>({
-    requestValidator: async (data) => await z.object({
-        body: z_post_auth_admin_users_body,
-        path: z.never().optional(),
-        query: z.never().optional()
-    }).parseAsync(data),
+export const postAuthAdminUsers = <ThrowOnError extends boolean = false>(
+  options: Options<PostAuthAdminUsersData, ThrowOnError>,
+) =>
+  (options.client ?? client).post<
+    PostAuthAdminUsersResponses,
+    PostAuthAdminUsersErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) =>
+      await z
+        .object({
+          body: z_post_auth_admin_users_body,
+          path: z.never().optional(),
+          query: z.never().optional(),
+        })
+        .parseAsync(data),
     url: '/auth/admin/users',
     ...options,
     headers: {
-        'Content-Type': 'application/json',
-        ...options.headers
-    }
-});
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
 
-export const getAuthAdminUsersStatesBanned = <ThrowOnError extends boolean = false>(options?: Options<GetAuthAdminUsersStatesBannedData, ThrowOnError>) => (options?.client ?? client).get<GetAuthAdminUsersStatesBannedResponses, GetAuthAdminUsersStatesBannedErrors, ThrowOnError>({
-    requestValidator: async (data) => await z.object({
-        body: z.never().optional(),
-        path: z.never().optional(),
-        query: z.never().optional()
-    }).parseAsync(data),
+export const getAuthAdminUsersStatesBanned = <
+  ThrowOnError extends boolean = false,
+>(
+  options?: Options<GetAuthAdminUsersStatesBannedData, ThrowOnError>,
+) =>
+  (options?.client ?? client).get<
+    GetAuthAdminUsersStatesBannedResponses,
+    GetAuthAdminUsersStatesBannedErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) =>
+      await z
+        .object({
+          body: z.never().optional(),
+          path: z.never().optional(),
+          query: z.never().optional(),
+        })
+        .parseAsync(data),
     url: '/auth/admin/users/states/banned',
-    ...options
-});
+    ...options,
+  });
 
-export const deleteAuthAdminUsersByUserId = <ThrowOnError extends boolean = false>(options: Options<DeleteAuthAdminUsersByUserIdData, ThrowOnError>) => (options.client ?? client).delete<DeleteAuthAdminUsersByUserIdResponses, DeleteAuthAdminUsersByUserIdErrors, ThrowOnError>({
-    requestValidator: async (data) => await z.object({
-        body: z.never().optional(),
-        path: z_delete_auth_admin_users_by_user_id_path,
-        query: z.never().optional()
-    }).parseAsync(data),
+export const deleteAuthAdminUsersByUserId = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<DeleteAuthAdminUsersByUserIdData, ThrowOnError>,
+) =>
+  (options.client ?? client).delete<
+    DeleteAuthAdminUsersByUserIdResponses,
+    DeleteAuthAdminUsersByUserIdErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) =>
+      await z
+        .object({
+          body: z.never().optional(),
+          path: z_delete_auth_admin_users_by_user_id_path,
+          query: z.never().optional(),
+        })
+        .parseAsync(data),
     url: '/auth/admin/users/{user_id}',
-    ...options
-});
+    ...options,
+  });
 
-export const getAuthAdminUsersByUserId = <ThrowOnError extends boolean = false>(options: Options<GetAuthAdminUsersByUserIdData, ThrowOnError>) => (options.client ?? client).get<GetAuthAdminUsersByUserIdResponses, GetAuthAdminUsersByUserIdErrors, ThrowOnError>({
-    requestValidator: async (data) => await z.object({
-        body: z.never().optional(),
-        path: z_get_auth_admin_users_by_user_id_path,
-        query: z.never().optional()
-    }).parseAsync(data),
+export const getAuthAdminUsersByUserId = <ThrowOnError extends boolean = false>(
+  options: Options<GetAuthAdminUsersByUserIdData, ThrowOnError>,
+) =>
+  (options.client ?? client).get<
+    GetAuthAdminUsersByUserIdResponses,
+    GetAuthAdminUsersByUserIdErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) =>
+      await z
+        .object({
+          body: z.never().optional(),
+          path: z_get_auth_admin_users_by_user_id_path,
+          query: z.never().optional(),
+        })
+        .parseAsync(data),
     url: '/auth/admin/users/{user_id}',
-    ...options
-});
+    ...options,
+  });
 
-export const patchAuthAdminUsersByUserId = <ThrowOnError extends boolean = false>(options: Options<PatchAuthAdminUsersByUserIdData, ThrowOnError>) => (options.client ?? client).patch<PatchAuthAdminUsersByUserIdResponses, PatchAuthAdminUsersByUserIdErrors, ThrowOnError>({
-    requestValidator: async (data) => await z.object({
-        body: z_patch_auth_admin_users_by_user_id_body,
-        path: z_patch_auth_admin_users_by_user_id_path,
-        query: z.never().optional()
-    }).parseAsync(data),
+export const patchAuthAdminUsersByUserId = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<PatchAuthAdminUsersByUserIdData, ThrowOnError>,
+) =>
+  (options.client ?? client).patch<
+    PatchAuthAdminUsersByUserIdResponses,
+    PatchAuthAdminUsersByUserIdErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) =>
+      await z
+        .object({
+          body: z_patch_auth_admin_users_by_user_id_body,
+          path: z_patch_auth_admin_users_by_user_id_path,
+          query: z.never().optional(),
+        })
+        .parseAsync(data),
     url: '/auth/admin/users/{user_id}',
     ...options,
     headers: {
-        'Content-Type': 'application/json',
-        ...options.headers
-    }
-});
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
 
-export const getAuthAdminUsersByUserIdAccounts = <ThrowOnError extends boolean = false>(options: Options<GetAuthAdminUsersByUserIdAccountsData, ThrowOnError>) => (options.client ?? client).get<GetAuthAdminUsersByUserIdAccountsResponses, GetAuthAdminUsersByUserIdAccountsErrors, ThrowOnError>({
-    requestValidator: async (data) => await z.object({
-        body: z.never().optional(),
-        path: z_get_auth_admin_users_by_user_id_accounts_path,
-        query: z.never().optional()
-    }).parseAsync(data),
+export const getAuthAdminUsersByUserIdAccounts = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<GetAuthAdminUsersByUserIdAccountsData, ThrowOnError>,
+) =>
+  (options.client ?? client).get<
+    GetAuthAdminUsersByUserIdAccountsResponses,
+    GetAuthAdminUsersByUserIdAccountsErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) =>
+      await z
+        .object({
+          body: z.never().optional(),
+          path: z_get_auth_admin_users_by_user_id_accounts_path,
+          query: z.never().optional(),
+        })
+        .parseAsync(data),
     url: '/auth/admin/users/{user_id}/accounts',
-    ...options
-});
+    ...options,
+  });
 
-export const postAuthAdminUsersByUserIdAccounts = <ThrowOnError extends boolean = false>(options: Options<PostAuthAdminUsersByUserIdAccountsData, ThrowOnError>) => (options.client ?? client).post<PostAuthAdminUsersByUserIdAccountsResponses, PostAuthAdminUsersByUserIdAccountsErrors, ThrowOnError>({
-    requestValidator: async (data) => await z.object({
-        body: z_post_auth_admin_users_by_user_id_accounts_body,
-        path: z_post_auth_admin_users_by_user_id_accounts_path,
-        query: z.never().optional()
-    }).parseAsync(data),
+export const postAuthAdminUsersByUserIdAccounts = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<PostAuthAdminUsersByUserIdAccountsData, ThrowOnError>,
+) =>
+  (options.client ?? client).post<
+    PostAuthAdminUsersByUserIdAccountsResponses,
+    PostAuthAdminUsersByUserIdAccountsErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) =>
+      await z
+        .object({
+          body: z_post_auth_admin_users_by_user_id_accounts_body,
+          path: z_post_auth_admin_users_by_user_id_accounts_path,
+          query: z.never().optional(),
+        })
+        .parseAsync(data),
     url: '/auth/admin/users/{user_id}/accounts',
     ...options,
     headers: {
-        'Content-Type': 'application/json',
-        ...options.headers
-    }
-});
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
 
-export const postAuthAdminUsersByUserIdBan = <ThrowOnError extends boolean = false>(options: Options<PostAuthAdminUsersByUserIdBanData, ThrowOnError>) => (options.client ?? client).post<PostAuthAdminUsersByUserIdBanResponses, PostAuthAdminUsersByUserIdBanErrors, ThrowOnError>({
-    requestValidator: async (data) => await z.object({
-        body: z_post_auth_admin_users_by_user_id_ban_body,
-        path: z_post_auth_admin_users_by_user_id_ban_path,
-        query: z.never().optional()
-    }).parseAsync(data),
+export const postAuthAdminUsersByUserIdBan = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<PostAuthAdminUsersByUserIdBanData, ThrowOnError>,
+) =>
+  (options.client ?? client).post<
+    PostAuthAdminUsersByUserIdBanResponses,
+    PostAuthAdminUsersByUserIdBanErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) =>
+      await z
+        .object({
+          body: z_post_auth_admin_users_by_user_id_ban_body,
+          path: z_post_auth_admin_users_by_user_id_ban_path,
+          query: z.never().optional(),
+        })
+        .parseAsync(data),
     url: '/auth/admin/users/{user_id}/ban',
     ...options,
     headers: {
-        'Content-Type': 'application/json',
-        ...options.headers
-    }
-});
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
 
-export const getAuthAdminUsersByUserIdSessions = <ThrowOnError extends boolean = false>(options: Options<GetAuthAdminUsersByUserIdSessionsData, ThrowOnError>) => (options.client ?? client).get<GetAuthAdminUsersByUserIdSessionsResponses, GetAuthAdminUsersByUserIdSessionsErrors, ThrowOnError>({
-    requestValidator: async (data) => await z.object({
-        body: z.never().optional(),
-        path: z_get_auth_admin_users_by_user_id_sessions_path,
-        query: z.never().optional()
-    }).parseAsync(data),
+export const getAuthAdminUsersByUserIdSessions = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<GetAuthAdminUsersByUserIdSessionsData, ThrowOnError>,
+) =>
+  (options.client ?? client).get<
+    GetAuthAdminUsersByUserIdSessionsResponses,
+    GetAuthAdminUsersByUserIdSessionsErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) =>
+      await z
+        .object({
+          body: z.never().optional(),
+          path: z_get_auth_admin_users_by_user_id_sessions_path,
+          query: z.never().optional(),
+        })
+        .parseAsync(data),
     url: '/auth/admin/users/{user_id}/sessions',
-    ...options
-});
+    ...options,
+  });
 
-export const deleteAuthAdminUsersByUserIdState = <ThrowOnError extends boolean = false>(options: Options<DeleteAuthAdminUsersByUserIdStateData, ThrowOnError>) => (options.client ?? client).delete<DeleteAuthAdminUsersByUserIdStateResponses, DeleteAuthAdminUsersByUserIdStateErrors, ThrowOnError>({
-    requestValidator: async (data) => await z.object({
-        body: z.never().optional(),
-        path: z_delete_auth_admin_users_by_user_id_state_path,
-        query: z.never().optional()
-    }).parseAsync(data),
+export const deleteAuthAdminUsersByUserIdState = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<DeleteAuthAdminUsersByUserIdStateData, ThrowOnError>,
+) =>
+  (options.client ?? client).delete<
+    DeleteAuthAdminUsersByUserIdStateResponses,
+    DeleteAuthAdminUsersByUserIdStateErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) =>
+      await z
+        .object({
+          body: z.never().optional(),
+          path: z_delete_auth_admin_users_by_user_id_state_path,
+          query: z.never().optional(),
+        })
+        .parseAsync(data),
     url: '/auth/admin/users/{user_id}/state',
-    ...options
-});
+    ...options,
+  });
 
-export const getAuthAdminUsersByUserIdState = <ThrowOnError extends boolean = false>(options: Options<GetAuthAdminUsersByUserIdStateData, ThrowOnError>) => (options.client ?? client).get<GetAuthAdminUsersByUserIdStateResponses, GetAuthAdminUsersByUserIdStateErrors, ThrowOnError>({
-    requestValidator: async (data) => await z.object({
-        body: z.never().optional(),
-        path: z_get_auth_admin_users_by_user_id_state_path,
-        query: z.never().optional()
-    }).parseAsync(data),
+export const getAuthAdminUsersByUserIdState = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<GetAuthAdminUsersByUserIdStateData, ThrowOnError>,
+) =>
+  (options.client ?? client).get<
+    GetAuthAdminUsersByUserIdStateResponses,
+    GetAuthAdminUsersByUserIdStateErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) =>
+      await z
+        .object({
+          body: z.never().optional(),
+          path: z_get_auth_admin_users_by_user_id_state_path,
+          query: z.never().optional(),
+        })
+        .parseAsync(data),
     url: '/auth/admin/users/{user_id}/state',
-    ...options
-});
+    ...options,
+  });
 
-export const patchAuthAdminUsersByUserIdState = <ThrowOnError extends boolean = false>(options: Options<PatchAuthAdminUsersByUserIdStateData, ThrowOnError>) => (options.client ?? client).patch<PatchAuthAdminUsersByUserIdStateResponses, PatchAuthAdminUsersByUserIdStateErrors, ThrowOnError>({
-    requestValidator: async (data) => await z.object({
-        body: z_patch_auth_admin_users_by_user_id_state_body,
-        path: z_patch_auth_admin_users_by_user_id_state_path,
-        query: z.never().optional()
-    }).parseAsync(data),
+export const patchAuthAdminUsersByUserIdState = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<PatchAuthAdminUsersByUserIdStateData, ThrowOnError>,
+) =>
+  (options.client ?? client).patch<
+    PatchAuthAdminUsersByUserIdStateResponses,
+    PatchAuthAdminUsersByUserIdStateErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) =>
+      await z
+        .object({
+          body: z_patch_auth_admin_users_by_user_id_state_body,
+          path: z_patch_auth_admin_users_by_user_id_state_path,
+          query: z.never().optional(),
+        })
+        .parseAsync(data),
     url: '/auth/admin/users/{user_id}/state',
     ...options,
     headers: {
-        'Content-Type': 'application/json',
-        ...options.headers
-    }
-});
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
 
-export const postAuthAdminUsersByUserIdState = <ThrowOnError extends boolean = false>(options: Options<PostAuthAdminUsersByUserIdStateData, ThrowOnError>) => (options.client ?? client).post<PostAuthAdminUsersByUserIdStateResponses, PostAuthAdminUsersByUserIdStateErrors, ThrowOnError>({
-    requestValidator: async (data) => await z.object({
-        body: z_post_auth_admin_users_by_user_id_state_body,
-        path: z_post_auth_admin_users_by_user_id_state_path,
-        query: z.never().optional()
-    }).parseAsync(data),
+export const postAuthAdminUsersByUserIdState = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<PostAuthAdminUsersByUserIdStateData, ThrowOnError>,
+) =>
+  (options.client ?? client).post<
+    PostAuthAdminUsersByUserIdStateResponses,
+    PostAuthAdminUsersByUserIdStateErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) =>
+      await z
+        .object({
+          body: z_post_auth_admin_users_by_user_id_state_body,
+          path: z_post_auth_admin_users_by_user_id_state_path,
+          query: z.never().optional(),
+        })
+        .parseAsync(data),
     url: '/auth/admin/users/{user_id}/state',
     ...options,
     headers: {
-        'Content-Type': 'application/json',
-        ...options.headers
-    }
-});
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
 
-export const postAuthAdminUsersByUserIdUnban = <ThrowOnError extends boolean = false>(options: Options<PostAuthAdminUsersByUserIdUnbanData, ThrowOnError>) => (options.client ?? client).post<PostAuthAdminUsersByUserIdUnbanResponses, PostAuthAdminUsersByUserIdUnbanErrors, ThrowOnError>({
-    requestValidator: async (data) => await z.object({
-        body: z.never().optional(),
-        path: z_post_auth_admin_users_by_user_id_unban_path,
-        query: z.never().optional()
-    }).parseAsync(data),
+export const postAuthAdminUsersByUserIdUnban = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<PostAuthAdminUsersByUserIdUnbanData, ThrowOnError>,
+) =>
+  (options.client ?? client).post<
+    PostAuthAdminUsersByUserIdUnbanResponses,
+    PostAuthAdminUsersByUserIdUnbanErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) =>
+      await z
+        .object({
+          body: z.never().optional(),
+          path: z_post_auth_admin_users_by_user_id_unban_path,
+          query: z.never().optional(),
+        })
+        .parseAsync(data),
     url: '/auth/admin/users/{user_id}/unban',
-    ...options
-});
+    ...options,
+  });
 
-export const postAuthEmailPasswordChangePassword = <ThrowOnError extends boolean = false>(options: Options<PostAuthEmailPasswordChangePasswordData, ThrowOnError>) => (options.client ?? client).post<PostAuthEmailPasswordChangePasswordResponses, PostAuthEmailPasswordChangePasswordErrors, ThrowOnError>({
-    requestValidator: async (data) => await z.object({
-        body: z_post_auth_email_password_change_password_body,
-        path: z.never().optional(),
-        query: z.never().optional()
-    }).parseAsync(data),
+export const postAuthEmailPasswordChangePassword = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<PostAuthEmailPasswordChangePasswordData, ThrowOnError>,
+) =>
+  (options.client ?? client).post<
+    PostAuthEmailPasswordChangePasswordResponses,
+    PostAuthEmailPasswordChangePasswordErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) =>
+      await z
+        .object({
+          body: z_post_auth_email_password_change_password_body,
+          path: z.never().optional(),
+          query: z.never().optional(),
+        })
+        .parseAsync(data),
     url: '/auth/email-password/change-password',
     ...options,
     headers: {
-        'Content-Type': 'application/json',
-        ...options.headers
-    }
-});
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
 
-export const postAuthEmailPasswordRequestEmailChange = <ThrowOnError extends boolean = false>(options: Options<PostAuthEmailPasswordRequestEmailChangeData, ThrowOnError>) => (options.client ?? client).post<PostAuthEmailPasswordRequestEmailChangeResponses, PostAuthEmailPasswordRequestEmailChangeErrors, ThrowOnError>({
-    requestValidator: async (data) => await z.object({
-        body: z_post_auth_email_password_request_email_change_body,
-        path: z.never().optional(),
-        query: z.never().optional()
-    }).parseAsync(data),
+export const postAuthEmailPasswordRequestEmailChange = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<PostAuthEmailPasswordRequestEmailChangeData, ThrowOnError>,
+) =>
+  (options.client ?? client).post<
+    PostAuthEmailPasswordRequestEmailChangeResponses,
+    PostAuthEmailPasswordRequestEmailChangeErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) =>
+      await z
+        .object({
+          body: z_post_auth_email_password_request_email_change_body,
+          path: z.never().optional(),
+          query: z.never().optional(),
+        })
+        .parseAsync(data),
     url: '/auth/email-password/request-email-change',
     ...options,
     headers: {
-        'Content-Type': 'application/json',
-        ...options.headers
-    }
-});
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
 
-export const postAuthEmailPasswordRequestPasswordReset = <ThrowOnError extends boolean = false>(options: Options<PostAuthEmailPasswordRequestPasswordResetData, ThrowOnError>) => (options.client ?? client).post<PostAuthEmailPasswordRequestPasswordResetResponses, PostAuthEmailPasswordRequestPasswordResetErrors, ThrowOnError>({
-    requestValidator: async (data) => await z.object({
-        body: z_post_auth_email_password_request_password_reset_body,
-        path: z.never().optional(),
-        query: z.never().optional()
-    }).parseAsync(data),
+export const postAuthEmailPasswordRequestPasswordReset = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<PostAuthEmailPasswordRequestPasswordResetData, ThrowOnError>,
+) =>
+  (options.client ?? client).post<
+    PostAuthEmailPasswordRequestPasswordResetResponses,
+    PostAuthEmailPasswordRequestPasswordResetErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) =>
+      await z
+        .object({
+          body: z_post_auth_email_password_request_password_reset_body,
+          path: z.never().optional(),
+          query: z.never().optional(),
+        })
+        .parseAsync(data),
     url: '/auth/email-password/request-password-reset',
     ...options,
     headers: {
-        'Content-Type': 'application/json',
-        ...options.headers
-    }
-});
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
 
-export const postAuthEmailPasswordSendEmailVerification = <ThrowOnError extends boolean = false>(options: Options<PostAuthEmailPasswordSendEmailVerificationData, ThrowOnError>) => (options.client ?? client).post<PostAuthEmailPasswordSendEmailVerificationResponses, PostAuthEmailPasswordSendEmailVerificationErrors, ThrowOnError>({
-    requestValidator: async (data) => await z.object({
-        body: z_post_auth_email_password_send_email_verification_body,
-        path: z.never().optional(),
-        query: z.never().optional()
-    }).parseAsync(data),
+export const postAuthEmailPasswordSendEmailVerification = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<
+    PostAuthEmailPasswordSendEmailVerificationData,
+    ThrowOnError
+  >,
+) =>
+  (options.client ?? client).post<
+    PostAuthEmailPasswordSendEmailVerificationResponses,
+    PostAuthEmailPasswordSendEmailVerificationErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) =>
+      await z
+        .object({
+          body: z_post_auth_email_password_send_email_verification_body,
+          path: z.never().optional(),
+          query: z.never().optional(),
+        })
+        .parseAsync(data),
     url: '/auth/email-password/send-email-verification',
     ...options,
     headers: {
-        'Content-Type': 'application/json',
-        ...options.headers
-    }
-});
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
 
-export const postAuthEmailPasswordSignIn = <ThrowOnError extends boolean = false>(options: Options<PostAuthEmailPasswordSignInData, ThrowOnError>) => (options.client ?? client).post<PostAuthEmailPasswordSignInResponses, PostAuthEmailPasswordSignInErrors, ThrowOnError>({
-    requestValidator: async (data) => await z.object({
-        body: z_post_auth_email_password_sign_in_body,
-        path: z.never().optional(),
-        query: z.never().optional()
-    }).parseAsync(data),
+export const postAuthEmailPasswordSignIn = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<PostAuthEmailPasswordSignInData, ThrowOnError>,
+) =>
+  (options.client ?? client).post<
+    PostAuthEmailPasswordSignInResponses,
+    PostAuthEmailPasswordSignInErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) =>
+      await z
+        .object({
+          body: z_post_auth_email_password_sign_in_body,
+          path: z.never().optional(),
+          query: z.never().optional(),
+        })
+        .parseAsync(data),
     url: '/auth/email-password/sign-in',
     ...options,
     headers: {
-        'Content-Type': 'application/json',
-        ...options.headers
-    }
-});
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
 
-export const postAuthEmailPasswordSignUp = <ThrowOnError extends boolean = false>(options: Options<PostAuthEmailPasswordSignUpData, ThrowOnError>) => (options.client ?? client).post<PostAuthEmailPasswordSignUpResponses, PostAuthEmailPasswordSignUpErrors, ThrowOnError>({
-    requestValidator: async (data) => await z.object({
-        body: z_post_auth_email_password_sign_up_body,
-        path: z.never().optional(),
-        query: z.never().optional()
-    }).parseAsync(data),
+export const postAuthEmailPasswordSignUp = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<PostAuthEmailPasswordSignUpData, ThrowOnError>,
+) =>
+  (options.client ?? client).post<
+    PostAuthEmailPasswordSignUpResponses,
+    PostAuthEmailPasswordSignUpErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) =>
+      await z
+        .object({
+          body: z_post_auth_email_password_sign_up_body,
+          path: z.never().optional(),
+          query: z.never().optional(),
+        })
+        .parseAsync(data),
     url: '/auth/email-password/sign-up',
     ...options,
     headers: {
-        'Content-Type': 'application/json',
-        ...options.headers
-    }
-});
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
 
-export const getAuthEmailPasswordVerifyEmail = <ThrowOnError extends boolean = false>(options: Options<GetAuthEmailPasswordVerifyEmailData, ThrowOnError>) => (options.client ?? client).get<GetAuthEmailPasswordVerifyEmailResponses, GetAuthEmailPasswordVerifyEmailErrors, ThrowOnError>({
-    requestValidator: async (data) => await z.object({
-        body: z.never().optional(),
-        path: z.never().optional(),
-        query: z_get_auth_email_password_verify_email_query
-    }).parseAsync(data),
+export const getAuthEmailPasswordVerifyEmail = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<GetAuthEmailPasswordVerifyEmailData, ThrowOnError>,
+) =>
+  (options.client ?? client).get<
+    GetAuthEmailPasswordVerifyEmailResponses,
+    GetAuthEmailPasswordVerifyEmailErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) =>
+      await z
+        .object({
+          body: z.never().optional(),
+          path: z.never().optional(),
+          query: z_get_auth_email_password_verify_email_query,
+        })
+        .parseAsync(data),
     url: '/auth/email-password/verify-email',
-    ...options
-});
+    ...options,
+  });
 
-export const getAuthMe = <ThrowOnError extends boolean = false>(options?: Options<GetAuthMeData, ThrowOnError>) => (options?.client ?? client).get<GetAuthMeResponses, GetAuthMeErrors, ThrowOnError>({
-    requestValidator: async (data) => await z.object({
-        body: z.never().optional(),
-        path: z.never().optional(),
-        query: z.never().optional()
-    }).parseAsync(data),
+export const getAuthMe = <ThrowOnError extends boolean = false>(
+  options?: Options<GetAuthMeData, ThrowOnError>,
+) =>
+  (options?.client ?? client).get<
+    GetAuthMeResponses,
+    GetAuthMeErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) =>
+      await z
+        .object({
+          body: z.never().optional(),
+          path: z.never().optional(),
+          query: z.never().optional(),
+        })
+        .parseAsync(data),
     url: '/auth/me',
-    ...options
-});
+    ...options,
+  });
 
-export const postAuthSignOut = <ThrowOnError extends boolean = false>(options?: Options<PostAuthSignOutData, ThrowOnError>) => (options?.client ?? client).post<PostAuthSignOutResponses, PostAuthSignOutErrors, ThrowOnError>({
-    requestValidator: async (data) => await z.object({
-        body: z_post_auth_sign_out_body.optional(),
-        path: z.never().optional(),
-        query: z.never().optional()
-    }).parseAsync(data),
+export const postAuthSignOut = <ThrowOnError extends boolean = false>(
+  options?: Options<PostAuthSignOutData, ThrowOnError>,
+) =>
+  (options?.client ?? client).post<
+    PostAuthSignOutResponses,
+    PostAuthSignOutErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) =>
+      await z
+        .object({
+          body: z_post_auth_sign_out_body.optional(),
+          path: z.never().optional(),
+          query: z.never().optional(),
+        })
+        .parseAsync(data),
     url: '/auth/sign-out',
     ...options,
     headers: {
-        'Content-Type': 'application/json',
-        ...options?.headers
-    }
-});
+      'Content-Type': 'application/json',
+      ...options?.headers,
+    },
+  });

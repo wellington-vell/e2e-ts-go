@@ -63,5 +63,8 @@
   "gopls": {
     "formatting.gofumpt": true
   },
-  "go.formatFlags": ["fmt", "--stdin"]
+  "go.formatFlags": ["fmt", "--stdin"],
+  "prettier.enable": false,
+  "eslint.enable": false,
+  "biome.enable": false
 }

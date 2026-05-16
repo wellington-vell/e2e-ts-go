@@ -246,6 +246,8 @@ definitions:
       updatedAt:
         format: date
         type: string
+      userId:
+        type: string
     required:
     - text
     type: object

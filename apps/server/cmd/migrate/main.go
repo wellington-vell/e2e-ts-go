@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 
+	"server/internal/auth"
 	"server/internal/db"
 	"server/internal/lib"
 
@@ -13,6 +14,12 @@ import (
 
 func main() {
 	lib.LoadEnv()
+
+	_, err := auth.NewAuthula()
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Failed to initialize auth: %v\n", err)
+		os.Exit(1)
+	}
 
 	if err := db.InitDB(); err != nil {
 		fmt.Fprintf(os.Stderr, "Failed to initialize database: %v\n", err)

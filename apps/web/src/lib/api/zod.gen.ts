@@ -3,802 +3,807 @@
 import * as z from 'zod';
 
 export const z_account = z.object({
-    access_token: z.string().optional(),
-    access_token_expires_at: z.string().optional(),
-    account_id: z.string().optional(),
-    created_at: z.string().optional(),
-    id: z.string().optional(),
-    id_token: z.string().optional(),
-    password: z.string().optional(),
-    provider_id: z.string().optional(),
-    refresh_token: z.string().optional(),
-    refresh_token_expires_at: z.string().optional(),
-    scope: z.string().optional(),
-    updated_at: z.string().optional(),
-    user_id: z.string().optional()
+  access_token: z.string().optional(),
+  access_token_expires_at: z.string().optional(),
+  account_id: z.string().optional(),
+  created_at: z.string().optional(),
+  id: z.string().optional(),
+  id_token: z.string().optional(),
+  password: z.string().optional(),
+  provider_id: z.string().optional(),
+  refresh_token: z.string().optional(),
+  refresh_token_expires_at: z.string().optional(),
+  scope: z.string().optional(),
+  updated_at: z.string().optional(),
+  user_id: z.string().optional(),
 });
 
 export const z_create_todo_request = z.object({
-    actualHours: z.number().gte(0).optional(),
-    cost: z.number().gte(0).optional(),
-    dueDate: z.iso.date().optional(),
-    estimatedHours: z.number().gte(0).optional(),
-    label: z.enum([
-        'bug',
-        'feature',
-        'doc'
-    ]).optional(),
-    priority: z.enum([
-        'low',
-        'medium',
-        'high'
-    ]).optional(),
-    progress: z.int().gte(0).lte(100).optional(),
-    status: z.enum([
-        'backlog',
-        'todo',
-        'in_progress',
-        'done',
-        'canceled'
-    ]).optional(),
-    text: z.string().min(1)
+  actualHours: z.number().gte(0).optional(),
+  cost: z.number().gte(0).optional(),
+  dueDate: z.iso.date().optional(),
+  estimatedHours: z.number().gte(0).optional(),
+  label: z.enum(['bug', 'feature', 'doc']).optional(),
+  priority: z.enum(['low', 'medium', 'high']).optional(),
+  progress: z.int().gte(0).lte(100).optional(),
+  status: z
+    .enum(['backlog', 'todo', 'in_progress', 'done', 'canceled'])
+    .optional(),
+  text: z.string().min(1),
 });
 
 export const z_create_user_request = z.object({
-    email: z.string().optional(),
-    email_verified: z.boolean().optional(),
-    image: z.string().optional(),
-    metadata: z.record(z.string(), z.unknown()).optional(),
-    name: z.string().optional()
+  email: z.string().optional(),
+  email_verified: z.boolean().optional(),
+  image: z.string().optional(),
+  metadata: z.record(z.string(), z.unknown()).optional(),
+  name: z.string().optional(),
 });
 
 export const z_health_response = z.object({
-    arch: z.string().optional(),
-    args: z.array(z.string()).optional(),
-    date: z.string().optional(),
-    memory: z.record(z.string(), z.unknown()).optional(),
-    node: z.string().optional(),
-    os: z.string().optional(),
-    status: z.string().optional(),
-    timezone: z.string().optional(),
-    timezoneName: z.string().optional(),
-    timezoneOffset: z.int().optional(),
-    uptime: z.number().optional(),
-    version: z.string().optional()
+  arch: z.string().optional(),
+  args: z.array(z.string()).optional(),
+  date: z.string().optional(),
+  memory: z.record(z.string(), z.unknown()).optional(),
+  node: z.string().optional(),
+  os: z.string().optional(),
+  status: z.string().optional(),
+  timezone: z.string().optional(),
+  timezoneName: z.string().optional(),
+  timezoneOffset: z.int().optional(),
+  uptime: z.number().optional(),
+  version: z.string().optional(),
 });
 
 export const z_session = z.object({
-    created_at: z.string().optional(),
-    expires_at: z.string().optional(),
-    id: z.string().optional(),
-    ip_address: z.string().optional(),
-    token: z.string().optional(),
-    updated_at: z.string().optional(),
-    user_agent: z.string().optional(),
-    user_id: z.string().optional()
+  created_at: z.string().optional(),
+  expires_at: z.string().optional(),
+  id: z.string().optional(),
+  ip_address: z.string().optional(),
+  token: z.string().optional(),
+  updated_at: z.string().optional(),
+  user_agent: z.string().optional(),
+  user_id: z.string().optional(),
 });
 
 export const z_sign_in_request = z.object({
-    callback_url: z.string().optional(),
-    email: z.string().optional(),
-    password: z.string().optional()
+  callback_url: z.string().optional(),
+  email: z.string().optional(),
+  password: z.string().optional(),
 });
 
 export const z_sign_out_request = z.object({
-    session_id: z.string().optional(),
-    sign_out_all: z.boolean().optional()
+  session_id: z.string().optional(),
+  sign_out_all: z.boolean().optional(),
 });
 
 export const z_sign_out_response = z.object({
-    message: z.string().optional()
+  message: z.string().optional(),
 });
 
 export const z_sign_up_request = z.object({
-    callback_url: z.string().optional(),
-    email: z.string().optional(),
-    image: z.string().optional(),
-    metadata: z.record(z.string(), z.unknown()).optional(),
-    name: z.string().optional(),
-    password: z.string().optional()
+  callback_url: z.string().optional(),
+  email: z.string().optional(),
+  image: z.string().optional(),
+  metadata: z.record(z.string(), z.unknown()).optional(),
+  name: z.string().optional(),
+  password: z.string().optional(),
 });
 
-export const z_todo_priority = z.enum([
-    'low',
-    'medium',
-    'high'
-]);
+export const z_todo_priority = z.enum(['low', 'medium', 'high']);
 
 export const z_todo_status = z.enum([
-    'backlog',
-    'todo',
-    'in_progress',
-    'done',
-    'canceled'
+  'backlog',
+  'todo',
+  'in_progress',
+  'done',
+  'canceled',
 ]);
 
 export const z_todo = z.object({
-    actualHours: z.number().optional(),
-    completedAt: z.iso.date().optional(),
-    cost: z.number().optional(),
-    createdAt: z.iso.date().optional(),
-    dueDate: z.iso.date().optional(),
-    estimatedHours: z.number().optional(),
-    id: z.string().optional(),
-    label: z.string().optional(),
-    priority: z_todo_priority.optional(),
-    progress: z.int().optional(),
-    status: z_todo_status.optional(),
-    text: z.string().min(1),
-    updatedAt: z.iso.date().optional()
+  actualHours: z.number().optional(),
+  completedAt: z.iso.date().optional(),
+  cost: z.number().optional(),
+  createdAt: z.iso.date().optional(),
+  dueDate: z.iso.date().optional(),
+  estimatedHours: z.number().optional(),
+  id: z.string().optional(),
+  label: z.string().optional(),
+  priority: z_todo_priority.optional(),
+  progress: z.int().optional(),
+  status: z_todo_status.optional(),
+  text: z.string().min(1),
+  updatedAt: z.iso.date().optional(),
+  userId: z.string().optional(),
 });
 
 export const z_update_todo_request = z.object({
-    actualHours: z.number().gte(0).optional(),
-    completedAt: z.string().optional(),
-    cost: z.number().gte(0).optional(),
-    dueDate: z.iso.date().optional(),
-    estimatedHours: z.number().gte(0).optional(),
-    label: z.enum([
-        'bug',
-        'feature',
-        'doc'
-    ]).optional(),
-    priority: z.enum([
-        'low',
-        'medium',
-        'high'
-    ]).optional(),
-    progress: z.int().gte(0).lte(100).optional(),
-    status: z.enum([
-        'backlog',
-        'todo',
-        'in_progress',
-        'done',
-        'canceled'
-    ]).optional(),
-    text: z.string().min(1).optional()
+  actualHours: z.number().gte(0).optional(),
+  completedAt: z.string().optional(),
+  cost: z.number().gte(0).optional(),
+  dueDate: z.iso.date().optional(),
+  estimatedHours: z.number().gte(0).optional(),
+  label: z.enum(['bug', 'feature', 'doc']).optional(),
+  priority: z.enum(['low', 'medium', 'high']).optional(),
+  progress: z.int().gte(0).lte(100).optional(),
+  status: z
+    .enum(['backlog', 'todo', 'in_progress', 'done', 'canceled'])
+    .optional(),
+  text: z.string().min(1).optional(),
 });
 
 export const z_update_user_request = z.object({
-    email: z.string().optional(),
-    email_verified: z.boolean().optional(),
-    image: z.string().optional(),
-    metadata: z.record(z.string(), z.unknown()).optional(),
-    name: z.string().optional()
+  email: z.string().optional(),
+  email_verified: z.boolean().optional(),
+  image: z.string().optional(),
+  metadata: z.record(z.string(), z.unknown()).optional(),
+  name: z.string().optional(),
 });
 
 export const z_user = z.object({
-    created_at: z.string().optional(),
-    email: z.string().optional(),
-    email_verified: z.boolean().optional(),
-    id: z.string().optional(),
-    image: z.string().optional(),
-    metadata: z.record(z.string(), z.unknown()).optional(),
-    name: z.string().optional(),
-    updated_at: z.string().optional()
+  created_at: z.string().optional(),
+  email: z.string().optional(),
+  email_verified: z.boolean().optional(),
+  id: z.string().optional(),
+  image: z.string().optional(),
+  metadata: z.record(z.string(), z.unknown()).optional(),
+  name: z.string().optional(),
+  updated_at: z.string().optional(),
 });
 
 export const z_create_user_response = z.object({
-    user: z_user.optional()
+  user: z_user.optional(),
 });
 
 export const z_get_me_response = z.object({
-    session: z_session.optional(),
-    user: z_user.optional()
+  session: z_session.optional(),
+  user: z_user.optional(),
 });
 
 export const z_get_user_by_id_response = z.object({
-    user: z_user.optional()
+  user: z_user.optional(),
 });
 
 export const z_sign_in_response = z.object({
-    session: z_session.optional(),
-    user: z_user.optional()
+  session: z_session.optional(),
+  user: z_user.optional(),
 });
 
 export const z_sign_up_response = z.object({
-    session: z_session.optional(),
-    user: z_user.optional()
+  session: z_session.optional(),
+  user: z_user.optional(),
 });
 
 export const z_update_user_response = z.object({
-    user: z_user.optional()
+  user: z_user.optional(),
 });
 
 export const z_users_page = z.object({
-    next_cursor: z.string().optional(),
-    users: z.array(z_user).optional()
+  next_cursor: z.string().optional(),
+  users: z.array(z_user).optional(),
 });
 
 export const z_add_role_permission_request = z.object({
-    permission_id: z.string().optional()
+  permission_id: z.string().optional(),
 });
 
 export const z_add_role_permission_response = z.object({
-    message: z.string().optional()
+  message: z.string().optional(),
 });
 
 export const z_admin_session_state = z.object({
-    created_at: z.string().optional(),
-    impersonation_expires_at: z.string().optional(),
-    impersonation_reason: z.string().optional(),
-    impersonator_user_id: z.string().optional(),
-    revoked_at: z.string().optional(),
-    revoked_by_user_id: z.string().optional(),
-    revoked_reason: z.string().optional(),
-    session_id: z.string().optional(),
-    updated_at: z.string().optional()
+  created_at: z.string().optional(),
+  impersonation_expires_at: z.string().optional(),
+  impersonation_reason: z.string().optional(),
+  impersonator_user_id: z.string().optional(),
+  revoked_at: z.string().optional(),
+  revoked_by_user_id: z.string().optional(),
+  revoked_reason: z.string().optional(),
+  session_id: z.string().optional(),
+  updated_at: z.string().optional(),
 });
 
 export const z_admin_user_session = z.object({
-    session: z_session.optional(),
-    state: z_admin_session_state.optional()
+  session: z_session.optional(),
+  state: z_admin_session_state.optional(),
 });
 
 export const z_admin_user_state = z.object({
-    banned: z.boolean().optional(),
-    banned_at: z.string().optional(),
-    banned_by_user_id: z.string().optional(),
-    banned_reason: z.string().optional(),
-    banned_until: z.string().optional(),
-    created_at: z.string().optional(),
-    updated_at: z.string().optional(),
-    user_id: z.string().optional()
+  banned: z.boolean().optional(),
+  banned_at: z.string().optional(),
+  banned_by_user_id: z.string().optional(),
+  banned_reason: z.string().optional(),
+  banned_until: z.string().optional(),
+  created_at: z.string().optional(),
+  updated_at: z.string().optional(),
+  user_id: z.string().optional(),
 });
 
 export const z_assign_user_role_request = z.object({
-    expires_at: z.string().optional(),
-    role_id: z.string().optional()
+  expires_at: z.string().optional(),
+  role_id: z.string().optional(),
 });
 
 export const z_assign_user_role_response = z.object({
-    message: z.string().optional()
+  message: z.string().optional(),
 });
 
 export const z_ban_user_request = z.object({
-    banned_until: z.string().optional(),
-    reason: z.string().optional()
+  banned_until: z.string().optional(),
+  reason: z.string().optional(),
 });
 
 export const z_ban_user_response = z.object({
-    state: z_admin_user_state.optional()
+  state: z_admin_user_state.optional(),
 });
 
 export const z_change_password_request = z.object({
-    password: z.string().optional(),
-    token: z.string().optional()
+  password: z.string().optional(),
+  token: z.string().optional(),
 });
 
 export const z_change_password_response = z.object({
-    message: z.string().optional()
+  message: z.string().optional(),
 });
 
 export const z_check_user_permissions_request = z.object({
-    permission_keys: z.array(z.string()).optional()
+  permission_keys: z.array(z.string()).optional(),
 });
 
 export const z_check_user_permissions_response = z.object({
-    has_permissions: z.boolean().optional()
+  has_permissions: z.boolean().optional(),
 });
 
 export const z_create_account_request = z.object({
-    access_token: z.string().optional(),
-    access_token_expires_at: z.string().optional(),
-    account_id: z.string().optional(),
-    id_token: z.string().optional(),
-    password: z.string().optional(),
-    provider_id: z.string().optional(),
-    refresh_token: z.string().optional(),
-    refresh_token_expires_at: z.string().optional(),
-    scope: z.string().optional()
+  access_token: z.string().optional(),
+  access_token_expires_at: z.string().optional(),
+  account_id: z.string().optional(),
+  id_token: z.string().optional(),
+  password: z.string().optional(),
+  provider_id: z.string().optional(),
+  refresh_token: z.string().optional(),
+  refresh_token_expires_at: z.string().optional(),
+  scope: z.string().optional(),
 });
 
 export const z_create_account_response = z.object({
-    account: z_account.optional()
+  account: z_account.optional(),
 });
 
 export const z_create_permission_request = z.object({
-    description: z.string().optional(),
-    is_system: z.boolean().optional(),
-    key: z.string().optional()
+  description: z.string().optional(),
+  is_system: z.boolean().optional(),
+  key: z.string().optional(),
 });
 
 export const z_create_role_request = z.object({
-    description: z.string().optional(),
-    is_system: z.boolean().optional(),
-    name: z.string().optional(),
-    weight: z.int().optional()
+  description: z.string().optional(),
+  is_system: z.boolean().optional(),
+  name: z.string().optional(),
+  weight: z.int().optional(),
 });
 
 export const z_create_session_state_request = z.object({
-    impersonation_expires_at: z.string().optional(),
-    impersonation_reason: z.string().optional(),
-    impersonator_user_id: z.string().optional(),
-    revoke: z.boolean().optional(),
-    revoked_reason: z.string().optional()
+  impersonation_expires_at: z.string().optional(),
+  impersonation_reason: z.string().optional(),
+  impersonator_user_id: z.string().optional(),
+  revoke: z.boolean().optional(),
+  revoked_reason: z.string().optional(),
 });
 
 export const z_create_user_state_request = z.object({
-    banned: z.boolean().optional(),
-    banned_reason: z.string().optional(),
-    banned_until: z.string().optional()
+  banned: z.boolean().optional(),
+  banned_reason: z.string().optional(),
+  banned_until: z.string().optional(),
 });
 
 export const z_delete_account_response = z.object({
-    message: z.string().optional()
+  message: z.string().optional(),
 });
 
 export const z_delete_permission_response = z.object({
-    message: z.string().optional()
+  message: z.string().optional(),
 });
 
 export const z_delete_role_response = z.object({
-    message: z.string().optional()
+  message: z.string().optional(),
 });
 
 export const z_delete_session_state_response = z.object({
-    message: z.string().optional()
+  message: z.string().optional(),
 });
 
 export const z_delete_user_response = z.object({
-    message: z.string().optional()
+  message: z.string().optional(),
 });
 
 export const z_delete_user_state_response = z.object({
-    message: z.string().optional()
+  message: z.string().optional(),
 });
 
 export const z_get_account_by_id_response = z.object({
-    account: z_account.optional()
+  account: z_account.optional(),
 });
 
 export const z_get_session_state_response = z.object({
-    state: z_admin_session_state.optional()
+  state: z_admin_session_state.optional(),
 });
 
 export const z_get_user_state_response = z.object({
-    state: z_admin_user_state.optional()
+  state: z_admin_user_state.optional(),
 });
 
 export const z_impersonation = z.object({
-    actor_session_id: z.string().optional(),
-    actor_user_id: z.string().optional(),
-    created_at: z.string().optional(),
-    ended_at: z.string().optional(),
-    ended_by_user_id: z.string().optional(),
-    expires_at: z.string().optional(),
-    id: z.string().optional(),
-    impersonation_session_id: z.string().optional(),
-    reason: z.string().optional(),
-    started_at: z.string().optional(),
-    target_user_id: z.string().optional(),
-    updated_at: z.string().optional()
+  actor_session_id: z.string().optional(),
+  actor_user_id: z.string().optional(),
+  created_at: z.string().optional(),
+  ended_at: z.string().optional(),
+  ended_by_user_id: z.string().optional(),
+  expires_at: z.string().optional(),
+  id: z.string().optional(),
+  impersonation_session_id: z.string().optional(),
+  reason: z.string().optional(),
+  started_at: z.string().optional(),
+  target_user_id: z.string().optional(),
+  updated_at: z.string().optional(),
 });
 
 export const z_get_impersonation_by_id_response = z.object({
-    impersonation: z_impersonation.optional()
+  impersonation: z_impersonation.optional(),
 });
 
 export const z_permission = z.object({
-    created_at: z.string().optional(),
-    description: z.string().optional(),
-    id: z.string().optional(),
-    is_system: z.boolean().optional(),
-    key: z.string().optional(),
-    updated_at: z.string().optional()
+  created_at: z.string().optional(),
+  description: z.string().optional(),
+  id: z.string().optional(),
+  is_system: z.boolean().optional(),
+  key: z.string().optional(),
+  updated_at: z.string().optional(),
 });
 
 export const z_create_permission_response = z.object({
-    permission: z_permission.optional()
+  permission: z_permission.optional(),
 });
 
 export const z_permission_grant_source = z.object({
-    granted_at: z.string().optional(),
-    granted_by_user_id: z.string().optional(),
-    role_id: z.string().optional(),
-    role_name: z.string().optional()
+  granted_at: z.string().optional(),
+  granted_by_user_id: z.string().optional(),
+  role_id: z.string().optional(),
+  role_name: z.string().optional(),
 });
 
 export const z_remove_role_permission_response = z.object({
-    message: z.string().optional()
+  message: z.string().optional(),
 });
 
 export const z_remove_user_role_response = z.object({
-    message: z.string().optional()
+  message: z.string().optional(),
 });
 
 export const z_replace_role_permission_response = z.object({
-    message: z.string().optional()
+  message: z.string().optional(),
 });
 
 export const z_replace_role_permissions_request = z.object({
-    permission_ids: z.array(z.string()).optional()
+  permission_ids: z.array(z.string()).optional(),
 });
 
 export const z_replace_user_roles_request = z.object({
-    role_ids: z.array(z.string()).optional()
+  role_ids: z.array(z.string()).optional(),
 });
 
 export const z_replace_user_roles_response = z.object({
-    message: z.string().optional()
+  message: z.string().optional(),
 });
 
 export const z_request_email_change_request = z.object({
-    callback_url: z.string().optional(),
-    new_email: z.string().optional()
+  callback_url: z.string().optional(),
+  new_email: z.string().optional(),
 });
 
 export const z_request_password_reset_request = z.object({
-    callback_url: z.string().optional(),
-    email: z.string().optional()
+  callback_url: z.string().optional(),
+  email: z.string().optional(),
 });
 
 export const z_revoke_session_request = z.object({
-    reason: z.string().optional()
+  reason: z.string().optional(),
 });
 
 export const z_revoke_session_response = z.object({
-    state: z_admin_session_state.optional()
+  state: z_admin_session_state.optional(),
 });
 
 export const z_role = z.object({
-    created_at: z.string().optional(),
-    description: z.string().optional(),
-    id: z.string().optional(),
-    is_system: z.boolean().optional(),
-    name: z.string().optional(),
-    updated_at: z.string().optional(),
-    weight: z.int().optional()
+  created_at: z.string().optional(),
+  description: z.string().optional(),
+  id: z.string().optional(),
+  is_system: z.boolean().optional(),
+  name: z.string().optional(),
+  updated_at: z.string().optional(),
+  weight: z.int().optional(),
 });
 
 export const z_create_role_response = z.object({
-    role: z_role.optional()
+  role: z_role.optional(),
 });
 
 export const z_send_email_verification_request = z.object({
-    callback_url: z.string().optional()
+  callback_url: z.string().optional(),
 });
 
 export const z_start_impersonation_request = z.object({
-    expires_in_seconds: z.int().optional(),
-    reason: z.string().optional(),
-    target_user_id: z.string().optional()
+  expires_in_seconds: z.int().optional(),
+  reason: z.string().optional(),
+  target_user_id: z.string().optional(),
 });
 
 export const z_start_impersonation_response = z.object({
-    impersonation: z_impersonation.optional()
+  impersonation: z_impersonation.optional(),
 });
 
 export const z_stop_impersonation_response = z.object({
-    message: z.string().optional()
+  message: z.string().optional(),
 });
 
 export const z_unban_user_response = z.object({
-    state: z_admin_user_state.optional()
+  state: z_admin_user_state.optional(),
 });
 
 export const z_update_account_request = z.object({
-    access_token: z.string().optional(),
-    access_token_expires_at: z.string().optional(),
-    account_id: z.string().optional(),
-    id_token: z.string().optional(),
-    password: z.string().optional(),
-    provider_id: z.string().optional(),
-    refresh_token: z.string().optional(),
-    refresh_token_expires_at: z.string().optional(),
-    scope: z.string().optional()
+  access_token: z.string().optional(),
+  access_token_expires_at: z.string().optional(),
+  account_id: z.string().optional(),
+  id_token: z.string().optional(),
+  password: z.string().optional(),
+  provider_id: z.string().optional(),
+  refresh_token: z.string().optional(),
+  refresh_token_expires_at: z.string().optional(),
+  scope: z.string().optional(),
 });
 
 export const z_update_account_response = z.object({
-    account: z_account.optional()
+  account: z_account.optional(),
 });
 
 export const z_update_permission_request = z.object({
-    description: z.string().optional()
+  description: z.string().optional(),
 });
 
 export const z_update_permission_response = z.object({
-    permission: z_permission.optional()
+  permission: z_permission.optional(),
 });
 
 export const z_update_role_request = z.object({
-    description: z.string().optional(),
-    name: z.string().optional(),
-    weight: z.int().optional()
+  description: z.string().optional(),
+  name: z.string().optional(),
+  weight: z.int().optional(),
 });
 
 export const z_update_role_response = z.object({
-    role: z_role.optional()
+  role: z_role.optional(),
 });
 
 export const z_upsert_session_state_request = z.object({
-    impersonation_expires_at: z.string().optional(),
-    impersonation_reason: z.string().optional(),
-    impersonator_user_id: z.string().optional(),
-    revoke: z.boolean().optional(),
-    revoked_reason: z.string().optional()
+  impersonation_expires_at: z.string().optional(),
+  impersonation_reason: z.string().optional(),
+  impersonator_user_id: z.string().optional(),
+  revoke: z.boolean().optional(),
+  revoked_reason: z.string().optional(),
 });
 
 export const z_upsert_session_state_response = z.object({
-    state: z_admin_session_state.optional()
+  state: z_admin_session_state.optional(),
 });
 
 export const z_upsert_user_state_request = z.object({
-    banned: z.boolean().optional(),
-    banned_reason: z.string().optional(),
-    banned_until: z.string().optional()
+  banned: z.boolean().optional(),
+  banned_reason: z.string().optional(),
+  banned_until: z.string().optional(),
 });
 
 export const z_upsert_user_state_response = z.object({
-    state: z_admin_user_state.optional()
+  state: z_admin_user_state.optional(),
 });
 
 export const z_user_accounts_response = z.object({
-    accounts: z.array(z_account).optional()
+  accounts: z.array(z_account).optional(),
 });
 
 export const z_user_permission_info = z.object({
-    granted_at: z.string().optional(),
-    granted_by_user_id: z.string().optional(),
-    permission_description: z.string().optional(),
-    permission_id: z.string().optional(),
-    permission_key: z.string().optional(),
-    sources: z.array(z_permission_grant_source).optional()
+  granted_at: z.string().optional(),
+  granted_by_user_id: z.string().optional(),
+  permission_description: z.string().optional(),
+  permission_id: z.string().optional(),
+  permission_key: z.string().optional(),
+  sources: z.array(z_permission_grant_source).optional(),
 });
 
 export const z_get_user_permissions_response = z.object({
-    permissions: z.array(z_user_permission_info).optional()
+  permissions: z.array(z_user_permission_info).optional(),
 });
 
 export const z_role_details = z.object({
-    permissions: z.array(z_user_permission_info).optional(),
-    role: z_role.optional()
+  permissions: z.array(z_user_permission_info).optional(),
+  role: z_role.optional(),
 });
 
 export const z_user_role_info = z.object({
-    assigned_at: z.string().optional(),
-    assigned_by_user_id: z.string().optional(),
-    expires_at: z.string().optional(),
-    role_description: z.string().optional(),
-    role_id: z.string().optional(),
-    role_name: z.string().optional(),
-    role_weight: z.int().optional()
+  assigned_at: z.string().optional(),
+  assigned_by_user_id: z.string().optional(),
+  expires_at: z.string().optional(),
+  role_description: z.string().optional(),
+  role_id: z.string().optional(),
+  role_name: z.string().optional(),
+  role_weight: z.int().optional(),
 });
 
 export const z_post_api_v1_todos_body = z_create_todo_request;
 
 export const z_delete_api_v1_todos_by_id_path = z.object({
-    id: z.string()
+  id: z.string(),
 });
 
 export const z_get_api_v1_todos_by_id_path = z.object({
-    id: z.string()
+  id: z.string(),
 });
 
 export const z_put_api_v1_todos_by_id_body = z_update_todo_request;
 
 export const z_put_api_v1_todos_by_id_path = z.object({
-    id: z.string()
+  id: z.string(),
 });
 
-export const z_post_auth_access_control_permissions_body = z_create_permission_request;
+export const z_post_auth_access_control_permissions_body =
+  z_create_permission_request;
 
-export const z_delete_auth_access_control_permissions_by_permission_id_path = z.object({
-    permission_id: z.string()
-});
+export const z_delete_auth_access_control_permissions_by_permission_id_path =
+  z.object({
+    permission_id: z.string(),
+  });
 
-export const z_get_auth_access_control_permissions_by_permission_id_path = z.object({
-    permission_id: z.string()
-});
+export const z_get_auth_access_control_permissions_by_permission_id_path =
+  z.object({
+    permission_id: z.string(),
+  });
 
-export const z_patch_auth_access_control_permissions_by_permission_id_body = z_update_permission_request;
+export const z_patch_auth_access_control_permissions_by_permission_id_body =
+  z_update_permission_request;
 
-export const z_patch_auth_access_control_permissions_by_permission_id_path = z.object({
-    permission_id: z.string()
-});
+export const z_patch_auth_access_control_permissions_by_permission_id_path =
+  z.object({
+    permission_id: z.string(),
+  });
 
 export const z_post_auth_access_control_roles_body = z_create_role_request;
 
-export const z_get_auth_access_control_roles_by_name_by_role_name_path = z.object({
-    role_name: z.string()
-});
+export const z_get_auth_access_control_roles_by_name_by_role_name_path =
+  z.object({
+    role_name: z.string(),
+  });
 
 export const z_delete_auth_access_control_roles_by_role_id_path = z.object({
-    role_id: z.string()
+  role_id: z.string(),
 });
 
 export const z_get_auth_access_control_roles_by_role_id_path = z.object({
-    role_id: z.string()
+  role_id: z.string(),
 });
 
-export const z_patch_auth_access_control_roles_by_role_id_body = z_update_role_request;
+export const z_patch_auth_access_control_roles_by_role_id_body =
+  z_update_role_request;
 
 export const z_patch_auth_access_control_roles_by_role_id_path = z.object({
-    role_id: z.string()
+  role_id: z.string(),
 });
 
-export const z_get_auth_access_control_roles_by_role_id_permissions_path = z.object({
-    role_id: z.string()
-});
-
-export const z_post_auth_access_control_roles_by_role_id_permissions_body = z_add_role_permission_request;
-
-export const z_post_auth_access_control_roles_by_role_id_permissions_path = z.object({
-    role_id: z.string()
-});
-
-export const z_put_auth_access_control_roles_by_role_id_permissions_body = z_replace_role_permissions_request;
-
-export const z_put_auth_access_control_roles_by_role_id_permissions_path = z.object({
-    role_id: z.string()
-});
-
-export const z_delete_auth_access_control_roles_by_role_id_permissions_by_permission_id_path = z.object({
+export const z_get_auth_access_control_roles_by_role_id_permissions_path =
+  z.object({
     role_id: z.string(),
-    permission_id: z.string()
-});
+  });
 
-export const z_get_auth_access_control_users_by_user_id_permissions_path = z.object({
-    user_id: z.string()
-});
+export const z_post_auth_access_control_roles_by_role_id_permissions_body =
+  z_add_role_permission_request;
 
-export const z_post_auth_access_control_users_by_user_id_permissions_check_body = z_check_user_permissions_request;
+export const z_post_auth_access_control_roles_by_role_id_permissions_path =
+  z.object({
+    role_id: z.string(),
+  });
 
-export const z_post_auth_access_control_users_by_user_id_permissions_check_path = z.object({
-    user_id: z.string()
-});
+export const z_put_auth_access_control_roles_by_role_id_permissions_body =
+  z_replace_role_permissions_request;
+
+export const z_put_auth_access_control_roles_by_role_id_permissions_path =
+  z.object({
+    role_id: z.string(),
+  });
+
+export const z_delete_auth_access_control_roles_by_role_id_permissions_by_permission_id_path =
+  z.object({
+    role_id: z.string(),
+    permission_id: z.string(),
+  });
+
+export const z_get_auth_access_control_users_by_user_id_permissions_path =
+  z.object({
+    user_id: z.string(),
+  });
+
+export const z_post_auth_access_control_users_by_user_id_permissions_check_body =
+  z_check_user_permissions_request;
+
+export const z_post_auth_access_control_users_by_user_id_permissions_check_path =
+  z.object({
+    user_id: z.string(),
+  });
 
 export const z_get_auth_access_control_users_by_user_id_roles_path = z.object({
-    user_id: z.string()
+  user_id: z.string(),
 });
 
-export const z_post_auth_access_control_users_by_user_id_roles_body = z_assign_user_role_request;
+export const z_post_auth_access_control_users_by_user_id_roles_body =
+  z_assign_user_role_request;
 
 export const z_post_auth_access_control_users_by_user_id_roles_path = z.object({
-    user_id: z.string()
+  user_id: z.string(),
 });
 
-export const z_put_auth_access_control_users_by_user_id_roles_body = z_replace_user_roles_request;
+export const z_put_auth_access_control_users_by_user_id_roles_body =
+  z_replace_user_roles_request;
 
 export const z_put_auth_access_control_users_by_user_id_roles_path = z.object({
-    user_id: z.string()
+  user_id: z.string(),
 });
 
-export const z_delete_auth_access_control_users_by_user_id_roles_by_role_id_path = z.object({
+export const z_delete_auth_access_control_users_by_user_id_roles_by_role_id_path =
+  z.object({
     user_id: z.string(),
-    role_id: z.string()
-});
+    role_id: z.string(),
+  });
 
 export const z_delete_auth_admin_accounts_by_id_path = z.object({
-    id: z.string()
+  id: z.string(),
 });
 
 export const z_get_auth_admin_accounts_by_id_path = z.object({
-    id: z.string()
+  id: z.string(),
 });
 
 export const z_patch_auth_admin_accounts_by_id_body = z_update_account_request;
 
 export const z_patch_auth_admin_accounts_by_id_path = z.object({
-    id: z.string()
+  id: z.string(),
 });
 
-export const z_post_auth_admin_impersonations_body = z_start_impersonation_request;
+export const z_post_auth_admin_impersonations_body =
+  z_start_impersonation_request;
 
-export const z_get_auth_admin_impersonations_by_impersonation_id_path = z.object({
-    impersonation_id: z.string()
-});
+export const z_get_auth_admin_impersonations_by_impersonation_id_path =
+  z.object({
+    impersonation_id: z.string(),
+  });
 
-export const z_post_auth_admin_impersonations_by_impersonation_id_stop_path = z.object({
-    impersonation_id: z.string()
-});
+export const z_post_auth_admin_impersonations_by_impersonation_id_stop_path =
+  z.object({
+    impersonation_id: z.string(),
+  });
 
-export const z_post_auth_admin_sessions_by_session_id_revoke_body = z_revoke_session_request;
+export const z_post_auth_admin_sessions_by_session_id_revoke_body =
+  z_revoke_session_request;
 
 export const z_post_auth_admin_sessions_by_session_id_revoke_path = z.object({
-    session_id: z.string()
+  session_id: z.string(),
 });
 
 export const z_delete_auth_admin_sessions_by_session_id_state_path = z.object({
-    session_id: z.string()
+  session_id: z.string(),
 });
 
 export const z_get_auth_admin_sessions_by_session_id_state_path = z.object({
-    session_id: z.string()
+  session_id: z.string(),
 });
 
-export const z_patch_auth_admin_sessions_by_session_id_state_body = z_upsert_session_state_request;
+export const z_patch_auth_admin_sessions_by_session_id_state_body =
+  z_upsert_session_state_request;
 
 export const z_patch_auth_admin_sessions_by_session_id_state_path = z.object({
-    session_id: z.string()
+  session_id: z.string(),
 });
 
-export const z_post_auth_admin_sessions_by_session_id_state_body = z_create_session_state_request;
+export const z_post_auth_admin_sessions_by_session_id_state_body =
+  z_create_session_state_request;
 
 export const z_post_auth_admin_sessions_by_session_id_state_path = z.object({
-    session_id: z.string()
+  session_id: z.string(),
 });
 
 export const z_get_auth_admin_users_query = z.object({
-    cursor: z.string().optional(),
-    limit: z.int().optional()
+  cursor: z.string().optional(),
+  limit: z.int().optional(),
 });
 
 export const z_post_auth_admin_users_body = z_create_user_request;
 
 export const z_delete_auth_admin_users_by_user_id_path = z.object({
-    user_id: z.string()
+  user_id: z.string(),
 });
 
 export const z_get_auth_admin_users_by_user_id_path = z.object({
-    user_id: z.string()
+  user_id: z.string(),
 });
 
 export const z_patch_auth_admin_users_by_user_id_body = z_update_user_request;
 
 export const z_patch_auth_admin_users_by_user_id_path = z.object({
-    user_id: z.string()
+  user_id: z.string(),
 });
 
 export const z_get_auth_admin_users_by_user_id_accounts_path = z.object({
-    user_id: z.string()
+  user_id: z.string(),
 });
 
-export const z_post_auth_admin_users_by_user_id_accounts_body = z_create_account_request;
+export const z_post_auth_admin_users_by_user_id_accounts_body =
+  z_create_account_request;
 
 export const z_post_auth_admin_users_by_user_id_accounts_path = z.object({
-    user_id: z.string()
+  user_id: z.string(),
 });
 
 export const z_post_auth_admin_users_by_user_id_ban_body = z_ban_user_request;
 
 export const z_post_auth_admin_users_by_user_id_ban_path = z.object({
-    user_id: z.string()
+  user_id: z.string(),
 });
 
 export const z_get_auth_admin_users_by_user_id_sessions_path = z.object({
-    user_id: z.string()
+  user_id: z.string(),
 });
 
 export const z_delete_auth_admin_users_by_user_id_state_path = z.object({
-    user_id: z.string()
+  user_id: z.string(),
 });
 
 export const z_get_auth_admin_users_by_user_id_state_path = z.object({
-    user_id: z.string()
+  user_id: z.string(),
 });
 
-export const z_patch_auth_admin_users_by_user_id_state_body = z_upsert_user_state_request;
+export const z_patch_auth_admin_users_by_user_id_state_body =
+  z_upsert_user_state_request;
 
 export const z_patch_auth_admin_users_by_user_id_state_path = z.object({
-    user_id: z.string()
+  user_id: z.string(),
 });
 
-export const z_post_auth_admin_users_by_user_id_state_body = z_create_user_state_request;
+export const z_post_auth_admin_users_by_user_id_state_body =
+  z_create_user_state_request;
 
 export const z_post_auth_admin_users_by_user_id_state_path = z.object({
-    user_id: z.string()
+  user_id: z.string(),
 });
 
 export const z_post_auth_admin_users_by_user_id_unban_path = z.object({
-    user_id: z.string()
+  user_id: z.string(),
 });
 
-export const z_post_auth_email_password_change_password_body = z_change_password_request;
+export const z_post_auth_email_password_change_password_body =
+  z_change_password_request;
 
-export const z_post_auth_email_password_request_email_change_body = z_request_email_change_request;
+export const z_post_auth_email_password_request_email_change_body =
+  z_request_email_change_request;
 
-export const z_post_auth_email_password_request_password_reset_body = z_request_password_reset_request;
+export const z_post_auth_email_password_request_password_reset_body =
+  z_request_password_reset_request;
 
-export const z_post_auth_email_password_send_email_verification_body = z_send_email_verification_request;
+export const z_post_auth_email_password_send_email_verification_body =
+  z_send_email_verification_request;
 
 export const z_post_auth_email_password_sign_in_body = z_sign_in_request;
 
 export const z_post_auth_email_password_sign_up_body = z_sign_up_request;
 
 export const z_get_auth_email_password_verify_email_query = z.object({
-    token: z.string(),
-    callback_url: z.string().optional()
+  token: z.string(),
+  callback_url: z.string().optional(),
 });
 
 export const z_post_auth_sign_out_body = z_sign_out_request;

@@ -1,7 +1,9 @@
 import { defineConfig } from '@hey-api/openapi-ts';
 
 export default defineConfig({
-  input: { path: 'http://localhost:8080/spec.json' },
+  input: {
+    path: 'apps/server/docs/swagger.json',
+  },
   output: {
     path: 'apps/web/src/lib/api',
     entryFile: false,

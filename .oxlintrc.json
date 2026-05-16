@@ -24,7 +24,6 @@
     "react-you-might-not-need-an-effect/no-pass-live-state-to-parent": "error",
     "react-you-might-not-need-an-effect/no-pass-data-to-parent": "error",
     "react-you-might-not-need-an-effect/no-initialize-state": "error",
-    "react-you-might-not-need-an-effect/no-empty-effect": "error",
     "use-no-memo/react-hook-form": "error",
     "use-no-memo/tanstack-table": "error",
     "use-no-memo/material-react-table": "error",

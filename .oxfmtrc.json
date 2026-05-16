@@ -16,6 +16,7 @@
     "**/*.html",
     "**/*.css",
     "**/*.gen.*",
+    "!**/apps/web/src/lib/api/**/*.*",
     "**/metro.config.js",
     "**/CHANGELOG.md",
     "**/*.yml",

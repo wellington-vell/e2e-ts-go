@@ -1,4 +1,20 @@
 definitions:
+  github_com_Authula_authula_plugins_email-password_types.SignInRequest:
+    properties:
+      callback_url:
+        type: string
+      email:
+        type: string
+      password:
+        type: string
+    type: object
+  github_com_Authula_authula_plugins_email-password_types.SignInResponse:
+    properties:
+      session:
+        $ref: '#/definitions/models.Session'
+      user:
+        $ref: '#/definitions/models.User'
+    type: object
   models.Account:
     properties:
       access_token:
@@ -29,12 +45,45 @@ definitions:
       user_id:
         type: string
     type: object
-  server_internal_models.AdminUserSession:
+  models.Session:
     properties:
-      session:
-        $ref: '#/definitions/server_internal_models.Session'
-      state:
-        $ref: '#/definitions/types.AdminSessionState'
+      created_at:
+        type: string
+      expires_at:
+        type: string
+      id:
+        type: string
+      ip_address:
+        type: string
+      token:
+        type: string
+      updated_at:
+        type: string
+      user_agent:
+        type: string
+      user_id:
+        type: string
+    type: object
+  models.User:
+    properties:
+      created_at:
+        type: string
+      email:
+        type: string
+      email_verified:
+        type: boolean
+      id:
+        type: string
+      image:
+        type: string
+      metadata:
+        items:
+          type: integer
+        type: array
+      name:
+        type: string
+      updated_at:
+        type: string
     type: object
   server_internal_models.CreateTodoRequest:
     properties:
@@ -82,36 +131,12 @@ definitions:
     required:
     - text
     type: object
-  server_internal_models.CreateUserRequest:
-    properties:
-      email:
-        type: string
-      email_verified:
-        type: boolean
-      image:
-        type: string
-      metadata:
-        additionalProperties: {}
-        type: object
-      name:
-        type: string
-    type: object
-  server_internal_models.CreateUserResponse:
-    properties:
-      user:
-        $ref: '#/definitions/server_internal_models.User'
-    type: object
   server_internal_models.GetMeResponse:
     properties:
       session:
-        $ref: '#/definitions/server_internal_models.Session'
+        $ref: '#/definitions/models.Session'
       user:
-        $ref: '#/definitions/server_internal_models.User'
-    type: object
-  server_internal_models.GetUserByIDResponse:
-    properties:
-      user:
-        $ref: '#/definitions/server_internal_models.User'
+        $ref: '#/definitions/models.User'
     type: object
   server_internal_models.HealthResponse:
     properties:
@@ -143,41 +168,6 @@ definitions:
       version:
         type: string
     type: object
-  server_internal_models.Session:
-    properties:
-      created_at:
-        type: string
-      expires_at:
-        type: string
-      id:
-        type: string
-      ip_address:
-        type: string
-      token:
-        type: string
-      updated_at:
-        type: string
-      user_agent:
-        type: string
-      user_id:
-        type: string
-    type: object
-  server_internal_models.SignInRequest:
-    properties:
-      callback_url:
-        type: string
-      email:
-        type: string
-      password:
-        type: string
-    type: object
-  server_internal_models.SignInResponse:
-    properties:
-      session:
-        $ref: '#/definitions/server_internal_models.Session'
-      user:
-        $ref: '#/definitions/server_internal_models.User'
-    type: object
   server_internal_models.SignOutRequest:
     properties:
       session_id:
@@ -189,29 +179,6 @@ definitions:
     properties:
       message:
         type: string
-    type: object
-  server_internal_models.SignUpRequest:
-    properties:
-      callback_url:
-        type: string
-      email:
-        type: string
-      image:
-        type: string
-      metadata:
-        additionalProperties: {}
-        type: object
-      name:
-        type: string
-      password:
-        type: string
-    type: object
-  server_internal_models.SignUpResponse:
-    properties:
-      session:
-        $ref: '#/definitions/server_internal_models.Session'
-      user:
-        $ref: '#/definitions/server_internal_models.User'
     type: object
   server_internal_models.Todo:
     properties:
@@ -321,54 +288,6 @@ definitions:
         minLength: 1
         type: string
     type: object
-  server_internal_models.UpdateUserRequest:
-    properties:
-      email:
-        type: string
-      email_verified:
-        type: boolean
-      image:
-        type: string
-      metadata:
-        additionalProperties: {}
-        type: object
-      name:
-        type: string
-    type: object
-  server_internal_models.UpdateUserResponse:
-    properties:
-      user:
-        $ref: '#/definitions/server_internal_models.User'
-    type: object
-  server_internal_models.User:
-    properties:
-      created_at:
-        type: string
-      email:
-        type: string
-      email_verified:
-        type: boolean
-      id:
-        type: string
-      image:
-        type: string
-      metadata:
-        additionalProperties: {}
-        type: object
-      name:
-        type: string
-      updated_at:
-        type: string
-    type: object
-  server_internal_models.UsersPage:
-    properties:
-      next_cursor:
-        type: string
-      users:
-        items:
-          $ref: '#/definitions/server_internal_models.User'
-        type: array
-    type: object
   types.AddRolePermissionRequest:
     properties:
       permission_id:
@@ -399,6 +318,13 @@ definitions:
         type: string
       updated_at:
         type: string
+    type: object
+  types.AdminUserSession:
+    properties:
+      session:
+        $ref: '#/definitions/models.Session'
+      state:
+        $ref: '#/definitions/types.AdminSessionState'
     type: object
   types.AdminUserState:
     properties:
@@ -536,6 +462,26 @@ definitions:
       revoked_reason:
         type: string
     type: object
+  types.CreateUserRequest:
+    properties:
+      email:
+        type: string
+      email_verified:
+        type: boolean
+      image:
+        type: string
+      metadata:
+        items:
+          type: integer
+        type: array
+      name:
+        type: string
+    type: object
+  types.CreateUserResponse:
+    properties:
+      user:
+        $ref: '#/definitions/models.User'
+    type: object
   types.CreateUserStateRequest:
     properties:
       banned:
@@ -589,6 +535,11 @@ definitions:
     properties:
       state:
         $ref: '#/definitions/types.AdminSessionState'
+    type: object
+  types.GetUserByIDResponse:
+    properties:
+      user:
+        $ref: '#/definitions/models.User'
     type: object
   types.GetUserPermissionsResponse:
     properties:
@@ -744,6 +695,30 @@ definitions:
       callback_url:
         type: string
     type: object
+  types.SignUpRequest:
+    properties:
+      callback_url:
+        type: string
+      email:
+        type: string
+      image:
+        type: string
+      metadata:
+        items:
+          type: integer
+        type: array
+      name:
+        type: string
+      password:
+        type: string
+    type: object
+  types.SignUpResponse:
+    properties:
+      session:
+        $ref: '#/definitions/models.Session'
+      user:
+        $ref: '#/definitions/models.User'
+    type: object
   types.StartImpersonationRequest:
     properties:
       expires_in_seconds:
@@ -818,6 +793,26 @@ definitions:
       role:
         $ref: '#/definitions/types.Role'
     type: object
+  types.UpdateUserRequest:
+    properties:
+      email:
+        type: string
+      email_verified:
+        type: boolean
+      image:
+        type: string
+      metadata:
+        items:
+          type: integer
+        type: array
+      name:
+        type: string
+    type: object
+  types.UpdateUserResponse:
+    properties:
+      user:
+        $ref: '#/definitions/models.User'
+    type: object
   types.UpsertSessionStateRequest:
     properties:
       impersonation_expires_at:
@@ -890,6 +885,15 @@ definitions:
         type: string
       role_weight:
         type: integer
+    type: object
+  types.UsersPage:
+    properties:
+      next_cursor:
+        type: string
+      users:
+        items:
+          $ref: '#/definitions/models.User'
+        type: array
     type: object
 info:
   contact: {}
@@ -1321,7 +1325,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/types.Permission'
+              $ref: '#/definitions/types.UserPermissionInfo'
             type: array
         "401":
           description: Unauthorized
@@ -2010,7 +2014,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/server_internal_models.UsersPage'
+            $ref: '#/definitions/types.UsersPage'
         "401":
           description: Unauthorized
           schema:
@@ -2028,14 +2032,14 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/server_internal_models.CreateUserRequest'
+          $ref: '#/definitions/types.CreateUserRequest'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/server_internal_models.CreateUserResponse'
+            $ref: '#/definitions/types.CreateUserResponse'
         "400":
           description: Bad request
           schema:
@@ -2086,7 +2090,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/server_internal_models.GetUserByIDResponse'
+            $ref: '#/definitions/types.GetUserByIDResponse'
         "401":
           description: Unauthorized
           schema:
@@ -2113,14 +2117,14 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/server_internal_models.UpdateUserRequest'
+          $ref: '#/definitions/types.UpdateUserRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/server_internal_models.UpdateUserResponse'
+            $ref: '#/definitions/types.UpdateUserResponse'
         "400":
           description: Bad request
           schema:
@@ -2248,7 +2252,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/server_internal_models.AdminUserSession'
+              $ref: '#/definitions/types.AdminUserSession'
             type: array
         "401":
           description: Unauthorized
@@ -2542,14 +2546,14 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/server_internal_models.SignInRequest'
+          $ref: '#/definitions/github_com_Authula_authula_plugins_email-password_types.SignInRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/server_internal_models.SignInResponse'
+            $ref: '#/definitions/github_com_Authula_authula_plugins_email-password_types.SignInResponse'
         "400":
           description: Bad request
           schema:
@@ -2568,14 +2572,14 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/server_internal_models.SignUpRequest'
+          $ref: '#/definitions/types.SignUpRequest'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/server_internal_models.SignUpResponse'
+            $ref: '#/definitions/types.SignUpResponse'
         "400":
           description: Bad request
           schema:

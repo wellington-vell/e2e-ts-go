@@ -2,6 +2,7 @@ import { createFormHook } from '@tanstack/react-form';
 
 import {
   FormButton,
+  FormCalendar,
   FormCheckbox,
   FormError,
   FormField,
@@ -25,6 +26,7 @@ export const { useAppForm } = createFormHook({
     Error: FormError,
     Textarea: FormTextarea,
     Checkbox: FormCheckbox,
+    Calendar: FormCalendar,
     InputOTP: FormInputOTP,
     InputGroupInput: FormInputGroupInput,
     Select: FormSelect,

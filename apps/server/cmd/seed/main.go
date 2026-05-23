@@ -23,7 +23,11 @@ func main() {
 		fmt.Fprintf(os.Stderr, "Failed to initialize auth: %v\n", err)
 		os.Exit(1)
 	}
-	defer authInstance.ClosePlugins()
+	defer func() {
+		if err := authInstance.ClosePlugins(); err != nil {
+			fmt.Fprintf(os.Stderr, "Failed to close auth plugins: %v\n", err)
+		}
+	}()
 
 	if err := db.InitDB(); err != nil {
 		fmt.Fprintf(os.Stderr, "Failed to initialize database: %v\n", err)

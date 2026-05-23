@@ -86,7 +86,7 @@ func NewAuthula() (*authula.Auth, error) {
 						"POST:/email-password/request-password-reset",
 						"POST:/email-password/request-email-change",
 					},
-					Plugins: []string{"session.auth"},
+					// Plugins: []string{"session.auth"},
 				},
 
 				// // ADMIN Plugin
@@ -99,7 +99,7 @@ func NewAuthula() (*authula.Auth, error) {
 						"PATCH:/admin/users/{user_id}",
 						"DELETE:/admin/users/{user_id}",
 					},
-					Plugins: []string{"session.auth"},
+					// Plugins: []string{"session.auth"},
 				},
 				// Account Management
 				{
@@ -110,7 +110,7 @@ func NewAuthula() (*authula.Auth, error) {
 						"PATCH:/admin/accounts/{id}",
 						"DELETE:/admin/accounts/{id}",
 					},
-					Plugins: []string{"session.auth"},
+					// Plugins: []string{"session.auth"},
 				},
 				// User State Management
 				{
@@ -123,7 +123,7 @@ func NewAuthula() (*authula.Auth, error) {
 						"POST:/admin/users/{user_id}/ban",
 						"POST:/admin/users/{user_id}/unban",
 					},
-					Plugins: []string{"session.auth"},
+					// Plugins: []string{"session.auth"},
 				},
 				// Session State Management
 				{
@@ -136,7 +136,7 @@ func NewAuthula() (*authula.Auth, error) {
 						"GET:/admin/sessions/states/revoked",
 						"GET:/admin/users/{user_id}/sessions",
 					},
-					Plugins: []string{"session.auth"},
+					// Plugins: []string{"session.auth"},
 				},
 				// Impersonation Management
 				{
@@ -160,7 +160,7 @@ func NewAuthula() (*authula.Auth, error) {
 						"PATCH:/access-control/roles/{role_id}",
 						"DELETE:/access-control/roles/{role_id}",
 					},
-					Plugins: []string{"session.auth"},
+					// Plugins: []string{"session.auth"},
 				},
 				// Permissions Management
 				{
@@ -171,7 +171,7 @@ func NewAuthula() (*authula.Auth, error) {
 						"PATCH:/access-control/permissions/{permission_id}",
 						"DELETE:/access-control/permissions/{permission_id}",
 					},
-					Plugins: []string{"session.auth"},
+					// Plugins: []string{"session.auth"},
 				},
 				// Role-Permission Mapping
 				{
@@ -181,7 +181,7 @@ func NewAuthula() (*authula.Auth, error) {
 						"PUT:/access-control/roles/{role_id}/permissions",
 						"DELETE:/access-control/roles/{role_id}/permissions/{permission_id}",
 					},
-					Plugins: []string{"session.auth"},
+					// Plugins: []string{"session.auth"},
 				},
 				// User Access & Permissions
 				{
@@ -193,7 +193,7 @@ func NewAuthula() (*authula.Auth, error) {
 						"GET:/access-control/users/{user_id}/permissions",
 						"POST:/access-control/users/{user_id}/permissions/check",
 					},
-					Plugins: []string{"session.auth"},
+					// Plugins: []string{"session.auth"},
 				},
 
 				// // Organizations Plugin

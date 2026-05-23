@@ -2,6 +2,12 @@
 
 import * as z from 'zod';
 
+export const z_sign_in_request = z.object({
+  callback_url: z.string().optional(),
+  email: z.string().optional(),
+  password: z.string().optional(),
+});
+
 export const z_account = z.object({
   access_token: z.string().optional(),
   access_token_expires_at: z.string().optional(),
@@ -18,6 +24,33 @@ export const z_account = z.object({
   user_id: z.string().optional(),
 });
 
+export const z_session = z.object({
+  created_at: z.string().optional(),
+  expires_at: z.string().optional(),
+  id: z.string().optional(),
+  ip_address: z.string().optional(),
+  token: z.string().optional(),
+  updated_at: z.string().optional(),
+  user_agent: z.string().optional(),
+  user_id: z.string().optional(),
+});
+
+export const z_user = z.object({
+  created_at: z.string().optional(),
+  email: z.string().optional(),
+  email_verified: z.boolean().optional(),
+  id: z.string().optional(),
+  image: z.string().optional(),
+  metadata: z.array(z.int()).optional(),
+  name: z.string().optional(),
+  updated_at: z.string().optional(),
+});
+
+export const z_sign_in_response = z.object({
+  session: z_session.optional(),
+  user: z_user.optional(),
+});
+
 export const z_create_todo_request = z.object({
   actualHours: z.number().gte(0).optional(),
   cost: z.number().gte(0).optional(),
@@ -32,12 +65,9 @@ export const z_create_todo_request = z.object({
   text: z.string().min(1),
 });
 
-export const z_create_user_request = z.object({
-  email: z.string().optional(),
-  email_verified: z.boolean().optional(),
-  image: z.string().optional(),
-  metadata: z.record(z.string(), z.unknown()).optional(),
-  name: z.string().optional(),
+export const z_get_me_response = z.object({
+  session: z_session.optional(),
+  user: z_user.optional(),
 });
 
 export const z_health_response = z.object({
@@ -55,23 +85,6 @@ export const z_health_response = z.object({
   version: z.string().optional(),
 });
 
-export const z_session = z.object({
-  created_at: z.string().optional(),
-  expires_at: z.string().optional(),
-  id: z.string().optional(),
-  ip_address: z.string().optional(),
-  token: z.string().optional(),
-  updated_at: z.string().optional(),
-  user_agent: z.string().optional(),
-  user_id: z.string().optional(),
-});
-
-export const z_sign_in_request = z.object({
-  callback_url: z.string().optional(),
-  email: z.string().optional(),
-  password: z.string().optional(),
-});
-
 export const z_sign_out_request = z.object({
   session_id: z.string().optional(),
   sign_out_all: z.boolean().optional(),
@@ -79,15 +92,6 @@ export const z_sign_out_request = z.object({
 
 export const z_sign_out_response = z.object({
   message: z.string().optional(),
-});
-
-export const z_sign_up_request = z.object({
-  callback_url: z.string().optional(),
-  email: z.string().optional(),
-  image: z.string().optional(),
-  metadata: z.record(z.string(), z.unknown()).optional(),
-  name: z.string().optional(),
-  password: z.string().optional(),
 });
 
 export const z_todo_priority = z.enum(['low', 'medium', 'high']);
@@ -130,57 +134,6 @@ export const z_update_todo_request = z.object({
     .enum(['backlog', 'todo', 'in_progress', 'done', 'canceled'])
     .optional(),
   text: z.string().min(1).optional(),
-});
-
-export const z_update_user_request = z.object({
-  email: z.string().optional(),
-  email_verified: z.boolean().optional(),
-  image: z.string().optional(),
-  metadata: z.record(z.string(), z.unknown()).optional(),
-  name: z.string().optional(),
-});
-
-export const z_user = z.object({
-  created_at: z.string().optional(),
-  email: z.string().optional(),
-  email_verified: z.boolean().optional(),
-  id: z.string().optional(),
-  image: z.string().optional(),
-  metadata: z.record(z.string(), z.unknown()).optional(),
-  name: z.string().optional(),
-  updated_at: z.string().optional(),
-});
-
-export const z_create_user_response = z.object({
-  user: z_user.optional(),
-});
-
-export const z_get_me_response = z.object({
-  session: z_session.optional(),
-  user: z_user.optional(),
-});
-
-export const z_get_user_by_id_response = z.object({
-  user: z_user.optional(),
-});
-
-export const z_sign_in_response = z.object({
-  session: z_session.optional(),
-  user: z_user.optional(),
-});
-
-export const z_sign_up_response = z.object({
-  session: z_session.optional(),
-  user: z_user.optional(),
-});
-
-export const z_update_user_response = z.object({
-  user: z_user.optional(),
-});
-
-export const z_users_page = z.object({
-  next_cursor: z.string().optional(),
-  users: z.array(z_user).optional(),
 });
 
 export const z_add_role_permission_request = z.object({
@@ -291,6 +244,18 @@ export const z_create_session_state_request = z.object({
   revoked_reason: z.string().optional(),
 });
 
+export const z_create_user_request = z.object({
+  email: z.string().optional(),
+  email_verified: z.boolean().optional(),
+  image: z.string().optional(),
+  metadata: z.array(z.int()).optional(),
+  name: z.string().optional(),
+});
+
+export const z_create_user_response = z.object({
+  user: z_user.optional(),
+});
+
 export const z_create_user_state_request = z.object({
   banned: z.boolean().optional(),
   banned_reason: z.string().optional(),
@@ -327,6 +292,10 @@ export const z_get_account_by_id_response = z.object({
 
 export const z_get_session_state_response = z.object({
   state: z_admin_session_state.optional(),
+});
+
+export const z_get_user_by_id_response = z.object({
+  user: z_user.optional(),
 });
 
 export const z_get_user_state_response = z.object({
@@ -432,6 +401,20 @@ export const z_send_email_verification_request = z.object({
   callback_url: z.string().optional(),
 });
 
+export const z_sign_up_request = z.object({
+  callback_url: z.string().optional(),
+  email: z.string().optional(),
+  image: z.string().optional(),
+  metadata: z.array(z.int()).optional(),
+  name: z.string().optional(),
+  password: z.string().optional(),
+});
+
+export const z_sign_up_response = z.object({
+  session: z_session.optional(),
+  user: z_user.optional(),
+});
+
 export const z_start_impersonation_request = z.object({
   expires_in_seconds: z.int().optional(),
   reason: z.string().optional(),
@@ -482,6 +465,18 @@ export const z_update_role_request = z.object({
 
 export const z_update_role_response = z.object({
   role: z_role.optional(),
+});
+
+export const z_update_user_request = z.object({
+  email: z.string().optional(),
+  email_verified: z.boolean().optional(),
+  image: z.string().optional(),
+  metadata: z.array(z.int()).optional(),
+  name: z.string().optional(),
+});
+
+export const z_update_user_response = z.object({
+  user: z_user.optional(),
 });
 
 export const z_upsert_session_state_request = z.object({
@@ -536,6 +531,11 @@ export const z_user_role_info = z.object({
   role_id: z.string().optional(),
   role_name: z.string().optional(),
   role_weight: z.int().optional(),
+});
+
+export const z_users_page = z.object({
+  next_cursor: z.string().optional(),
+  users: z.array(z_user).optional(),
 });
 
 export const z_post_api_v1_todos_body = z_create_todo_request;

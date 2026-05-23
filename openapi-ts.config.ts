@@ -14,6 +14,10 @@ export default defineConfig({
       schemaName: (name) => {
         return name
           .replace(/^server_internal_models\./i, '')
+          .replace(
+            /^github_com_authula_authula_plugins_email-password_types\./i,
+            '',
+          )
           .replace(/^types\./i, '')
           .replace(/^models\./i, '');
       },

@@ -701,7 +701,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/types.Permission"
+                                "$ref": "#/definitions/types.UserPermissionInfo"
                             }
                         }
                     },
@@ -1700,7 +1700,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/server_internal_models.UsersPage"
+                            "$ref": "#/definitions/types.UsersPage"
                         }
                     },
                     "401": {
@@ -1730,7 +1730,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/server_internal_models.CreateUserRequest"
+                            "$ref": "#/definitions/types.CreateUserRequest"
                         }
                     }
                 ],
@@ -1738,7 +1738,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/server_internal_models.CreateUserResponse"
+                            "$ref": "#/definitions/types.CreateUserResponse"
                         }
                     },
                     "400": {
@@ -1808,7 +1808,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/server_internal_models.GetUserByIDResponse"
+                            "$ref": "#/definitions/types.GetUserByIDResponse"
                         }
                     },
                     "401": {
@@ -1887,7 +1887,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/server_internal_models.UpdateUserRequest"
+                            "$ref": "#/definitions/types.UpdateUserRequest"
                         }
                     }
                 ],
@@ -1895,7 +1895,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/server_internal_models.UpdateUserResponse"
+                            "$ref": "#/definitions/types.UpdateUserResponse"
                         }
                     },
                     "400": {
@@ -2089,7 +2089,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/server_internal_models.AdminUserSession"
+                                "$ref": "#/definitions/types.AdminUserSession"
                             }
                         }
                     },
@@ -2508,7 +2508,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/server_internal_models.SignInRequest"
+                            "$ref": "#/definitions/github_com_Authula_authula_plugins_email-password_types.SignInRequest"
                         }
                     }
                 ],
@@ -2516,7 +2516,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/server_internal_models.SignInResponse"
+                            "$ref": "#/definitions/github_com_Authula_authula_plugins_email-password_types.SignInResponse"
                         }
                     },
                     "400": {
@@ -2548,7 +2548,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/server_internal_models.SignUpRequest"
+                            "$ref": "#/definitions/types.SignUpRequest"
                         }
                     }
                 ],
@@ -2556,7 +2556,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/server_internal_models.SignUpResponse"
+                            "$ref": "#/definitions/types.SignUpResponse"
                         }
                     },
                     "400": {
@@ -2677,6 +2677,31 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "github_com_Authula_authula_plugins_email-password_types.SignInRequest": {
+            "type": "object",
+            "properties": {
+                "callback_url": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_Authula_authula_plugins_email-password_types.SignInResponse": {
+            "type": "object",
+            "properties": {
+                "session": {
+                    "$ref": "#/definitions/models.Session"
+                },
+                "user": {
+                    "$ref": "#/definitions/models.User"
+                }
+            }
+        },
         "models.Account": {
             "type": "object",
             "properties": {
@@ -2722,14 +2747,64 @@ const docTemplate = `{
                 }
             }
         },
-        "server_internal_models.AdminUserSession": {
+        "models.Session": {
             "type": "object",
             "properties": {
-                "session": {
-                    "$ref": "#/definitions/server_internal_models.Session"
+                "created_at": {
+                    "type": "string"
                 },
-                "state": {
-                    "$ref": "#/definitions/types.AdminSessionState"
+                "expires_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "ip_address": {
+                    "type": "string"
+                },
+                "token": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "user_agent": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.User": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "email_verified": {
+                    "type": "boolean"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "image": {
+                    "type": "string"
+                },
+                "metadata": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "name": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
                 }
             }
         },
@@ -2800,51 +2875,14 @@ const docTemplate = `{
                 }
             }
         },
-        "server_internal_models.CreateUserRequest": {
-            "type": "object",
-            "properties": {
-                "email": {
-                    "type": "string"
-                },
-                "email_verified": {
-                    "type": "boolean"
-                },
-                "image": {
-                    "type": "string"
-                },
-                "metadata": {
-                    "type": "object",
-                    "additionalProperties": {}
-                },
-                "name": {
-                    "type": "string"
-                }
-            }
-        },
-        "server_internal_models.CreateUserResponse": {
-            "type": "object",
-            "properties": {
-                "user": {
-                    "$ref": "#/definitions/server_internal_models.User"
-                }
-            }
-        },
         "server_internal_models.GetMeResponse": {
             "type": "object",
             "properties": {
                 "session": {
-                    "$ref": "#/definitions/server_internal_models.Session"
+                    "$ref": "#/definitions/models.Session"
                 },
                 "user": {
-                    "$ref": "#/definitions/server_internal_models.User"
-                }
-            }
-        },
-        "server_internal_models.GetUserByIDResponse": {
-            "type": "object",
-            "properties": {
-                "user": {
-                    "$ref": "#/definitions/server_internal_models.User"
+                    "$ref": "#/definitions/models.User"
                 }
             }
         },
@@ -2893,60 +2931,6 @@ const docTemplate = `{
                 }
             }
         },
-        "server_internal_models.Session": {
-            "type": "object",
-            "properties": {
-                "created_at": {
-                    "type": "string"
-                },
-                "expires_at": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "ip_address": {
-                    "type": "string"
-                },
-                "token": {
-                    "type": "string"
-                },
-                "updated_at": {
-                    "type": "string"
-                },
-                "user_agent": {
-                    "type": "string"
-                },
-                "user_id": {
-                    "type": "string"
-                }
-            }
-        },
-        "server_internal_models.SignInRequest": {
-            "type": "object",
-            "properties": {
-                "callback_url": {
-                    "type": "string"
-                },
-                "email": {
-                    "type": "string"
-                },
-                "password": {
-                    "type": "string"
-                }
-            }
-        },
-        "server_internal_models.SignInResponse": {
-            "type": "object",
-            "properties": {
-                "session": {
-                    "$ref": "#/definitions/server_internal_models.Session"
-                },
-                "user": {
-                    "$ref": "#/definitions/server_internal_models.User"
-                }
-            }
-        },
         "server_internal_models.SignOutRequest": {
             "type": "object",
             "properties": {
@@ -2963,41 +2947,6 @@ const docTemplate = `{
             "properties": {
                 "message": {
                     "type": "string"
-                }
-            }
-        },
-        "server_internal_models.SignUpRequest": {
-            "type": "object",
-            "properties": {
-                "callback_url": {
-                    "type": "string"
-                },
-                "email": {
-                    "type": "string"
-                },
-                "image": {
-                    "type": "string"
-                },
-                "metadata": {
-                    "type": "object",
-                    "additionalProperties": {}
-                },
-                "name": {
-                    "type": "string"
-                },
-                "password": {
-                    "type": "string"
-                }
-            }
-        },
-        "server_internal_models.SignUpResponse": {
-            "type": "object",
-            "properties": {
-                "session": {
-                    "$ref": "#/definitions/server_internal_models.Session"
-                },
-                "user": {
-                    "$ref": "#/definitions/server_internal_models.User"
                 }
             }
         },
@@ -3153,79 +3102,6 @@ const docTemplate = `{
                 }
             }
         },
-        "server_internal_models.UpdateUserRequest": {
-            "type": "object",
-            "properties": {
-                "email": {
-                    "type": "string"
-                },
-                "email_verified": {
-                    "type": "boolean"
-                },
-                "image": {
-                    "type": "string"
-                },
-                "metadata": {
-                    "type": "object",
-                    "additionalProperties": {}
-                },
-                "name": {
-                    "type": "string"
-                }
-            }
-        },
-        "server_internal_models.UpdateUserResponse": {
-            "type": "object",
-            "properties": {
-                "user": {
-                    "$ref": "#/definitions/server_internal_models.User"
-                }
-            }
-        },
-        "server_internal_models.User": {
-            "type": "object",
-            "properties": {
-                "created_at": {
-                    "type": "string"
-                },
-                "email": {
-                    "type": "string"
-                },
-                "email_verified": {
-                    "type": "boolean"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "image": {
-                    "type": "string"
-                },
-                "metadata": {
-                    "type": "object",
-                    "additionalProperties": {}
-                },
-                "name": {
-                    "type": "string"
-                },
-                "updated_at": {
-                    "type": "string"
-                }
-            }
-        },
-        "server_internal_models.UsersPage": {
-            "type": "object",
-            "properties": {
-                "next_cursor": {
-                    "type": "string"
-                },
-                "users": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/server_internal_models.User"
-                    }
-                }
-            }
-        },
         "types.AddRolePermissionRequest": {
             "type": "object",
             "properties": {
@@ -3271,6 +3147,17 @@ const docTemplate = `{
                 },
                 "updated_at": {
                     "type": "string"
+                }
+            }
+        },
+        "types.AdminUserSession": {
+            "type": "object",
+            "properties": {
+                "session": {
+                    "$ref": "#/definitions/models.Session"
+                },
+                "state": {
+                    "$ref": "#/definitions/types.AdminSessionState"
                 }
             }
         },
@@ -3486,6 +3373,37 @@ const docTemplate = `{
                 }
             }
         },
+        "types.CreateUserRequest": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "email_verified": {
+                    "type": "boolean"
+                },
+                "image": {
+                    "type": "string"
+                },
+                "metadata": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "types.CreateUserResponse": {
+            "type": "object",
+            "properties": {
+                "user": {
+                    "$ref": "#/definitions/models.User"
+                }
+            }
+        },
         "types.CreateUserStateRequest": {
             "type": "object",
             "properties": {
@@ -3569,6 +3487,14 @@ const docTemplate = `{
             "properties": {
                 "state": {
                     "$ref": "#/definitions/types.AdminSessionState"
+                }
+            }
+        },
+        "types.GetUserByIDResponse": {
+            "type": "object",
+            "properties": {
+                "user": {
+                    "$ref": "#/definitions/models.User"
                 }
             }
         },
@@ -3812,6 +3738,43 @@ const docTemplate = `{
                 }
             }
         },
+        "types.SignUpRequest": {
+            "type": "object",
+            "properties": {
+                "callback_url": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "image": {
+                    "type": "string"
+                },
+                "metadata": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "name": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                }
+            }
+        },
+        "types.SignUpResponse": {
+            "type": "object",
+            "properties": {
+                "session": {
+                    "$ref": "#/definitions/models.Session"
+                },
+                "user": {
+                    "$ref": "#/definitions/models.User"
+                }
+            }
+        },
         "types.StartImpersonationRequest": {
             "type": "object",
             "properties": {
@@ -3928,6 +3891,37 @@ const docTemplate = `{
                 }
             }
         },
+        "types.UpdateUserRequest": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "email_verified": {
+                    "type": "boolean"
+                },
+                "image": {
+                    "type": "string"
+                },
+                "metadata": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "types.UpdateUserResponse": {
+            "type": "object",
+            "properties": {
+                "user": {
+                    "$ref": "#/definitions/models.User"
+                }
+            }
+        },
         "types.UpsertSessionStateRequest": {
             "type": "object",
             "properties": {
@@ -4038,6 +4032,20 @@ const docTemplate = `{
                 },
                 "role_weight": {
                     "type": "integer"
+                }
+            }
+        },
+        "types.UsersPage": {
+            "type": "object",
+            "properties": {
+                "next_cursor": {
+                    "type": "string"
+                },
+                "users": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.User"
+                    }
                 }
             }
         }

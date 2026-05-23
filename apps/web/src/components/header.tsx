@@ -1,4 +1,4 @@
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import {
   Link,
   useNavigate,
@@ -24,26 +24,61 @@ import {
 import { orpc, queryClient } from '@/lib/orpc';
 import type { routeTree } from '@/routeTree.gen';
 
+type AppLink = {
+  to: LinkProps<typeof routeTree>['to'];
+  label: string;
+  visible?: boolean;
+  icon?: React.ReactNode;
+};
+
+const links: AppLink[] = [
+  { to: '/', label: 'Home' },
+  { to: '/dashboard', label: 'Dashboard' },
+  // { to: '/todos', label: 'Todos' },
+  {
+    to: '/admin',
+    label: 'Admin',
+    // visible: !!session && session.user.role?.includes('admin'),
+  },
+] as const;
+
 export function Header() {
-  type AppLink = {
-    to: LinkProps<typeof routeTree>['to'];
-    label: string;
-    visible?: boolean;
-    icon?: React.ReactNode;
-  };
+  const router = useRouter();
+  const { session } = useRouteContext({ from: '__root__' });
 
-  const links: AppLink[] = [
-    { to: '/', label: 'Home' },
-    { to: '/dashboard', label: 'Dashboard' },
-    // { to: '/todos', label: 'Todos' },
-    {
-      to: '/admin',
-      label: 'Admin',
-      // visible: !!session && session.user.role?.includes('admin'),
-    },
-  ] as const;
+  const userId = session?.user?.id;
 
-  const isImpersonating = false;
+  const impersonations = useQuery(
+    orpc.getAuthAdminImpersonations.queryOptions({
+      enabled: !!userId,
+    }),
+  );
+
+  const activeImpersonation = impersonations.data?.body?.find(
+    (imp) =>
+      !!userId &&
+      imp.target_user_id === userId &&
+      !!imp.impersonation_session_id &&
+      !imp.ended_at &&
+      (!imp.expires_at || new Date(imp.expires_at) > new Date()),
+  );
+
+  const isImpersonating = !!activeImpersonation;
+
+  const stopImpersonation = useMutation(
+    orpc.postAuthAdminImpersonationsByImpersonationIdStop.mutationOptions({
+      onSuccess: () => {
+        toast.success('Stopped impersonating');
+        void queryClient.invalidateQueries({
+          queryKey: orpc.getAuthMe.key(),
+        });
+        void queryClient.invalidateQueries({
+          queryKey: orpc.getAuthAdminImpersonations.key(),
+        });
+        void router.invalidate();
+      },
+    }),
+  );
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60 shadow-sm">
@@ -55,7 +90,13 @@ export function Header() {
             variant="outline"
             size="sm"
             className="ml-2 border-amber-500/30 hover:bg-amber-500/20"
-            onClick={async () => {}}
+            onClick={async () => {
+              if (activeImpersonation?.id) {
+                await stopImpersonation.mutateAsync({
+                  path: { impersonation_id: activeImpersonation.id },
+                });
+              }
+            }}
           >
             Stop impersonating
           </Button>

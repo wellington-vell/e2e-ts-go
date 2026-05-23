@@ -139,8 +139,8 @@ func AuthSignOut(w http.ResponseWriter, r *http.Request) {
 // @Tags Auth Email Password
 // @Accept json
 // @Produce json
-// @Param request body models.SignUpRequest true "Sign up request"
-// @Success 201 {object} models.SignUpResponse
+// @Param request body eptypes.SignUpRequest true "Sign up request"
+// @Success 201 {object} eptypes.SignUpResponse
 // @Failure 400 {string} string "Bad request"
 // @Router /auth/email-password/sign-up [post]
 func AuthEmailPasswordSignUp(w http.ResponseWriter, r *http.Request) {
@@ -152,8 +152,8 @@ func AuthEmailPasswordSignUp(w http.ResponseWriter, r *http.Request) {
 // @Tags Auth Email Password
 // @Accept json
 // @Produce json
-// @Param request body models.SignInRequest true "Sign in request"
-// @Success 200 {object} models.SignInResponse
+// @Param request body eptypes.SignInRequest true "Sign in request"
+// @Success 200 {object} eptypes.SignInResponse
 // @Failure 400 {string} string "Bad request"
 // @Router /auth/email-password/sign-in [post]
 func AuthEmailPasswordSignIn(w http.ResponseWriter, r *http.Request) {
@@ -235,8 +235,8 @@ func AuthEmailPasswordRequestEmailChange(w http.ResponseWriter, r *http.Request)
 // @Tags Auth Admin
 // @Accept json
 // @Produce json
-// @Param request body models.CreateUserRequest true "Create user request"
-// @Success 201 {object} models.CreateUserResponse
+// @Param request body admtypes.CreateUserRequest true "Create user request"
+// @Success 201 {object} admtypes.CreateUserResponse
 // @Failure 400 {string} string "Bad request"
 // @Failure 401 {string} string "Unauthorized"
 // @Router /auth/admin/users [post]
@@ -250,7 +250,7 @@ func AuthAdminCreateUser(w http.ResponseWriter, r *http.Request) {
 // @Produce json
 // @Param cursor query string false "Pagination cursor"
 // @Param limit query int false "Pagination limit"
-// @Success 200 {object} models.UsersPage
+// @Success 200 {object} admtypes.UsersPage
 // @Failure 401 {string} string "Unauthorized"
 // @Router /auth/admin/users [get]
 func AuthAdminGetAllUsers(w http.ResponseWriter, r *http.Request) {
@@ -262,7 +262,7 @@ func AuthAdminGetAllUsers(w http.ResponseWriter, r *http.Request) {
 // @Tags Auth Admin
 // @Produce json
 // @Param user_id path string true "User ID"
-// @Success 200 {object} models.GetUserByIDResponse
+// @Success 200 {object} admtypes.GetUserByIDResponse
 // @Failure 401 {string} string "Unauthorized"
 // @Failure 404 {string} string "Not found"
 // @Router /auth/admin/users/{user_id} [get]
@@ -276,8 +276,8 @@ func AuthAdminGetUserByID(w http.ResponseWriter, r *http.Request) {
 // @Accept json
 // @Produce json
 // @Param user_id path string true "User ID"
-// @Param request body models.UpdateUserRequest true "Update user request"
-// @Success 200 {object} models.UpdateUserResponse
+// @Param request body admtypes.UpdateUserRequest true "Update user request"
+// @Success 200 {object} admtypes.UpdateUserResponse
 // @Failure 400 {string} string "Bad request"
 // @Failure 401 {string} string "Unauthorized"
 // @Failure 404 {string} string "Not found"
@@ -558,7 +558,7 @@ func AuthAdminGetRevokedSessionStates(w http.ResponseWriter, r *http.Request) {
 // @Tags Auth Admin
 // @Produce json
 // @Param user_id path string true "User ID"
-// @Success 200 {array} models.AdminUserSession
+// @Success 200 {array} admtypes.AdminUserSession
 // @Failure 401 {string} string "Unauthorized"
 // @Router /auth/admin/users/{user_id}/sessions [get]
 func AuthAdminGetUserSessions(w http.ResponseWriter, r *http.Request) {
@@ -797,7 +797,7 @@ func AuthAccessControlAddRolePermission(w http.ResponseWriter, r *http.Request) 
 // @Tags Auth Access Control
 // @Produce json
 // @Param role_id path string true "Role ID"
-// @Success 200 {array} actypes.Permission
+// @Success 200 {array} actypes.UserPermissionInfo
 // @Failure 401 {string} string "Unauthorized"
 // @Router /auth/access-control/roles/{role_id}/permissions [get]
 func AuthAccessControlGetRolePermissions(w http.ResponseWriter, r *http.Request) {
@@ -923,21 +923,21 @@ func _ensureImportsUsed() {
 	_ = models.GetMeResponse{}
 	_ = models.SignOutRequest{}
 	_ = models.SignOutResponse{}
-	_ = models.SignUpRequest{}
-	_ = models.SignUpResponse{}
-	_ = models.SignInRequest{}
-	_ = models.SignInResponse{}
+	_ = eptypes.SignUpRequest{}
+	_ = eptypes.SignUpResponse{}
+	_ = eptypes.SignInRequest{}
+	_ = eptypes.SignInResponse{}
 	_ = eptypes.SendEmailVerificationRequest{}
 	_ = eptypes.RequestPasswordResetRequest{}
 	_ = eptypes.ChangePasswordRequest{}
 	_ = eptypes.ChangePasswordResponse{}
 	_ = eptypes.RequestEmailChangeRequest{}
-	_ = models.CreateUserRequest{}
-	_ = models.CreateUserResponse{}
-	_ = models.UsersPage{}
-	_ = models.GetUserByIDResponse{}
-	_ = models.UpdateUserRequest{}
-	_ = models.UpdateUserResponse{}
+	_ = admtypes.CreateUserRequest{}
+	_ = admtypes.CreateUserResponse{}
+	_ = admtypes.UsersPage{}
+	_ = admtypes.GetUserByIDResponse{}
+	_ = admtypes.UpdateUserRequest{}
+	_ = admtypes.UpdateUserResponse{}
 	_ = admtypes.DeleteUserResponse{}
 	_ = admtypes.CreateAccountRequest{}
 	_ = admtypes.CreateAccountResponse{}
@@ -961,7 +961,7 @@ func _ensureImportsUsed() {
 	_ = admtypes.UpsertSessionStateRequest{}
 	_ = admtypes.DeleteSessionStateResponse{}
 	_ = admtypes.AdminSessionState{}
-	_ = models.AdminUserSession{}
+	_ = admtypes.AdminUserSession{}
 	_ = admtypes.RevokeSessionRequest{}
 	_ = admtypes.RevokeSessionResponse{}
 	_ = admtypes.Impersonation{}
@@ -987,6 +987,7 @@ func _ensureImportsUsed() {
 	_ = actypes.ReplaceRolePermissionsRequest{}
 	_ = actypes.ReplaceRolePermissionResponse{}
 	_ = actypes.RemoveRolePermissionResponse{}
+	_ = actypes.UserPermissionInfo{}
 	_ = actypes.UserRoleInfo{}
 	_ = actypes.ReplaceUserRolesRequest{}
 	_ = actypes.ReplaceUserRolesResponse{}

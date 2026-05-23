@@ -1,7 +1,9 @@
 import { Loader2 } from 'lucide-react';
+import type { DateRange } from 'react-day-picker';
 
 import { useFieldContext, useFormContext } from '@/components/form/context';
 import { Button } from '@/components/ui/button';
+import { Calendar } from '@/components/ui/calendar';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Field, FieldError, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
@@ -16,9 +18,15 @@ import {
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 
-export function FormInput({ ...props }: React.ComponentProps<typeof Input>) {
-  const field = useFieldContext<string>();
+export function FormInput({
+  type,
+  onKeyDown,
+  ...props
+}: React.ComponentProps<typeof Input>) {
+  const field = useFieldContext<string | number>();
   const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
+  const isNumber = type === 'number';
+  const value = field.state.value;
 
   return (
     <Input
@@ -26,8 +34,17 @@ export function FormInput({ ...props }: React.ComponentProps<typeof Input>) {
       id={field.name}
       name={field.name}
       onBlur={field.handleBlur}
-      onChange={(e) => field.handleChange(e.target.value)}
-      value={field.state.value}
+      onChange={(e) =>
+        field.handleChange(isNumber ? e.target.valueAsNumber : e.target.value)
+      }
+      onKeyDown={(e) => {
+        if (isNumber && e.key.length === 1 && /[^\d.\-+]/.test(e.key)) {
+          e.preventDefault();
+        }
+        onKeyDown?.(e);
+      }}
+      type={type}
+      value={typeof value === 'number' && Number.isNaN(value) ? '' : value}
       {...props}
     />
   );
@@ -132,6 +149,59 @@ export function FormTextarea({
       {...props}
     />
   );
+}
+
+type FormCalendarValue = Date | Date[] | DateRange | undefined;
+
+export function FormCalendar({
+  mode = 'single',
+  ...props
+}: {
+  mode?: 'single' | 'multiple' | 'range';
+} & Omit<
+  React.ComponentProps<typeof Calendar>,
+  'mode' | 'selected' | 'onSelect'
+>) {
+  const field = useFieldContext<FormCalendarValue>();
+  const value = field.state.value;
+  const onSelect = (next: FormCalendarValue) => {
+    field.handleChange(next);
+    field.handleBlur();
+  };
+
+  switch (mode) {
+    case 'multiple':
+      return (
+        <Calendar
+          {...props}
+          mode="multiple"
+          selected={Array.isArray(value) ? value : undefined}
+          onSelect={onSelect}
+        />
+      );
+    case 'range':
+      return (
+        <Calendar
+          {...props}
+          mode="range"
+          selected={
+            value && !Array.isArray(value) && !(value instanceof Date)
+              ? value
+              : undefined
+          }
+          onSelect={onSelect}
+        />
+      );
+    default:
+      return (
+        <Calendar
+          {...props}
+          mode="single"
+          selected={value instanceof Date ? value : undefined}
+          onSelect={onSelect}
+        />
+      );
+  }
 }
 
 export function FormCheckbox({

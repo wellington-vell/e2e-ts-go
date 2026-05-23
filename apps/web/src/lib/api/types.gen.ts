@@ -4,6 +4,17 @@ export type ClientOptions = {
   baseUrl: `${string}://apps` | (string & {});
 };
 
+export type SignInRequest = {
+  callback_url?: string;
+  email?: string;
+  password?: string;
+};
+
+export type SignInResponse = {
+  session?: Session;
+  user?: User;
+};
+
 export type Account = {
   access_token?: string;
   access_token_expires_at?: string;
@@ -23,9 +34,26 @@ export type Account = {
   user_id?: string;
 };
 
-export type AdminUserSession = {
-  session?: Session;
-  state?: AdminSessionState;
+export type Session = {
+  created_at?: string;
+  expires_at?: string;
+  id?: string;
+  ip_address?: string;
+  token?: string;
+  updated_at?: string;
+  user_agent?: string;
+  user_id?: string;
+};
+
+export type User = {
+  created_at?: string;
+  email?: string;
+  email_verified?: boolean;
+  id?: string;
+  image?: string;
+  metadata?: Array<number>;
+  name?: string;
+  updated_at?: string;
 };
 
 export type CreateTodoRequest = {
@@ -40,26 +68,8 @@ export type CreateTodoRequest = {
   text: string;
 };
 
-export type CreateUserRequest = {
-  email?: string;
-  email_verified?: boolean;
-  image?: string;
-  metadata?: {
-    [key: string]: unknown;
-  };
-  name?: string;
-};
-
-export type CreateUserResponse = {
-  user?: User;
-};
-
 export type GetMeResponse = {
   session?: Session;
-  user?: User;
-};
-
-export type GetUserByIdResponse = {
   user?: User;
 };
 
@@ -80,28 +90,6 @@ export type HealthResponse = {
   version?: string;
 };
 
-export type Session = {
-  created_at?: string;
-  expires_at?: string;
-  id?: string;
-  ip_address?: string;
-  token?: string;
-  updated_at?: string;
-  user_agent?: string;
-  user_id?: string;
-};
-
-export type SignInRequest = {
-  callback_url?: string;
-  email?: string;
-  password?: string;
-};
-
-export type SignInResponse = {
-  session?: Session;
-  user?: User;
-};
-
 export type SignOutRequest = {
   session_id?: string;
   sign_out_all?: boolean;
@@ -109,22 +97,6 @@ export type SignOutRequest = {
 
 export type SignOutResponse = {
   message?: string;
-};
-
-export type SignUpRequest = {
-  callback_url?: string;
-  email?: string;
-  image?: string;
-  metadata?: {
-    [key: string]: unknown;
-  };
-  name?: string;
-  password?: string;
-};
-
-export type SignUpResponse = {
-  session?: Session;
-  user?: User;
 };
 
 export type Todo = {
@@ -166,38 +138,6 @@ export type UpdateTodoRequest = {
   text?: string;
 };
 
-export type UpdateUserRequest = {
-  email?: string;
-  email_verified?: boolean;
-  image?: string;
-  metadata?: {
-    [key: string]: unknown;
-  };
-  name?: string;
-};
-
-export type UpdateUserResponse = {
-  user?: User;
-};
-
-export type User = {
-  created_at?: string;
-  email?: string;
-  email_verified?: boolean;
-  id?: string;
-  image?: string;
-  metadata?: {
-    [key: string]: unknown;
-  };
-  name?: string;
-  updated_at?: string;
-};
-
-export type UsersPage = {
-  next_cursor?: string;
-  users?: Array<User>;
-};
-
 export type AddRolePermissionRequest = {
   permission_id?: string;
 };
@@ -216,6 +156,11 @@ export type AdminSessionState = {
   revoked_reason?: string;
   session_id?: string;
   updated_at?: string;
+};
+
+export type AdminUserSession = {
+  session?: Session;
+  state?: AdminSessionState;
 };
 
 export type AdminUserState = {
@@ -309,6 +254,18 @@ export type CreateSessionStateRequest = {
   revoked_reason?: string;
 };
 
+export type CreateUserRequest = {
+  email?: string;
+  email_verified?: boolean;
+  image?: string;
+  metadata?: Array<number>;
+  name?: string;
+};
+
+export type CreateUserResponse = {
+  user?: User;
+};
+
 export type CreateUserStateRequest = {
   banned?: boolean;
   banned_reason?: string;
@@ -349,6 +306,10 @@ export type GetImpersonationByIdResponse = {
 
 export type GetSessionStateResponse = {
   state?: AdminSessionState;
+};
+
+export type GetUserByIdResponse = {
+  user?: User;
 };
 
 export type GetUserPermissionsResponse = {
@@ -451,6 +412,20 @@ export type SendEmailVerificationRequest = {
   callback_url?: string;
 };
 
+export type SignUpRequest = {
+  callback_url?: string;
+  email?: string;
+  image?: string;
+  metadata?: Array<number>;
+  name?: string;
+  password?: string;
+};
+
+export type SignUpResponse = {
+  session?: Session;
+  user?: User;
+};
+
 export type StartImpersonationRequest = {
   expires_in_seconds?: number;
   reason?: string;
@@ -503,6 +478,18 @@ export type UpdateRoleResponse = {
   role?: Role;
 };
 
+export type UpdateUserRequest = {
+  email?: string;
+  email_verified?: boolean;
+  image?: string;
+  metadata?: Array<number>;
+  name?: string;
+};
+
+export type UpdateUserResponse = {
+  user?: User;
+};
+
 export type UpsertSessionStateRequest = {
   impersonation_expires_at?: string;
   impersonation_reason?: string;
@@ -546,6 +533,11 @@ export type UserRoleInfo = {
   role_id?: string;
   role_name?: string;
   role_weight?: number;
+};
+
+export type UsersPage = {
+  next_cursor?: string;
+  users?: Array<User>;
 };
 
 export type GetApiV1HealthData = {
@@ -1134,7 +1126,7 @@ export type GetAuthAccessControlRolesByRoleIdPermissionsResponses = {
   /**
    * OK
    */
-  200: Array<Permission>;
+  200: Array<UserPermissionInfo>;
 };
 
 export type GetAuthAccessControlRolesByRoleIdPermissionsResponse =

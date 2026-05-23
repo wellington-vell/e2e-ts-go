@@ -55,7 +55,7 @@ func SeedDB(ctx context.Context, db *bun.DB, auth *authula.Auth) error {
 	}
 
 	// Assign permissions to roles
-	if err := seedRolePermissions(ctx, acPlugin, roles, permissions); err != nil {
+	if err := seedRolePermissions(ctx, db, roles, permissions); err != nil {
 		return fmt.Errorf("failed to seed role permissions: %w", err)
 	}
 
@@ -267,21 +267,22 @@ func seedPermissions(ctx context.Context, acPlugin *accesscontrolplugin.AccessCo
 	defs := []struct {
 		key         string
 		description string
+		isSystem    bool
 	}{
-		{"users:read", "View users"},
-		{"users:manage", "Create, update, and delete users"},
-		{"roles:read", "View roles"},
-		{"roles:manage", "Create, update, and delete roles"},
-		{"permissions:read", "View permissions"},
-		{"permissions:manage", "Create, update, and delete permissions"},
-		{"sessions:read", "View sessions"},
-		{"sessions:manage", "Revoke and manage sessions"},
-		{"impersonation:read", "View impersonations"},
-		{"impersonation:manage", "Start and stop impersonations"},
-		{"todos:read", "View todos"},
-		{"todos:create", "Create todos"},
-		{"todos:update", "Update todos"},
-		{"todos:delete", "Delete todos"},
+		{"users:read", "View users", true},
+		{"users:manage", "Create, update, and delete users", true},
+		{"roles:read", "View roles", true},
+		{"roles:manage", "Create, update, and delete roles", true},
+		{"permissions:read", "View permissions", true},
+		{"permissions:manage", "Create, update, and delete permissions", true},
+		{"sessions:read", "View sessions", true},
+		{"sessions:manage", "Revoke and manage sessions", true},
+		{"impersonation:read", "View impersonations", true},
+		{"impersonation:manage", "Start and stop impersonations", true},
+		{"todos:read", "View todos", false},
+		{"todos:create", "Create todos", false},
+		{"todos:update", "Update todos", false},
+		{"todos:delete", "Delete todos", false},
 	}
 
 	permissions := make(map[string]*actypes.Permission, len(defs))
@@ -290,6 +291,7 @@ func seedPermissions(ctx context.Context, acPlugin *accesscontrolplugin.AccessCo
 		perm, err := acPlugin.Api.CreatePermission(ctx, actypes.CreatePermissionRequest{
 			Key:         def.key,
 			Description: &desc,
+			IsSystem:    def.isSystem,
 		})
 		if err != nil {
 			return nil, fmt.Errorf("failed to create permission %s: %w", def.key, err)
@@ -305,10 +307,11 @@ func seedRoles(ctx context.Context, acPlugin *accesscontrolplugin.AccessControlP
 		name        string
 		description string
 		weight      int
+		isSystem    bool
 	}{
-		{"admin", "Administrator with full access", 100},
-		{"manager", "Manager with elevated access", 50},
-		{"user", "Standard user", 10},
+		{"admin", "Administrator with full access", 100, true},
+		{"manager", "Manager with elevated access", 50, false},
+		{"user", "Standard user", 10, true},
 	}
 
 	roles := make(map[string]*actypes.Role, len(defs))
@@ -319,6 +322,7 @@ func seedRoles(ctx context.Context, acPlugin *accesscontrolplugin.AccessControlP
 			Name:        def.name,
 			Description: &desc,
 			Weight:      &w,
+			IsSystem:    def.isSystem,
 		})
 		if err != nil {
 			return nil, fmt.Errorf("failed to create role %s: %w", def.name, err)
@@ -329,7 +333,7 @@ func seedRoles(ctx context.Context, acPlugin *accesscontrolplugin.AccessControlP
 	return roles, nil
 }
 
-func seedRolePermissions(ctx context.Context, acPlugin *accesscontrolplugin.AccessControlPlugin, roles map[string]*actypes.Role, permissions map[string]*actypes.Permission) error {
+func seedRolePermissions(ctx context.Context, db *bun.DB, roles map[string]*actypes.Role, permissions map[string]*actypes.Permission) error {
 	mapping := map[string][]string{
 		"admin": {
 			"users:read", "users:manage",
@@ -351,14 +355,21 @@ func seedRolePermissions(ctx context.Context, acPlugin *accesscontrolplugin.Acce
 		},
 	}
 
+	// Insert directly into the join table to bypass the service-layer guard
+	// that rejects writes to system roles and system permissions. Seeding is
+	// the trusted bootstrap path those guards are designed to protect at runtime.
+	now := time.Now().UTC()
 	for roleName, permKeys := range mapping {
 		role := roles[roleName]
-		permIDs := make([]string, 0, len(permKeys))
 		for _, key := range permKeys {
-			permIDs = append(permIDs, permissions[key].ID)
-		}
-		if err := acPlugin.Api.ReplaceRolePermissions(ctx, role.ID, permIDs, nil); err != nil {
-			return fmt.Errorf("failed to assign permissions to role %s: %w", roleName, err)
+			rp := &actypes.RolePermission{
+				RoleID:       role.ID,
+				PermissionID: permissions[key].ID,
+				GrantedAt:    now,
+			}
+			if _, err := db.NewInsert().Model(rp).Exec(ctx); err != nil {
+				return fmt.Errorf("failed to assign permission %s to role %s: %w", key, roleName, err)
+			}
 		}
 	}
 

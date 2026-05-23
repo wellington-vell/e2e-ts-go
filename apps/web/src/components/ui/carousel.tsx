@@ -86,10 +86,7 @@ function Carousel({
     [scrollPrev, scrollNext],
   );
 
-  React.useEffect(() => {
-    if (!apiRef || !api) return;
-    apiRef.current = api;
-  }, [apiRef, api]);
+  React.useImperativeHandle(apiRef, () => api, [api]);
 
   React.useEffect(() => {
     if (!api) {

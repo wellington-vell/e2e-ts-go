@@ -7,9 +7,11 @@ import React from 'react';
 import {
   DayPicker,
   getDefaultClassNames,
+  type ChevronProps,
   type DayButton,
-  type Locale,
+  type RootProps,
   useDayPicker,
+  type WeekNumberProps,
 } from 'react-day-picker';
 
 import { Button, buttonVariants } from '@/components/ui/button';
@@ -191,66 +193,10 @@ function Calendar({
         ...classNames,
       }}
       components={{
-        Root: ({ className: rootClassName, rootRef, ...rootProps }) => {
-          return (
-            <div
-              data-slot="calendar"
-              ref={(instance) => {
-                if (rootRef) {
-                  if (typeof rootRef === 'function') {
-                    rootRef(instance);
-                  } else {
-                    rootRef.current = instance;
-                  }
-                }
-              }}
-              className={cn(rootClassName)}
-              {...rootProps}
-            />
-          );
-        },
-        Chevron: ({
-          className: chevronClassName,
-          orientation,
-          ...chevronProps
-        }) => {
-          if (orientation === 'left') {
-            return (
-              <ChevronLeftIcon
-                className={cn('size-4', chevronClassName)}
-                {...chevronProps}
-              />
-            );
-          }
-
-          if (orientation === 'right') {
-            return (
-              <ChevronRightIcon
-                className={cn('size-4', chevronClassName)}
-                {...chevronProps}
-              />
-            );
-          }
-
-          return (
-            <ChevronDownIcon
-              className={cn('size-4', chevronClassName)}
-              {...chevronProps}
-            />
-          );
-        },
-        DayButton: ({ ...dayButtonProps }) => (
-          <CalendarDayButton locale={locale} {...dayButtonProps} />
-        ),
-        WeekNumber: ({ children, ...weekNumberProps }) => {
-          return (
-            <td {...weekNumberProps}>
-              <div className="flex size-(--cell-size) items-center justify-center text-center">
-                {children}
-              </div>
-            </td>
-          );
-        },
+        Root: CalendarRoot,
+        Chevron: CalendarChevron,
+        DayButton: CalendarDayButton,
+        WeekNumber: CalendarWeekNumber,
         Dropdown: CalendarDropdown,
         ...components,
       }}
@@ -259,24 +205,81 @@ function Calendar({
   );
 }
 
+function CalendarRoot({
+  className: rootClassName,
+  rootRef,
+  ...rootProps
+}: RootProps) {
+  return (
+    <div
+      data-slot="calendar"
+      ref={rootRef}
+      className={cn(rootClassName)}
+      {...rootProps}
+    />
+  );
+}
+
+function CalendarChevron({
+  className: chevronClassName,
+  orientation,
+  ...chevronProps
+}: ChevronProps) {
+  if (orientation === 'left') {
+    return (
+      <ChevronLeftIcon
+        className={cn('size-4', chevronClassName)}
+        {...chevronProps}
+      />
+    );
+  }
+
+  if (orientation === 'right') {
+    return (
+      <ChevronRightIcon
+        className={cn('size-4', chevronClassName)}
+        {...chevronProps}
+      />
+    );
+  }
+
+  return (
+    <ChevronDownIcon
+      className={cn('size-4', chevronClassName)}
+      {...chevronProps}
+    />
+  );
+}
+
+function CalendarWeekNumber({
+  children,
+  week: _week,
+  ...weekNumberProps
+}: WeekNumberProps) {
+  return (
+    <td {...weekNumberProps}>
+      <div className="flex size-(--cell-size) items-center justify-center text-center">
+        {children}
+      </div>
+    </td>
+  );
+}
+
 function CalendarDayButton({
   className,
   day,
   modifiers,
-  locale,
   ...buttonProps
-}: React.ComponentProps<typeof DayButton> & { locale?: Partial<Locale> }) {
+}: React.ComponentProps<typeof DayButton>) {
+  const { dayPickerProps } = useDayPicker();
+  const locale = dayPickerProps.locale;
   const defaultClassNames = getDefaultClassNames();
-
-  const ref = React.useRef<HTMLButtonElement>(null);
-  React.useEffect(() => {
-    if (modifiers.focused) ref.current?.focus();
-  }, [modifiers.focused]);
 
   return (
     <Button
       variant="ghost"
       size="icon"
+      autoFocus={modifiers.focused}
       data-day={day.date.toLocaleDateString(locale?.code)}
       data-selected-single={
         modifiers.selected &&

@@ -3,3 +3,7 @@ $schema: "./cache/schemas/workspace.json"
 projects:
   server: "apps/server"
   web: "apps/web"
+
+vcs:
+  manager: git
+  defaultBranch: main

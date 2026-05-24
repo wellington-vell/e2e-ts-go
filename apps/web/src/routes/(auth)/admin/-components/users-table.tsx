@@ -15,6 +15,7 @@ import { Time } from '@/components/ui/time';
 import type { AdminUserState } from '@/lib/api/types.gen';
 import { orpc } from '@/lib/orpc';
 import { AdminUsersProvider } from '@/routes/(auth)/admin/-components/context';
+import { CreateUserSheet } from '@/routes/(auth)/admin/-components/create-user-sheet';
 import { RowActions } from '@/routes/(auth)/admin/-components/row-actions';
 
 const PAGE_SIZE = 10;
@@ -72,6 +73,9 @@ export function UsersTable() {
         <div className="flex items-center justify-center py-8">Loading...</div>
       ) : (
         <AdminUsersProvider bannedMap={bannedMap}>
+          <div className="mb-4 flex justify-end">
+            <CreateUserSheet />
+          </div>
           <div className="overflow-hidden rounded-md border">
             <Table>
               <TableHeader>

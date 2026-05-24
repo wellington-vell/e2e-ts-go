@@ -49,10 +49,10 @@ func RegisterAuthRoutes(r chi.Router) {
 	r.Delete("/auth/admin/accounts/{id}", AuthAdminDeleteAccount)
 
 	// Admin - User State
-	r.Get("/auth/admin/users/{user_id}/state", AuthAdminGetUserState)
-	r.Post("/auth/admin/users/{user_id}/state", AuthAdminCreateUserState)
-	r.Patch("/auth/admin/users/{user_id}/state", AuthAdminUpdateUserState)
-	r.Delete("/auth/admin/users/{user_id}/state", AuthAdminDeleteUserState)
+	r.Get("/auth/admin/users/{user_id}/state", AuthAdminGetUserState)       //
+	r.Post("/auth/admin/users/{user_id}/state", AuthAdminCreateUserState)   //
+	r.Patch("/auth/admin/users/{user_id}/state", AuthAdminUpdateUserState)  //
+	r.Delete("/auth/admin/users/{user_id}/state", AuthAdminDeleteUserState) //
 	r.Get("/auth/admin/users/states/banned", AuthAdminGetBannedUserStates)
 	r.Post("/auth/admin/users/{user_id}/ban", AuthAdminBanUser)
 	r.Post("/auth/admin/users/{user_id}/unban", AuthAdminUnbanUser)
@@ -68,29 +68,29 @@ func RegisterAuthRoutes(r chi.Router) {
 
 	// Admin - Impersonation
 	r.Get("/auth/admin/impersonations", AuthAdminGetAllImpersonations)
-	r.Get("/auth/admin/impersonations/{impersonation_id}", AuthAdminGetImpersonationByID)
+	r.Get("/auth/admin/impersonations/{impersonation_id}", AuthAdminGetImpersonationByID) //
 	r.Post("/auth/admin/impersonations", AuthAdminStartImpersonation)
 	r.Post("/auth/admin/impersonations/{impersonation_id}/stop", AuthAdminStopImpersonation)
 
 	// Access Control - Roles
 	r.Post("/auth/access-control/roles", AuthAccessControlCreateRole)
 	r.Get("/auth/access-control/roles", AuthAccessControlGetAllRoles)
-	r.Get("/auth/access-control/roles/by-name/{role_name}", AuthAccessControlGetRoleByName)
-	r.Get("/auth/access-control/roles/{role_id}", AuthAccessControlGetRoleByID)
+	r.Get("/auth/access-control/roles/by-name/{role_name}", AuthAccessControlGetRoleByName) //
+	r.Get("/auth/access-control/roles/{role_id}", AuthAccessControlGetRoleByID)             //
 	r.Patch("/auth/access-control/roles/{role_id}", AuthAccessControlUpdateRole)
 	r.Delete("/auth/access-control/roles/{role_id}", AuthAccessControlDeleteRole)
 
 	// Access Control - Permissions
 	r.Post("/auth/access-control/permissions", AuthAccessControlCreatePermission)
 	r.Get("/auth/access-control/permissions", AuthAccessControlGetAllPermissions)
-	r.Get("/auth/access-control/permissions/{permission_id}", AuthAccessControlGetPermissionByID)
+	r.Get("/auth/access-control/permissions/{permission_id}", AuthAccessControlGetPermissionByID) //
 	r.Patch("/auth/access-control/permissions/{permission_id}", AuthAccessControlUpdatePermission)
 	r.Delete("/auth/access-control/permissions/{permission_id}", AuthAccessControlDeletePermission)
 
 	// Access Control - Role Permissions
 	r.Post("/auth/access-control/roles/{role_id}/permissions", AuthAccessControlAddRolePermission)
 	r.Get("/auth/access-control/roles/{role_id}/permissions", AuthAccessControlGetRolePermissions)
-	r.Put("/auth/access-control/roles/{role_id}/permissions", AuthAccessControlReplaceRolePermissions)
+	r.Put("/auth/access-control/roles/{role_id}/permissions", AuthAccessControlReplaceRolePermissions) //
 	r.Delete("/auth/access-control/roles/{role_id}/permissions/{permission_id}", AuthAccessControlRemoveRolePermission)
 
 	// Access Control - User Access

@@ -2,6 +2,7 @@ import { createFileRoute } from '@tanstack/react-router';
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { PermissionsTable } from '@/routes/(auth)/admin/-components/permissions-table';
+import { RevokedSessionsTable } from '@/routes/(auth)/admin/-components/revoked-sessions-table';
 import { RolesTable } from '@/routes/(auth)/admin/-components/roles-table';
 import { UsersTable } from '@/routes/(auth)/admin/-components/users-table';
 
@@ -22,6 +23,7 @@ function AdminPage() {
           <TabsTrigger value="users">Users</TabsTrigger>
           <TabsTrigger value="roles">Roles</TabsTrigger>
           <TabsTrigger value="permissions">Permissions</TabsTrigger>
+          <TabsTrigger value="sessions">Sessions</TabsTrigger>
         </TabsList>
         <TabsContent value="users">
           <UsersTable />
@@ -31,6 +33,9 @@ function AdminPage() {
         </TabsContent>
         <TabsContent value="permissions">
           <PermissionsTable />
+        </TabsContent>
+        <TabsContent value="sessions">
+          <RevokedSessionsTable />
         </TabsContent>
       </Tabs>
     </div>

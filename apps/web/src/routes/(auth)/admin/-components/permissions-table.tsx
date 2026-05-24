@@ -192,6 +192,7 @@ export function CreatePermissionSheet() {
     },
     validators: {
       onSubmit: schema,
+      onChange: schema,
     },
   });
 
@@ -296,6 +297,7 @@ export function EditPermissionSheet({
     },
     validators: {
       onSubmit: schema,
+      onChange: schema,
     },
   });
 
@@ -312,7 +314,7 @@ export function EditPermissionSheet({
             e.stopPropagation();
             await form.handleSubmit();
           }}
-          className="space-y-4 py-4"
+          className="grid flex-1 auto-rows-min gap-6 px-4"
         >
           <div className="space-y-2">
             <label className="text-sm font-medium">Key</label>

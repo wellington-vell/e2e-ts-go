@@ -24,7 +24,7 @@ func Router(auth *authula.Auth) http.Handler {
 	origins := lib.Env.CorsOrigin
 	r.Use(cors.New(cors.Options{
 		AllowedOrigins:   []string{origins},
-		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowedMethods:   []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
 		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-Requested-With", "Set-Cookie", "Cookie"},
 		AllowCredentials: true,
 		MaxAge:           300,

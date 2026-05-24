@@ -1,4 +1,6 @@
-import { Loader2 } from 'lucide-react';
+import { format } from 'date-fns';
+import { CalendarIcon, Loader2 } from 'lucide-react';
+import React from 'react';
 import type { DateRange } from 'react-day-picker';
 
 import { useFieldContext, useFormContext } from '@/components/form/context';
@@ -10,6 +12,11 @@ import { Input } from '@/components/ui/input';
 import { InputGroupInput } from '@/components/ui/input-group';
 import { InputOTP } from '@/components/ui/input-otp';
 import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
+import {
   Select,
   SelectContent,
   SelectItem,
@@ -17,6 +24,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
+import { cn } from '@/lib/utils';
 
 export function FormInput({
   type,
@@ -152,35 +160,63 @@ export function FormTextarea({
 }
 
 type FormCalendarValue = Date | Date[] | DateRange | undefined;
+function formatCalendarValue(
+  mode: React.ComponentProps<typeof Calendar>['mode'],
+  value: FormCalendarValue,
+): string {
+  if (!value) return '';
+  if (mode === 'single' && value instanceof Date) {
+    return format(value, 'PPP');
+  }
+  if (mode === 'multiple' && Array.isArray(value) && value.length > 0) {
+    return `${value.length} date${value.length === 1 ? '' : 's'} selected`;
+  }
+  if (mode === 'range' && !Array.isArray(value) && !(value instanceof Date)) {
+    if (value.from && value.to) {
+      return `${format(value.from, 'PPP')} – ${format(value.to, 'PPP')}`;
+    }
+    if (value.from) {
+      return format(value.from, 'PPP');
+    }
+  }
+  return '';
+}
 
 export function FormCalendar({
   mode = 'single',
+  placeholder = 'Pick a date',
   ...props
 }: {
-  mode?: 'single' | 'multiple' | 'range';
-} & Omit<
-  React.ComponentProps<typeof Calendar>,
-  'mode' | 'selected' | 'onSelect'
->) {
+  placeholder?: string;
+} & Omit<React.ComponentProps<typeof Calendar>, 'selected' | 'onSelect'>) {
   const field = useFieldContext<FormCalendarValue>();
+  const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
   const value = field.state.value;
-  const onSelect = (next: FormCalendarValue) => {
-    field.handleChange(next);
-    field.handleBlur();
+  const [open, setOpen] = React.useState(false);
+
+  const handleOpenChange = (next: boolean) => {
+    setOpen(next);
+    if (!next) {
+      field.handleBlur();
+    }
   };
 
+  const displayValue = formatCalendarValue(mode, value);
+
+  let calendar: React.ReactNode;
   switch (mode) {
     case 'multiple':
-      return (
+      calendar = (
         <Calendar
           {...props}
           mode="multiple"
           selected={Array.isArray(value) ? value : undefined}
-          onSelect={onSelect}
+          onSelect={(next) => field.handleChange(next)}
         />
       );
+      break;
     case 'range':
-      return (
+      calendar = (
         <Calendar
           {...props}
           mode="range"
@@ -189,19 +225,47 @@ export function FormCalendar({
               ? value
               : undefined
           }
-          onSelect={onSelect}
+          onSelect={(next) => field.handleChange(next)}
         />
       );
+      break;
     default:
-      return (
+      calendar = (
         <Calendar
           {...props}
           mode="single"
           selected={value instanceof Date ? value : undefined}
-          onSelect={onSelect}
+          onSelect={(next) => {
+            field.handleChange(next);
+            setOpen(false);
+          }}
         />
       );
   }
+
+  return (
+    <Popover open={open} onOpenChange={handleOpenChange}>
+      <PopoverTrigger
+        render={
+          <Button
+            aria-invalid={isInvalid}
+            id={field.name}
+            variant="outline"
+            className={cn(
+              'w-full justify-start text-left font-normal',
+              !displayValue && 'text-muted-foreground',
+            )}
+          >
+            <CalendarIcon className="size-4" />
+            {displayValue || placeholder}
+          </Button>
+        }
+      />
+      <PopoverContent align="start" className="w-auto p-0">
+        {calendar}
+      </PopoverContent>
+    </Popover>
+  );
 }
 
 export function FormCheckbox({

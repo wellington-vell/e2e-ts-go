@@ -1,11 +1,30 @@
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
-import { Ban, MoreHorizontal, Trash2, UserCog } from 'lucide-react';
+import {
+  Ban,
+  Clock,
+  KeyRound,
+  MoreHorizontal,
+  Pencil,
+  Shield,
+  Trash2,
+  UserCog,
+} from 'lucide-react';
 import React from 'react';
 import { toast } from 'sonner';
 import { z } from 'zod';
 
 import { useAppForm } from '@/components/form/hooks';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -28,14 +47,26 @@ import {
 } from '@/lib/api/zod.gen';
 import { orpc, queryClient } from '@/lib/orpc';
 import { useAdminUsers } from '@/routes/(auth)/admin/-components/context';
+import { EditUserSheet } from '@/routes/(auth)/admin/-components/edit-user-sheet';
+import { ManageUserAccountsSheet } from '@/routes/(auth)/admin/-components/manage-user-accounts-sheet';
+import { ManageUserRolesSheet } from '@/routes/(auth)/admin/-components/manage-user-roles-sheet';
+import { UserSessionsSheet } from '@/routes/(auth)/admin/-components/user-sessions-sheet';
 
 export function RowActions({ user }: { user: User }) {
   const userId = user.id ?? '';
   const { bannedMap } = useAdminUsers();
   const isBanned = bannedMap.has(userId);
 
+  const { data: meData } = useQuery(orpc.getAuthMe.queryOptions());
+  const isSelf = !!meData?.body?.user?.id && meData.body.user.id === userId;
+
   const [impersonateOpen, setImpersonateOpen] = React.useState(false);
   const [banOpen, setBanOpen] = React.useState(false);
+  const [rolesOpen, setRolesOpen] = React.useState(false);
+  const [sessionsOpen, setSessionsOpen] = React.useState(false);
+  const [editOpen, setEditOpen] = React.useState(false);
+  const [accountsOpen, setAccountsOpen] = React.useState(false);
+  const [deleteOpen, setDeleteOpen] = React.useState(false);
 
   return (
     <>
@@ -53,30 +84,88 @@ export function RowActions({ user }: { user: User }) {
             </Button>
           )}
         />
-        <DropdownMenuContent align="end" className="w-40">
-          <DropdownMenuItem onClick={() => setImpersonateOpen(true)}>
+        <DropdownMenuContent align="end" className="w-44">
+          <DropdownMenuItem onClick={() => setEditOpen(true)} disabled={isSelf}>
+            <Pencil className="size-4 mr-2" />
+            Edit
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            onClick={() => setImpersonateOpen(true)}
+            disabled={isSelf}
+          >
             <UserCog className="size-4 mr-2" />
             Impersonate
           </DropdownMenuItem>
+          <DropdownMenuItem onClick={() => setRolesOpen(true)}>
+            <Shield className="size-4 mr-2" />
+            Manage roles
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            onClick={() => setAccountsOpen(true)}
+            disabled={isSelf}
+          >
+            <KeyRound className="size-4 mr-2" />
+            Manage accounts
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={() => setSessionsOpen(true)}>
+            <Clock className="size-4 mr-2" />
+            View sessions
+          </DropdownMenuItem>
           <DropdownMenuSeparator />
           {isBanned ? (
-            <UnBanUserMenuItem userId={userId} />
+            <UnBanUserMenuItem userId={userId} disabled={isSelf} />
           ) : (
-            <DropdownMenuItem onClick={() => setBanOpen(true)}>
+            <DropdownMenuItem
+              onClick={() => setBanOpen(true)}
+              disabled={isSelf}
+            >
               <Ban className="size-4 mr-2" />
               Ban
             </DropdownMenuItem>
           )}
           <DropdownMenuSeparator />
-          <DeleteUserMenuItem userId={userId} />
+          <DropdownMenuItem
+            variant="destructive"
+            onClick={() => setDeleteOpen(true)}
+            disabled={isSelf}
+          >
+            <Trash2 className="size-4 mr-2" />
+            Delete
+          </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
+
       <ImpersonateDialog
         userId={userId}
         open={impersonateOpen}
         onOpenChange={setImpersonateOpen}
       />
       <BanUserDialog userId={userId} open={banOpen} onOpenChange={setBanOpen} />
+      <ManageUserRolesSheet
+        user={user}
+        open={rolesOpen}
+        onOpenChange={setRolesOpen}
+      />
+      <UserSessionsSheet
+        user={user}
+        open={sessionsOpen}
+        onOpenChange={setSessionsOpen}
+      />
+      <EditUserSheet
+        userId={userId}
+        open={editOpen}
+        onOpenChange={setEditOpen}
+      />
+      <ManageUserAccountsSheet
+        user={user}
+        open={accountsOpen}
+        onOpenChange={setAccountsOpen}
+      />
+      <DeleteUserDialog
+        user={user}
+        open={deleteOpen}
+        onOpenChange={setDeleteOpen}
+      />
     </>
   );
 }
@@ -305,7 +394,13 @@ function BanUserDialog({
   );
 }
 
-function UnBanUserMenuItem({ userId }: { userId: string }) {
+function UnBanUserMenuItem({
+  userId,
+  disabled,
+}: {
+  userId: string;
+  disabled?: boolean;
+}) {
   const mutation = useMutation(
     orpc.postAuthAdminUsersByUserIdUnban.mutationOptions({
       onSuccess: () => {
@@ -327,7 +422,7 @@ function UnBanUserMenuItem({ userId }: { userId: string }) {
           path: { user_id: userId },
         })
       }
-      disabled={mutation.isPending}
+      disabled={mutation.isPending || disabled}
     >
       <Ban className="size-4 mr-2" />
       Unban
@@ -335,7 +430,15 @@ function UnBanUserMenuItem({ userId }: { userId: string }) {
   );
 }
 
-function DeleteUserMenuItem({ userId }: { userId: string }) {
+function DeleteUserDialog({
+  user,
+  open,
+  onOpenChange,
+}: {
+  user: User;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+}) {
   const mutation = useMutation(
     orpc.deleteAuthAdminUsersByUserId.mutationOptions({
       onSuccess: () => {
@@ -346,22 +449,40 @@ function DeleteUserMenuItem({ userId }: { userId: string }) {
         void queryClient.invalidateQueries({
           queryKey: orpc.getAuthMe.key(),
         });
+        onOpenChange(false);
       },
     }),
   );
 
+  if (!open) return null;
+
   return (
-    <DropdownMenuItem
-      variant="destructive"
-      onClick={() =>
-        void mutation.mutateAsync({
-          path: { user_id: userId },
-        })
-      }
-      disabled={mutation.isPending}
-    >
-      <Trash2 className="size-4 mr-2" />
-      Delete
-    </DropdownMenuItem>
+    <AlertDialog open onOpenChange={onOpenChange}>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Delete user?</AlertDialogTitle>
+          <AlertDialogDescription>
+            <strong>{user.name || user.email}</strong> will be permanently
+            removed along with all linked accounts, sessions, and role
+            assignments. This cannot be undone.
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel disabled={mutation.isPending}>
+            Cancel
+          </AlertDialogCancel>
+          <AlertDialogAction
+            onClick={() =>
+              void mutation.mutateAsync({
+                path: { user_id: user.id ?? '' },
+              })
+            }
+            disabled={mutation.isPending}
+          >
+            {mutation.isPending ? 'Deleting...' : 'Delete user'}
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
   );
 }

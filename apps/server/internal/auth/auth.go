@@ -61,9 +61,9 @@ func NewAuthula() (*authula.Auth, error) {
 				MaxAge:           24 * time.Hour,
 			},
 		}),
-		// authulaconfig.WithLogger(authulamodels.LoggerConfig{
-		// 	Level: "debug",
-		// }),
+		authulaconfig.WithLogger(authulamodels.LoggerConfig{
+			Level: "debug",
+		}),
 		authulaconfig.WithRouteMappings(
 			[]authulamodels.RouteMapping{
 				// Core routes
@@ -72,128 +72,202 @@ func NewAuthula() (*authula.Auth, error) {
 					Plugins: []string{"session.auth"},
 				},
 				// // Email/Password Plugin
+				// Public endpoints
 				{
 					Paths: []string{
 						"POST:/email-password/sign-up",
 						"POST:/email-password/sign-in",
-						"POST:/email-password/change-password",
-					},
-				},
-				{
-					Paths: []string{
 						"GET:/email-password/verify-email",
 						"POST:/email-password/send-email-verification",
 						"POST:/email-password/request-password-reset",
+					},
+				},
+				// Authenticated user actions
+				{
+					Paths: []string{
+						"POST:/email-password/change-password",
 						"POST:/email-password/request-email-change",
-					},
-					// Plugins: []string{"session.auth"},
-				},
-
-				// // ADMIN Plugin
-				// User Management
-				{
-					Paths: []string{
-						"POST:/admin/users",
-						"GET:/admin/users",
-						"GET:/admin/users/{user_id}",
-						"PATCH:/admin/users/{user_id}",
-						"DELETE:/admin/users/{user_id}",
-					},
-					// Plugins: []string{"session.auth"},
-				},
-				// Account Management
-				{
-					Paths: []string{
-						"POST:/admin/users/{user_id}/accounts",
-						"GET:/admin/users/{user_id}/accounts",
-						"GET:/admin/accounts/{id}",
-						"PATCH:/admin/accounts/{id}",
-						"DELETE:/admin/accounts/{id}",
-					},
-					// Plugins: []string{"session.auth"},
-				},
-				// User State Management
-				{
-					Paths: []string{
-						"GET:/admin/users/{user_id}/state",
-						"POST:/admin/users/{user_id}/state",
-						"PATCH:/admin/users/{user_id}/state",
-						"DELETE:/admin/users/{user_id}/state",
-						"GET:/admin/users/states/banned",
-						"POST:/admin/users/{user_id}/ban",
-						"POST:/admin/users/{user_id}/unban",
-					},
-					// Plugins: []string{"session.auth"},
-				},
-				// Session State Management
-				{
-					Paths: []string{
-						"GET:/admin/sessions/{session_id}/state",
-						"POST:/admin/sessions/{session_id}/state",
-						"PATCH:/admin/sessions/{session_id}/state",
-						"DELETE:/admin/sessions/{session_id}/state",
-						"POST:/admin/sessions/{session_id}/revoke",
-						"GET:/admin/sessions/states/revoked",
-						"GET:/admin/users/{user_id}/sessions",
-					},
-					// Plugins: []string{"session.auth"},
-				},
-				// Impersonation Management
-				{
-					Paths: []string{
-						"GET:/admin/impersonations",
-						"GET:/admin/impersonations/{impersonation_id}",
-						"POST:/admin/impersonations",
-						"POST:/admin/impersonations/{impersonation_id}/stop",
 					},
 					Plugins: []string{"session.auth"},
 				},
 
-				// // ACCESS CONTROL Plugin
-				// Roles Management
+				// // ADMIN Plugin
+				// User Management - reads
 				{
 					Paths: []string{
-						"POST:/access-control/roles",
+						"GET:/admin/users",
+						"GET:/admin/users/{user_id}",
+					},
+					Plugins:     []string{"session.auth", "access_control.enforce"},
+					Permissions: []string{"users:read"},
+				},
+				// User Management - writes
+				{
+					Paths: []string{
+						"POST:/admin/users",
+						"PATCH:/admin/users/{user_id}",
+						"DELETE:/admin/users/{user_id}",
+					},
+					Plugins:     []string{"session.auth", "access_control.enforce"},
+					Permissions: []string{"users:manage"},
+				},
+				// Account Management - reads
+				{
+					Paths: []string{
+						"GET:/admin/users/{user_id}/accounts",
+						"GET:/admin/accounts/{id}",
+					},
+					Plugins:     []string{"session.auth", "access_control.enforce"},
+					Permissions: []string{"users:read"},
+				},
+				// Account Management - writes
+				{
+					Paths: []string{
+						"POST:/admin/users/{user_id}/accounts",
+						"PATCH:/admin/accounts/{id}",
+						"DELETE:/admin/accounts/{id}",
+					},
+					Plugins:     []string{"session.auth", "access_control.enforce"},
+					Permissions: []string{"users:manage"},
+				},
+				// User State Management - reads
+				{
+					Paths: []string{
+						"GET:/admin/users/{user_id}/state",
+						"GET:/admin/users/states/banned",
+					},
+					Plugins:     []string{"session.auth", "access_control.enforce"},
+					Permissions: []string{"users:read"},
+				},
+				// User State Management - writes
+				{
+					Paths: []string{
+						"POST:/admin/users/{user_id}/state",
+						"PATCH:/admin/users/{user_id}/state",
+						"DELETE:/admin/users/{user_id}/state",
+						"POST:/admin/users/{user_id}/ban",
+						"POST:/admin/users/{user_id}/unban",
+					},
+					Plugins:     []string{"session.auth", "access_control.enforce"},
+					Permissions: []string{"users:manage"},
+				},
+				// Session State Management - reads
+				{
+					Paths: []string{
+						"GET:/admin/sessions/{session_id}/state",
+						"GET:/admin/sessions/states/revoked",
+						"GET:/admin/users/{user_id}/sessions",
+					},
+					Plugins:     []string{"session.auth", "access_control.enforce"},
+					Permissions: []string{"sessions:read"},
+				},
+				// Session State Management - writes
+				{
+					Paths: []string{
+						"POST:/admin/sessions/{session_id}/state",
+						"PATCH:/admin/sessions/{session_id}/state",
+						"DELETE:/admin/sessions/{session_id}/state",
+						"POST:/admin/sessions/{session_id}/revoke",
+					},
+					Plugins:     []string{"session.auth", "access_control.enforce"},
+					Permissions: []string{"sessions:manage"},
+				},
+				// Impersonation Management - reads
+				{
+					Paths: []string{
+						"GET:/admin/impersonations",
+						"GET:/admin/impersonations/{impersonation_id}",
+					},
+					Plugins:     []string{"session.auth", "access_control.enforce"},
+					Permissions: []string{"impersonation:read"},
+				},
+				// Impersonation Management - writes
+				{
+					Paths: []string{
+						"POST:/admin/impersonations",
+						"POST:/admin/impersonations/{impersonation_id}/stop",
+					},
+					Plugins:     []string{"session.auth", "access_control.enforce"},
+					Permissions: []string{"impersonation:manage"},
+				},
+
+				// // ACCESS CONTROL Plugin
+				// Roles Management - reads
+				{
+					Paths: []string{
 						"GET:/access-control/roles",
 						"GET:/access-control/roles/by-name/{role_name}",
 						"GET:/access-control/roles/{role_id}",
+					},
+					Plugins:     []string{"session.auth", "access_control.enforce"},
+					Permissions: []string{"roles:read"},
+				},
+				// Roles Management - writes
+				{
+					Paths: []string{
+						"POST:/access-control/roles",
 						"PATCH:/access-control/roles/{role_id}",
 						"DELETE:/access-control/roles/{role_id}",
 					},
-					// Plugins: []string{"session.auth"},
+					Plugins:     []string{"session.auth", "access_control.enforce"},
+					Permissions: []string{"roles:manage"},
 				},
-				// Permissions Management
+				// Permissions Management - reads
+				{
+					Paths: []string{
+						"GET:/access-control/permissions",
+						"GET:/access-control/permissions/{permission_id}",
+					},
+					Plugins:     []string{"session.auth", "access_control.enforce"},
+					Permissions: []string{"permissions:read"},
+				},
+				// Permissions Management - writes
 				{
 					Paths: []string{
 						"POST:/access-control/permissions",
-						"GET:/access-control/permissions",
-						"GET:/access-control/permissions/{permission_id}",
 						"PATCH:/access-control/permissions/{permission_id}",
 						"DELETE:/access-control/permissions/{permission_id}",
 					},
-					// Plugins: []string{"session.auth"},
+					Plugins:     []string{"session.auth", "access_control.enforce"},
+					Permissions: []string{"permissions:manage"},
 				},
-				// Role-Permission Mapping
+				// Role-Permission Mapping - reads
+				{
+					Paths: []string{
+						"GET:/access-control/roles/{role_id}/permissions",
+					},
+					Plugins:     []string{"session.auth", "access_control.enforce"},
+					Permissions: []string{"roles:read"},
+				},
+				// Role-Permission Mapping - writes
 				{
 					Paths: []string{
 						"POST:/access-control/roles/{role_id}/permissions",
-						"GET:/access-control/roles/{role_id}/permissions",
 						"PUT:/access-control/roles/{role_id}/permissions",
 						"DELETE:/access-control/roles/{role_id}/permissions/{permission_id}",
 					},
-					// Plugins: []string{"session.auth"},
+					Plugins:     []string{"session.auth", "access_control.enforce"},
+					Permissions: []string{"roles:manage"},
 				},
-				// User Access & Permissions
+				// User Access & Permissions - reads
 				{
 					Paths: []string{
 						"GET:/access-control/users/{user_id}/roles",
-						"POST:/access-control/users/{user_id}/roles",
-						"PUT:/access-control/users/{user_id}/roles",
-						"DELETE:/access-control/users/{user_id}/roles/{role_id}",
 						"GET:/access-control/users/{user_id}/permissions",
 						"POST:/access-control/users/{user_id}/permissions/check",
 					},
-					// Plugins: []string{"session.auth"},
+					Plugins:     []string{"session.auth", "access_control.enforce"},
+					Permissions: []string{"users:read"},
+				},
+				// User Access & Permissions - writes
+				{
+					Paths: []string{
+						"POST:/access-control/users/{user_id}/roles",
+						"PUT:/access-control/users/{user_id}/roles",
+						"DELETE:/access-control/users/{user_id}/roles/{role_id}",
+					},
+					Plugins:     []string{"session.auth", "access_control.enforce"},
+					Permissions: []string{"users:manage"},
 				},
 
 				// // Organizations Plugin

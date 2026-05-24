@@ -6,7 +6,7 @@ import {
   useRouter,
   type LinkProps,
 } from '@tanstack/react-router';
-import { AlertTriangle, Moon, Sun } from 'lucide-react';
+import { AlertTriangle, DoorOpen, Moon, Sun, User2 } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import React from 'react';
 import { toast } from 'sonner';
@@ -38,7 +38,6 @@ const links: AppLink[] = [
   {
     to: '/admin',
     label: 'Admin',
-    // visible: !!session && session.user.role?.includes('admin'),
   },
 ] as const;
 
@@ -166,15 +165,25 @@ function UserMenu() {
       </DropdownMenuTrigger>
       <DropdownMenuContent className="bg-card w-full">
         <DropdownMenuGroup>
-          <DropdownMenuLabel>My Account</DropdownMenuLabel>
+          <DropdownMenuLabel className="text-center">
+            My Account
+          </DropdownMenuLabel>
           <DropdownMenuSeparator />
-          <DropdownMenuItem>{session.user.email}</DropdownMenuItem>
+          <DropdownMenuItem
+            onClick={() => {
+              void navigate({ to: '/settings' });
+            }}
+          >
+            <User2 />
+            {session.user.email}
+          </DropdownMenuItem>
           <DropdownMenuItem
             variant="destructive"
             onClick={async () => {
               await signOut.mutateAsync({});
             }}
           >
+            <DoorOpen />
             Sign Out
           </DropdownMenuItem>
         </DropdownMenuGroup>

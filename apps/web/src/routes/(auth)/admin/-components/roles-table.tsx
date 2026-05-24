@@ -179,7 +179,10 @@ export function CreateRoleSheet() {
   const schema = z.object({
     name: z.string().min(1, 'Name is required'),
     description: z.string(),
-    weight: z.string(),
+    weight: z
+      .number()
+      .min(0, 'Weight must be a positive number')
+      .max(100, 'Weight must be less than or equal to 100'),
     is_system: z.boolean(),
   });
 
@@ -199,7 +202,7 @@ export function CreateRoleSheet() {
     defaultValues: {
       name: '',
       description: '',
-      weight: '0',
+      weight: 0,
       is_system: false,
     },
     onSubmit: async ({ value }) => {
@@ -207,13 +210,14 @@ export function CreateRoleSheet() {
         body: {
           name: value.name,
           description: value.description,
-          weight: Number(value.weight),
+          weight: value.weight,
           is_system: value.is_system,
         },
       });
     },
     validators: {
       onSubmit: schema,
+      onChange: schema,
     },
   });
 
@@ -237,7 +241,7 @@ export function CreateRoleSheet() {
               e.stopPropagation();
               await form.handleSubmit();
             }}
-            className="space-y-4 py-4"
+            className="grid flex-1 auto-rows-min gap-6 px-4"
           >
             <form.AppField name="name">
               {(field) => (
@@ -302,7 +306,10 @@ export function EditRoleSheet({
   const schema = z.object({
     name: z.string().min(1, 'Name is required'),
     description: z.string(),
-    weight: z.string(),
+    weight: z
+      .number()
+      .min(0, 'Weight must be a positive number')
+      .max(100, 'Weight must be less than or equal to 100'),
   });
 
   const mutation = useMutation(
@@ -321,7 +328,7 @@ export function EditRoleSheet({
     defaultValues: {
       name: role.name ?? '',
       description: role.description ?? '',
-      weight: String(role.weight ?? 0),
+      weight: role.weight ?? 0,
     },
     onSubmit: async ({ value }) => {
       await mutation.mutateAsync({
@@ -329,12 +336,13 @@ export function EditRoleSheet({
         body: {
           name: value.name,
           description: value.description,
-          weight: Number(value.weight),
+          weight: value.weight,
         },
       });
     },
     validators: {
       onSubmit: schema,
+      onChange: schema,
     },
   });
 
@@ -351,7 +359,7 @@ export function EditRoleSheet({
             e.stopPropagation();
             await form.handleSubmit();
           }}
-          className="space-y-4 py-4"
+          className="grid flex-1 auto-rows-min gap-6 px-4"
         >
           <form.AppField name="name">
             {(field) => (
@@ -437,7 +445,7 @@ export function RolePermissionsSheet({
               Manage permissions for <strong>{role.name}</strong>
             </SheetDescription>
           </SheetHeader>
-          <div className="py-4 space-y-4">
+          <div className="grid flex-1 auto-rows-min gap-6 px-4">
             <div className="flex justify-end">
               <Button size="sm" onClick={() => setAssignOpen(true)}>
                 <Plus className="size-4 mr-2" />
@@ -545,6 +553,7 @@ export function AssignPermissionSheet({
     },
     validators: {
       onSubmit: schema,
+      onChange: schema,
     },
   });
 
@@ -563,11 +572,11 @@ export function AssignPermissionSheet({
             e.stopPropagation();
             await form.handleSubmit();
           }}
-          className="space-y-4 py-4"
+          className="grid flex-1 auto-rows-min gap-6 px-4"
         >
           <form.AppField name="permission_id">
             {(field) => (
-              <div className="space-y-2">
+              <div className="space-y-2 w-full">
                 <field.Label>Permission</field.Label>
                 <field.Select>
                   <SelectTrigger id="permission_id">
@@ -579,7 +588,7 @@ export function AssignPermissionSheet({
                         key={permission.id}
                         value={permission.id ?? ''}
                       >
-                        {permission.key} — {permission.description}
+                        {permission.description}
                       </field.SelectItem>
                     ))}
                   </field.SelectContent>

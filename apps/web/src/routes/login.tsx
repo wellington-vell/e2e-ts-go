@@ -1,6 +1,7 @@
 import { useMutation } from '@tanstack/react-query';
 import {
   createFileRoute,
+  Link,
   redirect,
   useNavigate,
   useRouter,
@@ -126,7 +127,12 @@ export function SignInForm({
           <form.AppField name="password">
             {(field) => (
               <div className="space-y-2">
-                <field.Label>Password</field.Label>
+                <div className="flex items-center justify-between">
+                  <field.Label>Password</field.Label>
+                  <Button variant="link">
+                    <Link to="/forgot-password">Forgot password?</Link>
+                  </Button>
+                </div>
                 <field.Input type="password" />
                 <field.Error />
               </div>
